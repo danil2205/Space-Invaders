@@ -7,31 +7,89 @@ canvas.height = 1000;
 
 class Player {
     constructor() {
-        this.width = 100;
-        this.height = 50;
-
-        this.position = {
-            x: canvas.width / 2 - this.width / 2,
-            y: canvas.height / 2 + this.height + 350,
-        }
         this.velocity = {
             x: 0,
             y: 0,
         }
 
+        const image = new Image();
+        image.src = './img/ship.png';
+        image.onload = () => {
+            const scale = 0.05;
+            this.image = image;
+            this.width = image.width * scale;
+            this.height = image.height * scale;
+            this.position = {
+                x: canvas.width / 2 - this.width / 2,
+                y: canvas.height / 2 + this.height + 250,
+            }
+        }
     }
+
     draw() {
-        ctx.fillStyle = 'green';
-        ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+        ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
     }
 
     update() {
-        this.draw();
-        this.position.x += this.velocity.x;
+        if (this.image) {
+            this.draw();
+            this.position.x += this.velocity.x;
+        }
     }
 }
 
+class Stone {
+    constructor({ position }) {
+        const image = new Image();
+        image.src = './img/mars.png';
+        image.onload = () => {
+            const scale = 0.03;
+            this.image = image;
+            this.width = image.width * scale;
+            this.height = image.height * scale;
+            this.position = position;
+        }
+    }
+
+    draw() {
+        ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+    }
+
+    move() {
+        if (this.position.y < canvas.height - this.height) {
+            this.position.y += 3;
+        }
+    }
+
+    delete() {
+        if (this.position.y + this.height >= canvas.height) {
+            setTimeout(() => {
+                stones.splice(0, 1);
+            }, 0);
+        }
+    }
+
+    update() {
+        if (this.image) {
+            this.draw();
+            this.move();
+            this.delete();
+        }
+    }
+}
+
+function spawnStones() {
+    if (frames % 75 === 0) stones.push(new Stone({
+        position: {
+            x: Math.floor(Math.random() * canvas.width),
+            y: Math.floor(Math.random() * 10),
+        }
+    }))
+}
+
+
 const player = new Player();
+const stones = [];
 const keys = {
     a: {
         pressed: false,
@@ -41,6 +99,7 @@ const keys = {
     },
 }
 
+let frames = 0;
 
 function animate() {
     requestAnimationFrame(animate);
@@ -48,10 +107,28 @@ function animate() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     player.update();
 
+    spawnStones();
+
+    stones.forEach((stone) => {
+        stone.update();
+
+        if (stone.image) {
+            if (player.position.x <= stone.position.x + stone.width &&
+                player.position.x + player.width >= stone.position.x &&
+                player.position.y <= stone.position.y + stone.height) {
+                console.log('Game Over');
+            }
+        }
+
+    })
+
     if (keys.a.pressed && player.position.x > 0) player.velocity.x = -5
     else if (keys.d.pressed && player.position.x < canvas.width - player.width) player.velocity.x = 5;
     else player.velocity.x = 0;
 
+
+
+    frames++;
 }
 
 animate();
@@ -60,10 +137,8 @@ window.addEventListener('keydown', (event) => {
     switch (event.key) {
         case 'a':
             keys.a.pressed = true;
-            // player.velocity.x = -5
             break;
         case 'd':
-            // player.velocity.x = 5;
             keys.d.pressed = true;
             break;
     }
@@ -73,10 +148,8 @@ window.addEventListener('keyup', (event) => {
     switch (event.key) {
         case 'a':
             keys.a.pressed = false;
-            // player.velocity.x = 0;
             break;
         case 'd':
-            // player.velocity.x = 0;
             keys.d.pressed = false;
             break;
     }
