@@ -1,9 +1,25 @@
 <style>
     body {
         margin: 0;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: green;
     }
 </style>
 
 
-<canvas></canvas>
-<script src="game.js"></script>
+<body>
+
+    <div style="position: center">
+        <p style="position: absolute; z-index: 10; color: white; left: 900px; top: 10px; margin: 0; font-size: x-large">
+            <span>Score: </span><span id="score">0</span>
+            <button onclick="refreshGame()">Restart</button>
+        </p>
+    </div>
+
+    <canvas id="canvas"></canvas>
+    <script src="class.js"></script>
+    <script src="game.js"></script>
+</body>
