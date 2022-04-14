@@ -3,14 +3,17 @@
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 const scoreText = document.querySelector('#score');
+const scoreGameOver = document.querySelector('#scoreGameOver');
+const bestScoreText = document.querySelector('#bestScore');
 
-canvas.width = 1920;
-canvas.height = 1080;
+canvas.width = 540;
+canvas.height = 960;
 
 
 let speed = 1;
 let frames = 0;
 let score = 0;
+let bestScore = bestScoreText.innerHTML;
 let player = new Player();
 let stones = [];
 let particles = [];
@@ -24,19 +27,68 @@ const keys = {
     },
 }
 const game = {
-    active: true
+    active: false,
+    menu: true
 }
 
+function toggleScreen(id, toggle) {
+    const element = document.querySelector(`#${id}`);
+    const display = toggle ? 'block' : 'none';
+    element.style.display = display;
+}
+function play() {
+    toggleScreen('menu', false);
+    toggleScreen('canvas', true);
+    toggleScreen('allScore', true);
+    game.active = true;
+    game.menu = false;
+    animate();
+}
+
+function settings() {
+    // todo
+}
+
+function exit() {
+    toggleScreen('menu', true);
+    toggleScreen('pause', false);
+    toggleScreen('canvas', false);
+    toggleScreen('allScore', false);
+    game.menu = true;
+    game.active = false;
+}
+
+function pause() {
+    if (!game.active && !game.menu) {
+        game.active = true;
+        toggleScreen('pause', false);
+        animate();
+    }
+    else if (game.active && !game.menu) {
+        game.active = false;
+        toggleScreen('pause', true);
+    }
+}
+
+
 function spawnObjects() {
-    if (frames % 75 === 0) stones.push(new Stone(0.02,{
+    if (frames % 50 === 0) stones.push(new Stone(0.02,{
         position: {
-            x: Math.floor(Math.random() * canvas.width - 36), //  36 === stone.width
+            x: Math.floor(Math.random() * canvas.width) , //  36 === stone.width
             y: Math.floor(Math.random() * 10),
         }
     }))
+
+    if (frames % 150 === 0) stones.push(new Stone(0.07,{
+        position: {
+            x: Math.floor(Math.random() * canvas.width - 18), //  36 === stone.width
+            y: Math.floor(Math.random() * 10),
+        }
+    }))
+
     if (frames % 80 === 0) cosmonauts.push(new Cosmonaut(0.02,{
         position: {
-            x: Math.floor(Math.random() * canvas.width + 50), // 50 === cosmonauts.width
+            x: Math.floor(Math.random() * canvas.width - 25), // 50 === cosmonauts.width
             y: Math.floor(Math.random() * 5),
         }
     }))
@@ -58,6 +110,15 @@ function collectCosmonauts() {
         }
     })
 }
+function changeBestScore() {
+    if (score > bestScore) {
+        bestScore = score;
+        bestScoreText.innerHTML = bestScore;
+    }
+}
+
+
+
 
 function refreshGame() {
     player = new Player();
@@ -70,6 +131,8 @@ function refreshGame() {
     score = 0
     scoreText.innerHTML = score;
     game.active = true;
+    toggleScreen('screen', false);
+    toggleScreen('canvas', true);
     animate();
 }
 
@@ -82,7 +145,7 @@ function backgroundStars() {
             },
             velocity: {
                 x: 0,
-                y: 1.5,
+                y: 2,
             },
             radius: Math.random() * 3,
             color: 'white',
@@ -92,7 +155,7 @@ function backgroundStars() {
 backgroundStars();
 
 function animate() {
-    if (!game.active) return;
+    if (!game.active) return changeBestScore();
     requestAnimationFrame(animate);
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -107,7 +170,12 @@ function animate() {
                 player.position.y <= stone.position.y + stone.height) {
                 console.log('Game Over');
                 player.opacity = 0;
-                setTimeout(() => game.active = false, 2000);
+                setTimeout(() => {
+                    game.active = false;
+                    scoreGameOver.innerHTML = score;
+                    toggleScreen('canvas', false);
+                    toggleScreen('screen', true);
+                }, 2000);
             }
         }
     })
@@ -130,9 +198,6 @@ function animate() {
         }
     })
 
-
-
-
     frames++;
 }
 
@@ -145,6 +210,9 @@ window.addEventListener('keydown', (event) => {
             break;
         case 'd':
             keys.d.pressed = true;
+            break;
+        case 'Escape':
+            pause()
             break;
     }
 })

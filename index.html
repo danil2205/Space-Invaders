@@ -1,25 +1,77 @@
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
     body {
         margin: 0;
         overflow: hidden;
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: green;
+        background-color: black;
+        font-family: 'VT323', sans-serif;
+    }
+    button {
+        border: none;
+        font-family: 'VT323', sans-serif;
+        font-size: 32px;
+        cursor: pointer;
+        padding: 12px 48px 12px 48px;
+        color: white;
+        background-color: #1bafdb;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        appearance: none;
+    }
+
+    h1 {
+        font-size: 70px;
+    }
+    p {
+        font-size: 32px;
+        position: absolute;
+        z-index: 10;
+        color: white;
+        margin: 0;
     }
 </style>
 
 
 <body>
-
-    <div style="position: center">
-        <p style="position: absolute; z-index: 10; color: white; left: 900px; top: 10px; margin: 0; font-size: x-large">
+    <div id="allScore" style="position: center; display: none">
+        <p style="left: 1280px; top: 10px;">
             <span>Score: </span><span id="score">0</span>
-            <button onclick="refreshGame()">Restart</button>
+        </p>
+        <p style="left: 580px; top: 10px;">
+            <span>Best: </span><span id="bestScore">0</span>
         </p>
     </div>
 
-    <canvas id="canvas"></canvas>
+    <div id="menu"style="display: block; color: white; padding: 20px; position: fixed; top: 50%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
+        <h1>Menu</h1>
+        <button style="width: 200px" onclick="play()">Play</button>
+        <button style="width: 200px" onclick="settings()">Settings</button>
+    </div>
+
+
+    <div id="screen" style="display: none; color: white; padding: 20px; position: center; top: 30%; left: 50%; margin-top: -300px; margin-left: -100px; height: 200px; width: 300px; text-align: center">
+        <div style="max-width: 448px; width: 100%; padding: 24px;">
+            <h1>Game Over</h1>
+            <h1 id="scoreGameOver">0</h1>
+            <button onclick="refreshGame()">Try Again</button>
+        </div>
+    </div>
+
+
+    <div id="pause" style="display: none; color: white; padding: 20px; position: fixed; top: 50%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
+        <div style="max-width: 448px; width: 100%; padding: 24px;">
+            <h1>Paused</h1>
+            <button style="width: 200px" onclick="pause()">Resume</button>
+            <button style="width: 200px" onclick="settings()">Settings</button>
+            <button style="width: 200px" onclick="exit()">Exit</button>
+        </div>
+    </div>
+
+
+    <canvas style="display: none" id="canvas"></canvas>
     <script src="class.js"></script>
     <script src="game.js"></script>
 </body>
