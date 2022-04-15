@@ -6,8 +6,8 @@ const scoreText = document.querySelector('#score');
 const scoreGameOver = document.querySelector('#scoreGameOver');
 const bestScoreText = document.querySelector('#bestScore');
 
-canvas.width = 540;
-canvas.height = 960;
+canvas.width = 850;    // 540
+canvas.height = 960;   // 960
 
 
 let speed = 1;
@@ -28,7 +28,9 @@ const keys = {
 }
 const game = {
     active: false,
-    menu: true
+    menu: true,
+    pause: false,
+    over: false,
 }
 
 function toggleScreen(id, toggle) {
@@ -36,6 +38,7 @@ function toggleScreen(id, toggle) {
     const display = toggle ? 'block' : 'none';
     element.style.display = display;
 }
+
 function play() {
     toggleScreen('menu', false);
     toggleScreen('canvas', true);
@@ -56,16 +59,19 @@ function exit() {
     toggleScreen('allScore', false);
     game.menu = true;
     game.active = false;
+    refreshGame();
 }
 
 function pause() {
-    if (!game.active && !game.menu) {
+    if (!game.active && !game.menu && !game.over) {
         game.active = true;
+        game.pause = false;
         toggleScreen('pause', false);
         animate();
     }
-    else if (game.active && !game.menu) {
+    else if (game.active && !game.menu && !game.over) {
         game.active = false;
+        game.pause = true;
         toggleScreen('pause', true);
     }
 }
@@ -117,23 +123,23 @@ function changeBestScore() {
     }
 }
 
-
-
-
 function refreshGame() {
     player = new Player();
     stones = [];
     particles = [];
     cosmonauts = [];
-    backgroundStars()
     speed = 1;
     frames = 0;
     score = 0
     scoreText.innerHTML = score;
     game.active = true;
-    toggleScreen('screen', false);
-    toggleScreen('canvas', true);
-    animate();
+    game.over = false;
+    backgroundStars();
+    if (!game.menu) {
+        toggleScreen('screen', false);
+        toggleScreen('canvas', true);
+        animate();
+    }
 }
 
 function backgroundStars() {
@@ -155,7 +161,8 @@ function backgroundStars() {
 backgroundStars();
 
 function animate() {
-    if (!game.active) return changeBestScore();
+    if (!game.active) return;
+    if (game.over) changeBestScore();
     requestAnimationFrame(animate);
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -170,6 +177,7 @@ function animate() {
                 player.position.y <= stone.position.y + stone.height) {
                 console.log('Game Over');
                 player.opacity = 0;
+                game.over = true;
                 setTimeout(() => {
                     game.active = false;
                     scoreGameOver.innerHTML = score;

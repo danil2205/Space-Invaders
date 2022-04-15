@@ -1,6 +1,7 @@
 <style>
     @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
     body {
+        background-image: url("./img/background_menu.png");
         margin: 0;
         overflow: hidden;
         display: flex;
@@ -45,14 +46,15 @@
         </p>
     </div>
 
-    <div id="menu"style="display: block; color: white; padding: 20px; position: fixed; top: 50%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
-        <h1>Menu</h1>
-        <button style="width: 200px" onclick="play()">Play</button>
-        <button style="width: 200px" onclick="settings()">Settings</button>
+    <div id="menu" style="display: block; color: white; padding: 20px; position: fixed; top: 60%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
+        <div style="max-width: 448px; width: 100%; padding: 24px;">
+            <h1>Menu</h1>
+            <button style="width: 200px" onclick="play()">Play</button>
+            <button style="width: 200px" onclick="settings()">Settings</button>
+        </div>
     </div>
 
-
-    <div id="screen" style="display: none; color: white; padding: 20px; position: center; top: 30%; left: 50%; margin-top: -300px; margin-left: -100px; height: 200px; width: 300px; text-align: center">
+    <div id="screen" style="display: none; color: white; padding: 20px; position: fixed; top: 60%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
         <div style="max-width: 448px; width: 100%; padding: 24px;">
             <h1>Game Over</h1>
             <h1 id="scoreGameOver">0</h1>
