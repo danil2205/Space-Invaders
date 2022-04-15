@@ -39,7 +39,7 @@
 <body>
     <div id="allScore" style="position: center; display: none">
         <p style="left: 1280px; top: 10px;">
-            <span>Score: </span><span id="score">0</span>
+        <img src="./img/cosmonaut_for_score.png" style="margin-bottom:-20px; width: 50px; height: 50px"  alt="Collected cosmonauts"> <span>x </span><span id="score">0</span>
         </p>
         <p style="left: 580px; top: 10px;">
             <span>Best: </span><span id="bestScore">0</span>
@@ -54,11 +54,30 @@
         </div>
     </div>
 
+    <div id="settings" style="display: none; color: white; padding: 20px; position: fixed; top: 60%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
+        <div style="max-width: 448px; width: 100%; padding: 24px;">
+            <h1>Settings</h1>
+            <span style="font-size: 32px;">Music: </span><input type="range" min="0" max="100" step="1" value="50">
+            <span style="font-size: 32px;">Sound: </span><input type="range" min="0" max="100" step="1" value="50">
+            <button style="width: 50%;" onclick="back()">Back</button>
+        </div>
+
+
+    </div>
+
     <div id="screen" style="display: none; color: white; padding: 20px; position: fixed; top: 60%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
         <div style="max-width: 448px; width: 100%; padding: 24px;">
             <h1>Game Over</h1>
             <h1 id="scoreGameOver">0</h1>
-            <button onclick="refreshGame()">Try Again</button>
+            <button style="width: 250px" onclick="refreshGame()">Try Again</button>
+            <button style="width: 250px" onclick="exit()">In Main Menu</button>
+        </div>
+    </div>
+
+    <div id="countdown" style="display: none; color: white; padding: 20px; position: fixed; top: 50%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
+        <div style="max-width: 448px; width: 100%; padding: 24px;">
+            <h1>Starting in:</h1>
+            <h1 id="countDownTimer" style="display: block">3</h1>
         </div>
     </div>
 

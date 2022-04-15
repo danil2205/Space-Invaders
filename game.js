@@ -13,7 +13,7 @@ canvas.height = 960;   // 960
 let speed = 1;
 let frames = 0;
 let score = 0;
-let bestScore = bestScoreText.innerHTML;
+let bestScore = 0;
 let player = new Player();
 let stones = [];
 let particles = [];
@@ -39,6 +39,14 @@ function toggleScreen(id, toggle) {
     element.style.display = display;
 }
 
+function countDown() {
+    const countDownTimer = document.querySelector('#countDownTimer');
+    toggleScreen('countdown', true);
+    setTimeout(() => countDownTimer.textContent = '2', 1000);
+    setTimeout(() => countDownTimer.textContent = '1', 2000);
+    countDownTimer.textContent = '3';
+}
+
 function play() {
     toggleScreen('menu', false);
     toggleScreen('canvas', true);
@@ -49,14 +57,25 @@ function play() {
 }
 
 function settings() {
-    // todo
+    if (game.menu) toggleScreen('menu', false);
+    else toggleScreen('pause', false);
+    toggleScreen('settings', true);
+}
+
+function back() {
+    toggleScreen('settings', false);
+    if (game.menu) toggleScreen('menu', true);
+    else {
+        toggleScreen('pause', true);
+    }
 }
 
 function exit() {
-    toggleScreen('menu', true);
     toggleScreen('pause', false);
     toggleScreen('canvas', false);
     toggleScreen('allScore', false);
+    toggleScreen('screen', false);
+    toggleScreen('menu', true);
     game.menu = true;
     game.active = false;
     refreshGame();
@@ -64,10 +83,15 @@ function exit() {
 
 function pause() {
     if (!game.active && !game.menu && !game.over) {
-        game.active = true;
-        game.pause = false;
         toggleScreen('pause', false);
-        animate();
+        countDown();
+        setTimeout(() => {
+            game.active = true;
+            game.pause = false;
+            toggleScreen('countdown', false);
+            animate();
+        }, 3000);
+
     }
     else if (game.active && !game.menu && !game.over) {
         game.active = false;
@@ -92,7 +116,7 @@ function spawnObjects() {
         }
     }))
 
-    if (frames % 80 === 0) cosmonauts.push(new Cosmonaut(0.02,{
+    if (frames % 80  === 0) cosmonauts.push(new Cosmonaut(0.02,{
         position: {
             x: Math.floor(Math.random() * canvas.width - 25), // 50 === cosmonauts.width
             y: Math.floor(Math.random() * 5),
@@ -172,9 +196,9 @@ function animate() {
     stones.forEach((stone) => {
         stone.update();
         if (stone.image) { // lose statement
-            if (player.position.x <= stone.position.x + stone.width / 2 &&
-                player.position.x + player.width >= stone.position.x &&
-                player.position.y <= stone.position.y + stone.height) {
+            if (player.position.x <= stone.position.x + stone.width / 2  - 22 &&   // -22 - magic number   ???
+                player.position.y <= stone.position.y + stone.height &&
+                player.position.x + player.width - 33>= stone.position.x) {  //  -33 - magic number   ???
                 console.log('Game Over');
                 player.opacity = 0;
                 game.over = true;
@@ -191,7 +215,6 @@ function animate() {
     cosmonauts.forEach((cosmonaut) => {
         cosmonaut.update();
     })
-
 
     particles.forEach((particle, index) => {
         if (particle.position.y - particle.radius >= canvas.height) {
