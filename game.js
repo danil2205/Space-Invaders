@@ -102,23 +102,23 @@ function pause() {
 
 
 function spawnObjects() {
-    if (frames % 50 === 0) stones.push(new Stone(0.02,{
+    if (frames % Math.floor(50 / speed) === 0) stones.push(new Stone(0.02,{
         position: {
-            x: Math.floor(Math.random() * canvas.width) , //  36 === stone.width
+            x: Math.floor(Math.random() * canvas.width - 18) + 18 , //  36 === stone.width
             y: Math.floor(Math.random() * 10),
         }
     }))
 
     if (frames % 150 === 0) stones.push(new Stone(0.07,{
         position: {
-            x: Math.floor(Math.random() * canvas.width - 18), //  36 === stone.width
+            x: Math.floor(Math.random() * canvas.width - 42) + 42, //  84 === stone.width
             y: Math.floor(Math.random() * 10),
         }
     }))
 
-    if (frames % 80  === 0) cosmonauts.push(new Cosmonaut(0.02,{
+    if (frames % Math.floor(80 / speed)  === 0) cosmonauts.push(new Cosmonaut(0.02,{
         position: {
-            x: Math.floor(Math.random() * canvas.width - 25), // 50 === cosmonauts.width
+            x: Math.floor(Math.random() * canvas.width - 25) + 25, // 50 === cosmonauts.width
             y: Math.floor(Math.random() * 5),
         }
     }))
@@ -129,13 +129,15 @@ function spawnObjects() {
 function collectCosmonauts() {
     cosmonauts.forEach((cosmonaut, index) => {
         if (cosmonaut.image) {
-            if (player.position.x + player.width >= cosmonaut.position.x &&
-                player.position.x <= cosmonaut.position.x + cosmonaut.width &&
+            if (player.position.x + player.width / 1.5 >= cosmonaut.position.x && // left side cosmonaut
+                // player.position.x <= cosmonaut.position.x - cosmonaut.width / 2 &&
+                player.position.x <= cosmonaut.position.x + cosmonaut.width / 10 && // right side cosmonaut
                 player.position.y <= cosmonaut.position.y + cosmonaut.height) {
-                score += 1;
-                scoreText.innerHTML = score;
-                cosmonauts.splice(index, 1);
-                console.log(score);
+                if (!game.over) {
+                    score += 1;
+                    scoreText.innerHTML = score;
+                    cosmonauts.splice(index, 1);
+                }
             }
         }
     })
@@ -196,10 +198,9 @@ function animate() {
     stones.forEach((stone) => {
         stone.update();
         if (stone.image) { // lose statement
-            if (player.position.x <= stone.position.x + stone.width / 2  - 22 &&   // -22 - magic number   ???
+            if (player.position.x <= stone.position.x  && // collision with stone,  right side stone
                 player.position.y <= stone.position.y + stone.height &&
-                player.position.x + player.width - 33>= stone.position.x) {  //  -33 - magic number   ???
-                console.log('Game Over');
+                player.position.x + player.width / 1.5 >= stone.position.x) { // left side stone
                 player.opacity = 0;
                 game.over = true;
                 setTimeout(() => {

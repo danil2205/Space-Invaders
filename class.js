@@ -66,7 +66,7 @@ class Stone {
     }
 
     delete() {
-        if (this.position.y + this.height >= canvas.height) {
+        if (this.position.y >= canvas.height) {
             setTimeout(() => {
                 stones.splice(0, 1);
             }, 0);
@@ -97,7 +97,7 @@ class Cosmonaut extends Stone {
     }
 
     delete() {
-        if (this.position.y + this.height >= canvas.height) {
+        if (this.position.y >= canvas.height) {
             setTimeout(() => {
                 cosmonauts.splice(0, 1);
             }, 0);
