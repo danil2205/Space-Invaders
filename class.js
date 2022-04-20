@@ -7,6 +7,7 @@ class Player {
             y: 0,
         }
 
+        const powerUp = null;
         this.opacity = 1;
         const image = new Image();
         image.src = './img/ship1.png';
@@ -133,5 +134,48 @@ class Particle {
         if (this.fades) {
             this.opacity -= 0.01
         }
+    }
+}
+
+class PowerUp {
+    constructor({ position }) {
+        this.position = position;
+        this.velocity = {
+            x: 0,
+            y: 5,
+        };
+
+        const image = new Image();
+        image.src = `./img/powerup.png`;
+        image.onload = () => {
+            const scale = 0.1;
+            this.image = image;
+            this.width = image.width * scale;
+            this.height = image.height * scale;
+            this.position = position;
+        }
+    }
+
+    draw() {
+        if (this.image) ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+    }
+
+    move() {
+        this.position.y += this.velocity.y * speed;
+    }
+
+    delete() {
+        if (this.position.y >= canvas.height) {
+            setTimeout(() => {
+                powerups.splice(0, 1);
+            }, 0);
+        }
+    }
+
+    update() {
+        this.draw();
+        this.move();
+        this.delete();
+
     }
 }

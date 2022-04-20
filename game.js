@@ -5,6 +5,7 @@ const ctx = canvas.getContext('2d');
 const scoreText = document.querySelector('#score');
 const scoreGameOver = document.querySelector('#scoreGameOver');
 const bestScoreText = document.querySelector('#bestScore');
+const announcementText = document.querySelector('#announcementText');
 
 canvas.width = 850;
 canvas.height = 960;
@@ -18,6 +19,8 @@ let player = new Player();
 let stones = [];
 let particles = [];
 let cosmonauts = [];
+let powerups = [];
+const powerupList = ['Shield', 'X2 Score'];
 const keys = {
     a: {
         pressed: false,
@@ -102,23 +105,30 @@ function pause() {
 function spawnObjects() {
     if (frames % Math.floor(50 / speed) === 0) stones.push(new Stone(0.02,{
         position: {
-            x: Math.floor(Math.random() * canvas.width - 18) + 18 , //  36 === stone.width
+            x: Math.floor(36 + Math.random() * canvas.width) - 36 , //  36 === stone.width
             y: Math.floor(Math.random() * 10),
         }
     }))
 
     if (frames % 150 === 0) stones.push(new Stone(0.07,{
         position: {
-            x: Math.floor(Math.random() * canvas.width - 42) + 42, //  84 === stone.width
+            x: Math.floor(84 + Math.random() * canvas.width) - 84, //  84 === stone.width
             y: Math.floor(Math.random() * 10),
         }
     }))
 
     if (frames % Math.floor(80 / speed)  === 0) cosmonauts.push(new Cosmonaut(0.02,{
         position: {
-            x: Math.floor(Math.random() * canvas.width - 25) + 25, // 50 === cosmonauts.width
+            x: Math.floor(50 + Math.random() * canvas.width) - 50, // 50 === cosmonauts.width
             y: Math.floor(Math.random() * 5),
         }
+    }))
+
+    if (frames % 1000 === 0) powerups.push(new PowerUp({
+        position: {
+            x: Math.floor(5 + Math.random() * canvas.width) - 5,
+            y: 0,
+        },
     }))
 
     if (frames % 250 === 0) speed += 0.1; // speed up stones and cosmonauts
@@ -140,12 +150,14 @@ function collectCosmonauts() {
                 LEFT_PLAYER_SIDE  <= RIGHT_COSMONAUT_SIDE &&
                 PLAYER_HEIGHT <= COSMONAUT_HEIGHT) {
                 score += 1;
+                if (player.powerUp === 'X2 Score') score += 1;
                 scoreText.innerHTML = score;
                 cosmonauts.splice(index, 1);
             }
         }
     })
 }
+
 function changeBestScore() {
     if (score > bestScore) {
         bestScore = score;
@@ -158,6 +170,7 @@ function refreshGame() {
     stones = [];
     particles = [];
     cosmonauts = [];
+    powerups = [];
     speed = 1;
     frames = 0;
     score = 0
@@ -173,14 +186,16 @@ function refreshGame() {
 }
 
 function lose() {
-    player.opacity = 0;
-    game.over = true;
-    setTimeout(() => {
-        game.active = false;
-        scoreGameOver.innerHTML = score;
-        toggleScreen('canvas', false);
-        toggleScreen('screen', true);
-    }, 2000);
+    if (player.powerUp !== 'Shield') {
+        player.opacity = 0;
+        game.over = true;
+        setTimeout(() => {
+            game.active = false;
+            scoreGameOver.innerHTML = score;
+            toggleScreen('canvas', false);
+            toggleScreen('screen', true);
+        }, 2000);
+    }
 }
 
 function backgroundStars() {
@@ -237,6 +252,46 @@ function updateStone() {
     })
 }
 
+function updatePowerUps() {
+    powerups.forEach((powerup, index) => {
+        powerup.update()
+        if (powerup.image) {
+            const LEFT_POWERUP_SIDE = powerup.position.x;
+            const RIGHT_POWERUP_SIDE = powerup.position.x + powerup.width;
+            const POWERUP_HEIGHT = powerup.position.y + powerup.height;
+
+            const LEFT_PLAYER_SIDE = player.position.x + player.width / 3.5; // magic number D:
+            const RIGHT_PLAYER_SIDE = player.position.x + player.width / 1.7; // magic number D:
+            const PLAYER_HEIGHT = player.position.y;
+
+            if (RIGHT_PLAYER_SIDE >= LEFT_POWERUP_SIDE &&
+                LEFT_PLAYER_SIDE <= RIGHT_POWERUP_SIDE &&
+                PLAYER_HEIGHT <= POWERUP_HEIGHT) {
+                setPowerUp();
+                powerups.splice(index, 1);
+            }
+        }
+    });
+}
+
+function setPowerUp() {
+    const randomPowerUp = powerupList[Math.floor(Math.random() * 2)];
+    player.powerUp = randomPowerUp;
+    if (player.powerUp === 'Shield') {
+        announcementText.textContent = 'GodMode For 5 Second Activated!';
+        toggleScreen('announcement', true);
+    }
+    if (player.powerUp === 'X2 Score') {
+        announcementText.textContent = 'Cosmonauts Give You X2 Points For 5 Second!';
+        toggleScreen('announcement', true);
+    }
+    setTimeout(() => {
+        player.powerUp = null;
+        toggleScreen('announcement', false)
+        console.log(`${randomPowerUp} ended`);
+    }, 5000);
+}
+
 
 function animate() {
     if (!game.active) return;
@@ -249,6 +304,7 @@ function animate() {
     updateBackgroundStars();
     collectCosmonauts();
     updateStone();
+    updatePowerUps();
     frames++;
 }
 animate();
