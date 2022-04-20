@@ -8,9 +8,8 @@ class Player {
         }
 
         this.opacity = 1;
-
         const image = new Image();
-        image.src = './img/ship.png';
+        image.src = './img/ship1.png';
         image.onload = () => {
             const scale = 0.05;
             this.image = image;

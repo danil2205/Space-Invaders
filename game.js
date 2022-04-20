@@ -6,8 +6,8 @@ const scoreText = document.querySelector('#score');
 const scoreGameOver = document.querySelector('#scoreGameOver');
 const bestScoreText = document.querySelector('#bestScore');
 
-canvas.width = 850;    // 540
-canvas.height = 960;   // 960
+canvas.width = 850;
+canvas.height = 960;
 
 
 let speed = 1;
@@ -57,17 +57,15 @@ function play() {
 }
 
 function settings() {
-    if (game.menu) toggleScreen('menu', false);
-    else toggleScreen('pause', false);
     toggleScreen('settings', true);
+    if (game.menu) return toggleScreen('menu', false);
+    toggleScreen('pause', false);
 }
 
 function back() {
     toggleScreen('settings', false);
-    if (game.menu) toggleScreen('menu', true);
-    else {
-        toggleScreen('pause', true);
-    }
+    if (game.menu) return toggleScreen('menu', true);
+    toggleScreen('pause', true);
 }
 
 function exit() {
@@ -128,16 +126,22 @@ function spawnObjects() {
 
 function collectCosmonauts() {
     cosmonauts.forEach((cosmonaut, index) => {
-        if (cosmonaut.image) {
-            if (player.position.x + player.width / 1.5 >= cosmonaut.position.x && // left side cosmonaut
-                // player.position.x <= cosmonaut.position.x - cosmonaut.width / 2 &&
-                player.position.x <= cosmonaut.position.x + cosmonaut.width / 10 && // right side cosmonaut
-                player.position.y <= cosmonaut.position.y + cosmonaut.height) {
-                if (!game.over) {
-                    score += 1;
-                    scoreText.innerHTML = score;
-                    cosmonauts.splice(index, 1);
-                }
+        cosmonaut.update();
+        if (cosmonaut.image && !game.over) {
+            const LEFT_COSMONAUT_SIDE = cosmonaut.position.x;
+            const RIGHT_COSMONAUT_SIDE = cosmonaut.position.x + cosmonaut.width;
+            const COSMONAUT_HEIGHT = cosmonaut.position.y + cosmonaut.height;
+
+            const LEFT_PLAYER_SIDE = player.position.x + player.width / 3.5; // magic number D:
+            const RIGHT_PLAYER_SIDE = player.position.x + player.width / 1.7; // magic number D:
+            const PLAYER_HEIGHT = player.position.y;
+
+            if (RIGHT_PLAYER_SIDE >= LEFT_COSMONAUT_SIDE &&
+                LEFT_PLAYER_SIDE  <= RIGHT_COSMONAUT_SIDE &&
+                PLAYER_HEIGHT <= COSMONAUT_HEIGHT) {
+                score += 1;
+                scoreText.innerHTML = score;
+                cosmonauts.splice(index, 1);
             }
         }
     })
@@ -168,6 +172,17 @@ function refreshGame() {
     }
 }
 
+function lose() {
+    player.opacity = 0;
+    game.over = true;
+    setTimeout(() => {
+        game.active = false;
+        scoreGameOver.innerHTML = score;
+        toggleScreen('canvas', false);
+        toggleScreen('screen', true);
+    }, 2000);
+}
+
 function backgroundStars() {
     for (let i = 0; i < 100; i++) {
         particles.push(new Particle({
@@ -186,37 +201,7 @@ function backgroundStars() {
 }
 backgroundStars();
 
-function animate() {
-    if (!game.active) return;
-    if (game.over) changeBestScore();
-    requestAnimationFrame(animate);
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    player.update();
-    spawnObjects();
-    collectCosmonauts();
-    stones.forEach((stone) => {
-        stone.update();
-        if (stone.image) { // lose statement
-            if (player.position.x <= stone.position.x  && // collision with stone,  right side stone
-                player.position.y <= stone.position.y + stone.height &&
-                player.position.x + player.width / 1.5 >= stone.position.x) { // left side stone
-                player.opacity = 0;
-                game.over = true;
-                setTimeout(() => {
-                    game.active = false;
-                    scoreGameOver.innerHTML = score;
-                    toggleScreen('canvas', false);
-                    toggleScreen('screen', true);
-                }, 2000);
-            }
-        }
-    })
-
-    cosmonauts.forEach((cosmonaut) => {
-        cosmonaut.update();
-    })
-
+function updateBackgroundStars() {
     particles.forEach((particle, index) => {
         if (particle.position.y - particle.radius >= canvas.height) {
             particle.position.y = -particle.radius;
@@ -229,10 +214,43 @@ function animate() {
             particle.update();
         }
     })
-
-    frames++;
 }
 
+function updateStone() {
+    stones.forEach((stone) => {
+        stone.update();
+        if (stone.image) {
+            const LEFT_PLAYER_SIDE = player.position.x + player.width / 3.5; // magic number :(
+            const RIGHT_PLAYER_SIDE = player.position.x + player.width / 1.7; // magic number :C
+            const PLAYER_HEIGHT = player.position.y;
+
+            const LEFT_SIDE_STONE = stone.position.x + stone.width / 15; // magic number D:
+            const RIGHT_SIDE_STONE = stone.position.x + stone.width / 1.2; // magic number D:
+            const STONE_HEIGHT = stone.position.y + stone.height;
+
+            if (RIGHT_PLAYER_SIDE >= LEFT_SIDE_STONE &&
+                LEFT_PLAYER_SIDE <= RIGHT_SIDE_STONE &&
+                PLAYER_HEIGHT <= STONE_HEIGHT) { // collision with stone
+                lose();
+            }
+        }
+    })
+}
+
+
+function animate() {
+    if (!game.active) return;
+    if (game.over) changeBestScore();
+    requestAnimationFrame(animate);
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    player.update();
+    spawnObjects();
+    updateBackgroundStars();
+    collectCosmonauts();
+    updateStone();
+    frames++;
+}
 animate();
 
 window.addEventListener('keydown', (event) => {
