@@ -1,0 +1,27 @@
+{
+  "name": "space-invaders",
+  "version": "1.0.0",
+  "description": "",
+  "main": "class.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --fix && prettier --write \"**/*.js\" \"**/*.json\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danil2205/Space-Invaders.git"
+  },
+  "author": "danil2205",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/danil2205/Space-Invaders/issues"
+  },
+  "homepage": "https://github.com/danil2205/Space-Invaders#readme",
+  "devDependencies": {
+    "eslint": "^8.13.0",
+    "eslint-config-google": "^0.14.0"
+  },
+  "dependencies": {
+    "prettier": "^2.6.2"
+  }
+}
