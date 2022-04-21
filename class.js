@@ -7,7 +7,6 @@ class Player {
       y: 0,
     };
 
-    const powerUp = null;
     this.opacity = 1;
     const image = new Image();
     image.src = './img/ship1.png';

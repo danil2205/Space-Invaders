@@ -44,17 +44,31 @@
         <p style="left: 580px; top: 10px;">
             <span>Best: </span><span id="bestScore">0</span>
         </p>
+        <p style="left: 1000px; top: 10px;">
+            <span id="coins">0</span> <img src="./img/coin.png" style="margin-bottom:-10px; width: 40px; height: 40px">
+        </p>
     </div>
 
     <div id="menu" style="display: block; color: white; padding: 20px; position: fixed; top: 60%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
         <div style="max-width: 448px; width: 100%; padding: 24px;">
             <h1>Menu</h1>
             <button style="width: 200px" onclick="play()">Play</button>
-            <button style="width: 200px" onclick="shop()">In future.</button>
+            <button style="width: 200px" onclick="shop()">Shop</button>
             <button style="width: 200px" onclick="settings()">Settings</button>
         </div>
     </div>
 
+    <div id="shop" style="display: none; color: white; padding: 20px; position: fixed; top: 60%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
+        <div style="max-width: 448px; width: 100%; padding: 24px;">
+            <h1>Shop</h1>
+            <h2 style="font-size: 40px">Power-Ups</h2>
+            <span id="multiplierLevel" style="font-size: 30px; margin-right: 30px">Level 1</span> <span id="costMulti" style="font-size: 30px; margin-left: 20px;">1</span>
+            <button style="width: 300px" onclick="upgradeMultiplier()">Upgrade Score</button>
+            <span id="shieldLevel" style="font-size: 30px">Level 1</span> <span id="costShield" style="font-size: 30px; margin-left: 20px;">1</span>
+            <button style="width: 300px" onclick="upgradeShield()">Upgrade GodMode</button>
+            <button style="width: 200px" onclick="back()">Back</button>
+        </div>
+    </div>
 
     <div id="settings" style="display: none; color: white; padding: 20px; position: fixed; top: 60%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
         <div style="max-width: 448px; width: 100%; padding: 24px;">

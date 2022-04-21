@@ -6,11 +6,12 @@ const scoreText = document.querySelector('#score');
 const scoreGameOver = document.querySelector('#scoreGameOver');
 const bestScoreText = document.querySelector('#bestScore');
 const announcementText = document.querySelector('#announcementText');
+const coinText = document.querySelector('#coins');
 
 canvas.width = 850;
 canvas.height = 960;
 
-
+let coins = 0;
 let speed = 1;
 let frames = 0;
 let score = 0;
@@ -20,7 +21,7 @@ let stones = [];
 let particles = [];
 let cosmonauts = [];
 let powerups = [];
-const powerupList = ['Shield', 'X2 Score'];
+const powerupList = ['Shield', 'Score Multiplier', 'Coin Multiplier'];
 const keys = {
   a: {
     pressed: false,
@@ -59,6 +60,34 @@ function play() {
   animate();
 }
 
+function shop() {
+  toggleScreen('menu', false);
+  toggleScreen('shop', true);
+}
+let costMulti = document.querySelector('#costMulti');
+let levelMulti = document.querySelector('#multiplierLevel');
+let levelsMulti = 2;
+function upgradeMultiplier() {
+  if (costMulti.innerText <= coins) {
+    coins -= costMulti.innerText;
+    costMulti.innerText = costMulti.innerText * 2;
+    levelMulti.innerText = 'Level ' + levelsMulti;
+    levelsMulti++;
+  }
+}
+
+let costShield = document.querySelector('#costShield');
+let levelShield = document.querySelector('#shieldLevel');
+let levelsShield = 2;
+function upgradeShield() {
+  if (costShield.innerText <= coins) {
+    coins -= costShield.innerText;
+    costShield.innerText = costShield.innerText * 2;
+    levelShield.innerText = 'Level ' + levelsShield;
+    levelsShield++;
+  }
+}
+
 function settings() {
   toggleScreen('settings', true);
   if (game.menu) return toggleScreen('menu', false);
@@ -67,6 +96,7 @@ function settings() {
 
 function back() {
   toggleScreen('settings', false);
+  toggleScreen('shop', false);
   if (game.menu) return toggleScreen('menu', true);
   toggleScreen('pause', true);
 }
@@ -149,7 +179,7 @@ function collectCosmonauts() {
                 LEFT_PLAYER_SIDE  <= RIGHT_COSMONAUT_SIDE &&
                 PLAYER_HEIGHT <= COSMONAUT_HEIGHT) {
         score += 1;
-        if (player.powerUp === 'X2 Score') score += 1;
+        if (player.powerUp === 'Score Multiplier') score += levelsMulti - 2;
         scoreText.innerHTML = score;
         cosmonauts.splice(index, 1);
       }
@@ -185,7 +215,7 @@ function refreshGame() {
 }
 
 function lose() {
-  if (player.powerUp !== 'Shield') {
+  if (player.powerUp !== 'Shield' && !game.over) {
     player.opacity = 0;
     game.over = true;
     setTimeout(() => {
@@ -276,21 +306,20 @@ function updatePowerUps() {
 function setPowerUp() {
   const randomPowerUp = powerupList[Math.floor(Math.random() * 2)];
   player.powerUp = randomPowerUp;
-  if (player.powerUp === 'Shield') {
-    announcementText.textContent = 'GodMode For 5 Second Activated!';
+  if (player.powerUp !== null) {
+    announcementText.textContent = `${player.powerUp} Activated!`;
     toggleScreen('announcement', true);
   }
-  if (player.powerUp === 'X2 Score') {
-    announcementText.textContent = 'Cosmonauts Give You X2 Points For 5 Second!';
-    toggleScreen('announcement', true);
-  }
-  setTimeout(() => {
-    player.powerUp = null;
-    toggleScreen('announcement', false);
-    console.log(`${randomPowerUp} ended`);
-  }, 5000);
+  delPowerUp();
 }
 
+function delPowerUp() {
+  setTimeout(() => {
+    toggleScreen('announcement', false);
+    console.log(`${player.powerUp} ended`);
+    player.powerUp = null;
+  }, 5000);
+}
 
 function animate() {
   if (!game.active) return;
@@ -301,9 +330,15 @@ function animate() {
   player.update();
   spawnObjects();
   updateBackgroundStars();
+  if (frames % 150 === 0) {
+    coins = coinText.innerText;
+    coinText.innerText = +coinText.innerText + 1;
+  }
+
   collectCosmonauts();
   updateStone();
   updatePowerUps();
+  console.log(coins)
   frames++;
 }
 animate();
