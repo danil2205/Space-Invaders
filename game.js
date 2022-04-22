@@ -37,37 +37,40 @@ const game = {
   over: false,
 };
 
-function toggleScreen(id, toggle) {
-  const element = document.querySelector(`#${id}`);
-  const display = toggle ? 'block' : 'none';
-  element.style.display = display;
+const toggleScreen = (toggle, ...ids) => {
+  for (const id of ids) {
+    const element = document.querySelector(`#${id}`);
+    const display = toggle ? 'block' : 'none';
+    element.style.display = display;
+  }
 }
 
-function countDown() {
+const countDown = () => {
   const countDownTimer = document.querySelector('#countDownTimer');
-  toggleScreen('countdown', true);
+  toggleScreen(true, 'countdown');
   setTimeout(() => countDownTimer.textContent = '2', 1000);
   setTimeout(() => countDownTimer.textContent = '1', 2000);
   countDownTimer.textContent = '3';
 }
 
-function play() {
-  toggleScreen('menu', false);
-  toggleScreen('canvas', true);
-  toggleScreen('allScore', true);
+const play = () => {
+  toggleScreen(false, 'menu');
+  toggleScreen(true, 'canvas', 'allScore');
   game.active = true;
   game.menu = false;
+  coinText.innerText = coins;
   animate();
 }
 
-function shop() {
-  toggleScreen('menu', false);
-  toggleScreen('shop', true);
+const shop = () => {
+  toggleScreen(false, 'menu');
+  toggleScreen(true, 'shop');
 }
-let costMulti = document.querySelector('#costMulti');
-let levelMulti = document.querySelector('#multiplierLevel');
-let levelsMulti = 2;
-function upgradeMultiplier() {
+
+const upgradeMultiplier = () => {
+  let costMulti = document.querySelector('#costMulti');
+  let levelMulti = document.querySelector('#multiplierLevel');
+  let levelsMulti = 2;
   if (costMulti.innerText <= coins) {
     coins -= costMulti.innerText;
     costMulti.innerText = costMulti.innerText * 2;
@@ -76,10 +79,10 @@ function upgradeMultiplier() {
   }
 }
 
-let costShield = document.querySelector('#costShield');
-let levelShield = document.querySelector('#shieldLevel');
-let levelsShield = 2;
-function upgradeShield() {
+const upgradeShield = () => {
+  let costShield = document.querySelector('#costShield');
+  let levelShield = document.querySelector('#shieldLevel');
+  let levelsShield = 2;
   if (costShield.innerText <= coins) {
     coins -= costShield.innerText;
     costShield.innerText = costShield.innerText * 2;
@@ -88,50 +91,44 @@ function upgradeShield() {
   }
 }
 
-function settings() {
-  toggleScreen('settings', true);
-  if (game.menu) return toggleScreen('menu', false);
-  toggleScreen('pause', false);
+const settings = () => {
+  toggleScreen(true, 'settings');
+  toggleScreen(false, 'menu', 'pause');
 }
 
-function back() {
-  toggleScreen('settings', false);
-  toggleScreen('shop', false);
-  if (game.menu) return toggleScreen('menu', true);
-  toggleScreen('pause', true);
+const back = () => {
+  toggleScreen(false, 'settings', 'shop');
+  if (game.menu) return toggleScreen(true, 'menu');
+  toggleScreen(true, 'pause');
 }
 
-function exit() {
-  toggleScreen('pause', false);
-  toggleScreen('canvas', false);
-  toggleScreen('allScore', false);
-  toggleScreen('screen', false);
-  toggleScreen('menu', true);
+const exit = () => {
+  toggleScreen(false, 'pause', 'canvas', 'allScore', 'screen');
+  toggleScreen(true, 'menu');
   game.menu = true;
   game.active = false;
   refreshGame();
 }
 
-function pause() {
+const pause = () => {
   if (!game.active && !game.menu && !game.over) {
-    toggleScreen('pause', false);
+    toggleScreen(false, 'pause');
     countDown();
     setTimeout(() => {
       game.active = true;
       game.pause = false;
-      toggleScreen('countdown', false);
+      toggleScreen(false,'countdown');
       animate();
     }, 3000);
 
   } else if (game.active && !game.menu && !game.over) {
     game.active = false;
     game.pause = true;
-    toggleScreen('pause', true);
+    toggleScreen(true, 'pause');
   }
 }
 
-
-function spawnObjects() {
+const spawnObjects = () => {
   if (frames % Math.floor(50 / speed) === 0) stones.push(new Stone(0.02, {
     position: {
       x: Math.floor(36 + Math.random() * canvas.width) - 36, //  36 === stone.width
@@ -163,7 +160,7 @@ function spawnObjects() {
   if (frames % 250 === 0) speed += 0.1; // speed up stones and cosmonauts
 }
 
-function collectCosmonauts() {
+const collectCosmonauts = () => {
   cosmonauts.forEach((cosmonaut, index) => {
     cosmonaut.update();
     if (cosmonaut.image && !game.over) {
@@ -187,14 +184,14 @@ function collectCosmonauts() {
   });
 }
 
-function changeBestScore() {
+const changeBestScore = () => {
   if (score > bestScore) {
     bestScore = score;
     bestScoreText.innerHTML = bestScore;
   }
 }
 
-function refreshGame() {
+const refreshGame = () => {
   player = new Player();
   stones = [];
   particles = [];
@@ -208,26 +205,26 @@ function refreshGame() {
   game.over = false;
   backgroundStars();
   if (!game.menu) {
-    toggleScreen('screen', false);
-    toggleScreen('canvas', true);
+    toggleScreen(false, 'screen');
+    toggleScreen(true, 'canvas');
     animate();
   }
 }
 
-function lose() {
+const lose = () => {
   if (player.powerUp !== 'Shield' && !game.over) {
     player.opacity = 0;
     game.over = true;
     setTimeout(() => {
       game.active = false;
       scoreGameOver.innerHTML = score;
-      toggleScreen('canvas', false);
-      toggleScreen('screen', true);
+      toggleScreen(false, 'canvas');
+      toggleScreen(true, 'screen');
     }, 2000);
   }
 }
 
-function backgroundStars() {
+const backgroundStars = () => {
   for (let i = 0; i < 100; i++) {
     particles.push(new Particle({
       position: {
@@ -245,7 +242,7 @@ function backgroundStars() {
 }
 backgroundStars();
 
-function updateBackgroundStars() {
+const updateBackgroundStars = () => {
   particles.forEach((particle, index) => {
     if (particle.position.y - particle.radius >= canvas.height) {
       particle.position.y = -particle.radius;
@@ -260,7 +257,7 @@ function updateBackgroundStars() {
   });
 }
 
-function updateStone() {
+const updateStone = () => {
   stones.forEach(stone => {
     stone.update();
     if (stone.image) {
@@ -281,7 +278,7 @@ function updateStone() {
   });
 }
 
-function updatePowerUps() {
+const updatePowerUps = () => {
   powerups.forEach((powerup, index) => {
     powerup.update();
     if (powerup.image) {
@@ -303,25 +300,25 @@ function updatePowerUps() {
   });
 }
 
-function setPowerUp() {
+const setPowerUp = () => {
   const randomPowerUp = powerupList[Math.floor(Math.random() * 2)];
   player.powerUp = randomPowerUp;
   if (player.powerUp !== null) {
     announcementText.textContent = `${player.powerUp} Activated!`;
-    toggleScreen('announcement', true);
+    toggleScreen(true, 'announcement');
   }
   delPowerUp();
 }
 
-function delPowerUp() {
+const delPowerUp = () => {
   setTimeout(() => {
-    toggleScreen('announcement', false);
+    toggleScreen(false, 'announcement');
     console.log(`${player.powerUp} ended`);
     player.powerUp = null;
   }, 5000);
 }
 
-function animate() {
+const animate = () => {
   if (!game.active) return;
   if (game.over) changeBestScore();
   requestAnimationFrame(animate);
@@ -331,8 +328,8 @@ function animate() {
   spawnObjects();
   updateBackgroundStars();
   if (frames % 150 === 0) {
-    coins = coinText.innerText;
-    coinText.innerText = +coinText.innerText + 1;
+    player.powerUp === 'Coin Multiplier' ? coins = +coins + 2 : coins = +coins + 1;
+    coinText.innerText = coins;
   }
 
   collectCosmonauts();
@@ -352,7 +349,7 @@ window.addEventListener('keydown', event => {
     keys.d.pressed = true;
     break;
   case 'Escape':
-    pause();
+    if (!game.pause) pause();
     break;
   }
 });
