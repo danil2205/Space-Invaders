@@ -37,6 +37,7 @@
 
 
 <body>
+    <audio src="./music/cool.mpeg" id="audio" autoplay="true" hidden="false" ></audio>
     <div id="allScore" style="position: center; display: none">
         <p style="left: 1280px; top: 10px;">
         <img src="./img/cosmonaut_for_score.png" style="margin-bottom:-20px; width: 50px; height: 50px"  alt="Collected cosmonauts"> <span>x </span><span id="score">0</span>
@@ -54,7 +55,6 @@
             <h1>Menu</h1>
             <button style="width: 200px" onclick="play()">Play</button>
             <button style="width: 200px" onclick="shop()">Shop</button>
-            <button style="width: 200px" onclick="settings()">Settings</button>
         </div>
     </div>
 
@@ -62,22 +62,11 @@
         <div style="max-width: 448px; width: 100%; padding: 24px;">
             <h1>Shop</h1>
             <h2 style="font-size: 40px">Power-Ups</h2>
-            <span id="multiplierLevel" style="font-size: 30px; margin-right: 30px">Level 1</span> <span id="costMulti" style="font-size: 30px; margin-left: 20px;">1</span>
+            <span id="costMulti" style="font-size: 30px; margin-left: 20px;">1</span><span style="font-size: 30px;"> coins</span>
             <button style="width: 300px" onclick="upgradeMultiplier()">Upgrade Score</button>
-            <span id="shieldLevel" style="font-size: 30px">Level 1</span> <span id="costShield" style="font-size: 30px; margin-left: 20px;">1</span>
-            <button style="width: 300px" onclick="upgradeShield()">Upgrade GodMode</button>
-            <button style="width: 200px" onclick="back()">Back</button>
+            <button style="width: 200px" onclick="back('menu')">Back</button>
         </div>
     </div>
-
-    <div id="settings" style="display: none; color: white; padding: 20px; position: fixed; top: 60%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
-        <div style="max-width: 448px; width: 100%; padding: 24px;">
-            <h1>Settings</h1>
-            <span style="font-size: 32px;">Music: </span><input type="range" min="0" max="100" step="1" value="50">
-            <span style="font-size: 32px;">Sound: </span><input type="range" min="0" max="100" step="1" value="50">
-            <button style="width: 50%;" onclick="back()">Back</button>
-        </div>
-
 
     </div>
 
@@ -86,7 +75,7 @@
             <h1>Game Over</h1>
             <h1 id="scoreGameOver">0</h1>
             <button style="width: 250px" onclick="refreshGame()">Try Again</button>
-            <button style="width: 250px" onclick="exit()">In Main Menu</button>
+            <button style="width: 250px" onclick="exit('pause', 'canvas', 'allScore', 'screen')">In Main Menu</button>
         </div>
     </div>
 
@@ -97,13 +86,11 @@
         </div>
     </div>
 
-
     <div id="pause" style="display: none; color: white; padding: 20px; position: fixed; top: 50%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
         <div style="max-width: 448px; width: 100%; padding: 24px;">
             <h1>Paused</h1>
             <button style="width: 200px" onclick="pause()">Resume</button>
-            <button style="width: 200px" onclick="settings()">Settings</button>
-            <button style="width: 200px" onclick="exit()">Exit</button>
+            <button style="width: 200px" onclick="exit('pause', 'canvas', 'allScore', 'screen')">Exit</button>
         </div>
     </div>
 
@@ -113,6 +100,7 @@
 
 
     <canvas style="display: none" id="canvas"></canvas>
+    <script src="buttons.js"></script>
     <script src="class.js"></script>
     <script src="game.js"></script>
 </body>

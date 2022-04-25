@@ -17,7 +17,7 @@ class Player {
       this.height = image.height * scale;
       this.position = {
         x: canvas.width / 2 - this.width / 2,
-        y: canvas.height / 2 + this.height + 250,
+        y: canvas.height / 2 + this.height + 250,  // magic
       };
     };
   }
@@ -25,13 +25,19 @@ class Player {
   draw() {
     ctx.save();
     ctx.globalAlpha = this.opacity;
-    ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+    ctx.drawImage(
+      this.image,
+      this.position.x,
+      this.position.y,
+      this.width,
+      this.height
+    );
     ctx.restore();
   }
 
   move() {
-    if (keys.a.pressed && player.position.x > -30) player.velocity.x = -5;
-    else if (keys.d.pressed && player.position.x < canvas.width - 70) player.velocity.x = 5;
+    if (keys.a.pressed && player.position.x + canvas.width > canvas.width) player.velocity.x = -5;
+    else if (keys.d.pressed && player.position.x < canvas.width - player.width) player.velocity.x = 5;
     else player.velocity.x = 0;
   }
 
@@ -57,7 +63,13 @@ class Stone {
   }
 
   draw() {
-    ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+    ctx.drawImage(
+      this.image,
+      this.position.x,
+      this.position.y,
+      this.width,
+      this.height
+    );
   }
 
   move() {
@@ -105,39 +117,38 @@ class Cosmonaut extends Stone {
 }
 
 class Particle {
-  constructor({ position, velocity, radius, color, fades }) {
+  constructor({ position, velocity, radius, color }) {
     this.position = position;
     this.velocity = velocity;
     this.radius = radius;
     this.color = color;
-    this.fades = fades;
     this.opacity = 1;
   }
 
   draw() {
-    ctx.save();
     ctx.globalAlpha = this.opacity;
     ctx.beginPath();
-    ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+    ctx.arc(
+      this.position.x,
+      this.position.y,
+      this.radius,
+      0,
+      Math.PI * 2
+    );
     ctx.fillStyle = this.color;
     ctx.fill();
     ctx.closePath();
-    ctx.restore();
   }
 
   update() {
     this.draw();
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
-
-    if (this.fades) {
-      this.opacity -= 0.01;
-    }
   }
 }
 
 class PowerUp {
-  constructor({ position }) {
+  constructor(scale, { position }) {
     this.position = position;
     this.velocity = {
       x: 0,
@@ -147,7 +158,6 @@ class PowerUp {
     const image = new Image();
     image.src = `./img/powerup.png`;
     image.onload = () => {
-      const scale = 0.1;
       this.image = image;
       this.width = image.width * scale;
       this.height = image.height * scale;
@@ -156,7 +166,13 @@ class PowerUp {
   }
 
   draw() {
-    if (this.image) ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+    if (this.image) ctx.drawImage(
+      this.image,
+      this.position.x,
+      this.position.y,
+      this.width,
+      this.height
+    );
   }
 
   move() {
@@ -175,6 +191,5 @@ class PowerUp {
     this.draw();
     this.move();
     this.delete();
-
   }
 }
