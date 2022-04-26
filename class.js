@@ -37,7 +37,7 @@ class Player {
 
   move() {
     if (keys.a.pressed && player.position.x + canvas.width > canvas.width) player.velocity.x = -5;
-    else if (keys.d.pressed && player.position.x < canvas.width - player.width) player.velocity.x = 5;
+    else if (keys.d.pressed && player.position.x + player.width < canvas.width ) player.velocity.x = 5;
     else player.velocity.x = 0;
   }
 
@@ -78,9 +78,7 @@ class Stone {
 
   delete() {
     if (this.position.y >= canvas.height) {
-      setTimeout(() => {
-        stones.splice(0, 1);
-      }, 0);
+      setTimeout(() => stones.splice(0, 1));
     }
   }
 
@@ -108,11 +106,7 @@ class Cosmonaut extends Stone {
   }
 
   delete() {
-    if (this.position.y >= canvas.height) {
-      setTimeout(() => {
-        cosmonauts.splice(0, 1);
-      }, 0);
-    }
+    if (this.position.y >= canvas.height) setTimeout(() => cosmonauts.splice(0, 1));
   }
 }
 
@@ -122,11 +116,9 @@ class Particle {
     this.velocity = velocity;
     this.radius = radius;
     this.color = color;
-    this.opacity = 1;
   }
 
   draw() {
-    ctx.globalAlpha = this.opacity;
     ctx.beginPath();
     ctx.arc(
       this.position.x,
@@ -180,11 +172,7 @@ class PowerUp {
   }
 
   delete() {
-    if (this.position.y >= canvas.height) {
-      setTimeout(() => {
-        powerups.splice(0, 1);
-      }, 0);
-    }
+    if (this.position.y >= canvas.height) setTimeout(() => powerups.splice(0, 1));
   }
 
   update() {

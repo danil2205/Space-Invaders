@@ -156,13 +156,8 @@ backgroundStars();
 const updateBackgroundStars = () => {
   for (const [index, particle] of particles.entries()) {
     if (particle.position.y - particle.radius >= canvas.height) particle.position.y = -particle.radius;
-    if (particle.opacity <= 0) {
-      setTimeout(() => {
-        particles.splice(index, 1);
-      });
-    } else {
-      particle.update();
-    }
+    if (particle.position.y >= canvas.height) setTimeout(() => particles.splice(index, 1));
+    particle.update();
   }
 };
 
@@ -170,8 +165,8 @@ const updateStone = (LEFT_PLAYER_SIDE, RIGHT_PLAYER_SIDE, PLAYER_HEIGHT) => {
   for (const stone of stones) {
     stone.update();
     if (stone.image) {
-      const LEFT_SIDE_STONE = stone.position.x + stone.width / 15;
-      const RIGHT_SIDE_STONE = stone.position.x + stone.width / 1.2;
+      const LEFT_SIDE_STONE = stone.position.x + stone.width;
+      const RIGHT_SIDE_STONE = stone.position.x + stone.width;
       const STONE_HEIGHT = stone.position.y + stone.height;
 
       // collision with stone
@@ -184,6 +179,16 @@ const updateStone = (LEFT_PLAYER_SIDE, RIGHT_PLAYER_SIDE, PLAYER_HEIGHT) => {
   }
 };
 
+const upgradeMultiplier = () => {
+  const costMulti = document.querySelector('#costMulti');
+  let levelMultiplier = 2;
+  if (costMulti.innerText <= coins) {
+    coins -= costMulti.innerText;
+    costMulti.innerText *= 2;
+    levelMultiplier++;
+  }
+};
+
 const delPowerUp = () => {
   const ACTION_TIME = 5000;
   setTimeout(() => {
@@ -193,7 +198,8 @@ const delPowerUp = () => {
 };
 
 const setPowerUp = () => {
-  const randomPowerUp = powerupList[Math.floor(Math.random() * 3)];
+  const amountOfPowers = powerupList.length;
+  const randomPowerUp = powerupList[Math.floor(Math.random() * amountOfPowers)];
   player.powerUp = randomPowerUp;
   if (player.powerUp !== null) {
     announcementText.textContent = `${player.powerUp} Activated!`;
@@ -224,9 +230,9 @@ const updatePowerUps = (LEFT_PLAYER_SIDE, RIGHT_PLAYER_SIDE, PLAYER_HEIGHT) => {
 
 const getCoins = () => {
   if (frames % 150 === 0) {
-    const AMOUNT_WITHOUT_MULTIPLIER = 1;
-    const AMOUNT_WITH_MULTIPLIER = 2;
-    coins += (player.powerUp === 'Coin Multiplier') ? AMOUNT_WITH_MULTIPLIER : AMOUNT_WITHOUT_MULTIPLIER;
+    const COINS_WITHOUT_MULTIPLIER = 1;
+    const COINS_WITH_MULTIPLIER = 2;
+    coins += (player.powerUp === 'Coin Multiplier') ? COINS_WITH_MULTIPLIER : COINS_WITHOUT_MULTIPLIER;
     coinText.innerText = coins;
   }
 };
@@ -237,8 +243,8 @@ const animate = () => {
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   player.update();
-  const LEFT_PLAYER_SIDE = player.position.x + player.width / 3.5;
-  const RIGHT_PLAYER_SIDE = player.position.x + player.width / 1.7;
+  const LEFT_PLAYER_SIDE = player.position.x + player.width / 3;
+  const RIGHT_PLAYER_SIDE = player.position.x + player.width / 1.5;
   const PLAYER_HEIGHT = player.position.y;
 
   if (frames % 500 === 0) speed += 0.1; // speed up
@@ -248,7 +254,7 @@ const animate = () => {
   collectCosmonauts(LEFT_PLAYER_SIDE, RIGHT_PLAYER_SIDE, PLAYER_HEIGHT);
   updateStone(LEFT_PLAYER_SIDE, RIGHT_PLAYER_SIDE, PLAYER_HEIGHT);
   updatePowerUps(LEFT_PLAYER_SIDE, RIGHT_PLAYER_SIDE, PLAYER_HEIGHT);
-  changeBestScore()
+  changeBestScore();
   frames++;
 };
 animate();
