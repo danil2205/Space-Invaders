@@ -7,6 +7,7 @@ const scoreGameOver = document.querySelector('#scoreGameOver');
 const bestScoreText = document.querySelector('#bestScore');
 const announcementText = document.querySelector('#announcementText');
 const coinText = document.querySelector('#coins');
+const imgLives = document.querySelector('#imgLives');
 const audio = document.querySelector('#audio');
 audio.volume = 0.1;
 
@@ -24,6 +25,7 @@ let stones = [];
 let particles = [];
 let cosmonauts = [];
 let powerups = [];
+const livesArray = [];
 const powerupList = ['Shield', 'Score Multiplier', 'Coin Multiplier'];
 const keys = {
   a: {
@@ -38,6 +40,31 @@ const game = {
   menu: true,
   pause: false,
   over: false,
+};
+
+const toggleAudio = () => {
+  audio.muted = !audio.muted;
+};
+
+const showLives = () => {
+  imgLives.innerHTML = ''; // to delete all lives from screen
+  for (let i = 0; i < player.lives; i++) {
+    livesArray[i] = new Image();
+    livesArray[i].src = './img/heart.png';
+    livesArray[i].width = 30;
+    livesArray[i].height = 30;
+    imgLives.append(livesArray[i]);
+  }
+};
+
+const delLives = () => {
+  player.removeLives();
+  livesArray.pop();
+  if (player.lives > 0) {
+    setTimeout(() => player.opacity = 0.1); // effect flash when ship faces with stone
+    setTimeout(() => player.opacity = 1, 500);
+  }
+  showLives(); // to show lives again, but -1 live
 };
 
 const toggleScreen = (toggle, ...ids) => {
@@ -67,6 +94,9 @@ const pause = () => {
       animate();
     }, 3000);
   } else if (game.active && !game.menu && !game.over) {
+    const pauseSound = document.querySelector('#pauseSound');
+    pauseSound.play();
+    audio.pause();
     game.active = false;
     game.pause = true;
     toggleScreen(true, 'pause');
@@ -123,11 +153,14 @@ const changeBestScore = () => {
 };
 
 const lose = () => {
-  if (player.powerUp !== 'Shield' && !game.over) {
+  if (!game.over) {
+    const boomSound = document.querySelector('#boomSound');
+    boomSound.play();
     player.opacity = 0;
     game.over = true;
     setTimeout(() => {
       game.active = false;
+      audio.pause();
       scoreGameOver.innerHTML = score;
       toggleScreen(false, 'canvas');
       toggleScreen(true, 'screen');
@@ -156,13 +189,13 @@ backgroundStars();
 const updateBackgroundStars = () => {
   for (const [index, particle] of particles.entries()) {
     if (particle.position.y - particle.radius >= canvas.height) particle.position.y = -particle.radius;
-    if (particle.position.y >= canvas.height) setTimeout(() => particles.splice(index, 1));
+    if (particle.opacity < 1) setTimeout(() => particles.splice(index, 1));
     particle.update();
   }
 };
 
 const updateStone = (LEFT_PLAYER_SIDE, RIGHT_PLAYER_SIDE, PLAYER_HEIGHT) => {
-  for (const stone of stones) {
+  for (const [index, stone] of stones.entries()) {
     stone.update();
     if (stone.image) {
       const LEFT_SIDE_STONE = stone.position.x + stone.width;
@@ -174,18 +207,29 @@ const updateStone = (LEFT_PLAYER_SIDE, RIGHT_PLAYER_SIDE, PLAYER_HEIGHT) => {
         RIGHT_PLAYER_SIDE >= LEFT_SIDE_STONE &&
         LEFT_PLAYER_SIDE <= RIGHT_SIDE_STONE &&
         PLAYER_HEIGHT <= STONE_HEIGHT
-      ) lose();
+      ) {
+        stones.splice(index, 1);
+        delLives();
+        if (player.lives === 0) lose();
+      }
     }
   }
 };
 
 const upgradeMultiplier = () => {
   const costMulti = document.querySelector('#costMulti');
-  let levelMultiplier = 2;
   if (costMulti.innerText <= coins) {
     coins -= costMulti.innerText;
     costMulti.innerText *= 2;
     levelMultiplier++;
+  }
+};
+
+const buyLife = () => {
+  const LIFE_COST = 100;
+  if (coins >= LIFE_COST) {
+    coins -= LIFE_COST;
+    player.lives += 1;
   }
 };
 
@@ -246,8 +290,8 @@ const animate = () => {
   const LEFT_PLAYER_SIDE = player.position.x + player.width / 3;
   const RIGHT_PLAYER_SIDE = player.position.x + player.width / 1.5;
   const PLAYER_HEIGHT = player.position.y;
-
   if (frames % 500 === 0) speed += 0.1; // speed up
+  audio.play();
   spawnObjects();
   updateBackgroundStars();
   getCoins();
@@ -261,6 +305,8 @@ animate();
 
 const refreshGame = () => {
   player = new Player();
+  audio.load();
+  player.lives = 3;
   stones = [];
   particles = [];
   cosmonauts = [];
@@ -271,6 +317,7 @@ const refreshGame = () => {
   scoreText.innerHTML = score;
   game.active = true;
   game.over = false;
+  showLives();
   backgroundStars();
   if (!game.menu) {
     toggleScreen(false, 'screen');
@@ -289,6 +336,9 @@ window.addEventListener('keydown', event => {
     break;
   case 'Escape':
     if (!game.pause) pause();
+    break;
+  case 'm':
+    toggleAudio();
     break;
   }
 });

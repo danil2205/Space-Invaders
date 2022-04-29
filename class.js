@@ -7,6 +7,7 @@ class Player {
       y: 0,
     };
 
+    this.lives = 3;
     this.opacity = 1;
     const image = new Image();
     image.src = './img/ship1.png';
@@ -39,6 +40,10 @@ class Player {
     if (keys.a.pressed && player.position.x + canvas.width > canvas.width) player.velocity.x = -5;
     else if (keys.d.pressed && player.position.x + player.width < canvas.width ) player.velocity.x = 5;
     else player.velocity.x = 0;
+  }
+
+  removeLives() {
+    if (!game.over && player.powerUp !== 'Shield') this.lives--;
   }
 
   update() {
@@ -116,9 +121,11 @@ class Particle {
     this.velocity = velocity;
     this.radius = radius;
     this.color = color;
+    this.opacity = 1;
   }
 
   draw() {
+    ctx.globalAlpha = this.opacity;
     ctx.beginPath();
     ctx.arc(
       this.position.x,

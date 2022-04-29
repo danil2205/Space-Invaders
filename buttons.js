@@ -1,8 +1,11 @@
 'use strict';
 
-const play = () => {
+const play = (...ids) => {
+  showLives();
+  audio.load();
+  audio.play();
   toggleScreen(false, 'menu');
-  toggleScreen(true, 'canvas', 'allScore');
+  for (const id of ids) toggleScreen(true, id);
   game.active = true;
   game.menu = false;
   coinText.innerText = coins;
@@ -14,7 +17,7 @@ const shop = () => {
   toggleScreen(true, 'shop');
 };
 
-const back = id => {
+const back = (id) => {
   toggleScreen(false, 'shop');
   toggleScreen(true, id);
 };
@@ -22,6 +25,7 @@ const back = id => {
 const exit = (...ids) => {
   for (const id of ids) toggleScreen(false, id);
   toggleScreen(true, 'menu');
+  game.pause = false;
   game.menu = true;
   game.active = false;
   refreshGame();

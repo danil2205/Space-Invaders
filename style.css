@@ -1,0 +1,196 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+body {
+    background-image: url("./img/background_menu.png");
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    font-family: 'VT323', sans-serif;
+}
+
+.pause {
+    display: none;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -300px;
+    margin-left: -200px;
+    height: 200px;
+    width: 300px;
+    text-align: center
+}
+
+.pause button {
+    width: 200px;
+}
+
+.pause div {
+    max-width: 448px;
+    width: 100%;
+    padding: 24px;
+}
+
+
+.announcement {
+    display: none;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -300px;
+    margin-left: -200px;
+    height: 200px;
+    width: 300px;
+    text-align: center;
+}
+
+.countdown {
+    display: none;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -300px;
+    margin-left: -200px;
+    height: 200px;
+    width: 300px;
+    text-align: center;
+}
+
+.countdown div {
+    max-width: 448px;
+    width: 100%;
+    padding: 24px;
+}
+
+.allScore {
+    position: center;
+    display: none
+}
+
+.allScore img {
+    margin-bottom:-10px;
+    width: 40px;
+    height: 40px;
+}
+
+
+.menu {
+    display: block;
+    color: white;
+    padding: 20px;
+    width: 300px;
+    position: fixed;
+    top: 60%;
+    left: 50%;
+    margin-top: -300px;
+    margin-left: -200px;
+    height: 200px;
+    text-align: center;
+}
+.menu div {
+    max-width: 448px;
+    width: 100%;
+    padding: 24px;
+}
+
+.menu button {
+    width: 200px;
+}
+
+.screen {
+    display: none;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    top: 60%;
+    left: 50%;
+    margin-top: -300px;
+    margin-left: -200px;
+    height: 200px;
+    width: 300px;
+    text-align: center;
+}
+
+.screen div {
+    max-width: 448px;
+    width: 100%;
+    padding: 24px;
+}
+
+.screen button {
+    width: 250px;
+}
+
+.shop {
+    display: none;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    top: 60%;
+    left: 50%;
+    margin-top: -300px;
+    margin-left: -200px;
+    height: 200px;
+    width: 300px;
+    text-align: center
+}
+
+.shop div {
+    max-width: 448px;
+    width: 100%;
+    padding: 24px;
+}
+
+.shop button {
+    width: 265px;
+}
+
+.shop span {
+    font-size: 30px;
+    margin-left: 20px;
+}
+
+
+.imgLives {
+    display: block;
+    position: fixed;
+    top: 10%;
+    left: 47.5%;
+}
+
+button {
+    border: none;
+    font-family: 'VT323', sans-serif;
+    font-size: 32px;
+    cursor: pointer;
+    padding: 12px 48px 12px 48px;
+    color: white;
+    background-color: #1bafdb;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    appearance: none;
+    width: 200px
+}
+
+h1 {
+    font-size: 70px;
+}
+
+h2 {
+    font-size: 35px;
+}
+p {
+    font-size: 32px;
+    position: absolute;
+    z-index: 10;
+    color: white;
+    margin: 0;
+}
+

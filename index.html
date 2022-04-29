@@ -1,104 +1,72 @@
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-    body {
-        background-image: url("./img/background_menu.png");
-        margin: 0;
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: black;
-        font-family: 'VT323', sans-serif;
-    }
-    button {
-        border: none;
-        font-family: 'VT323', sans-serif;
-        font-size: 32px;
-        cursor: pointer;
-        padding: 12px 48px 12px 48px;
-        color: white;
-        background-color: #1bafdb;
-        border-radius: 12px;
-        margin-bottom: 15px;
-        appearance: none;
-    }
-
-    h1 {
-        font-size: 70px;
-    }
-    p {
-        font-size: 32px;
-        position: absolute;
-        z-index: 10;
-        color: white;
-        margin: 0;
-    }
-</style>
-
-
 <body>
-    <audio src="./music/cool.mpeg" id="audio" autoplay="true" hidden="false" ></audio>
-    <div id="allScore" style="position: center; display: none">
+    <audio src="./music/cool.mpeg" id="audio" paused="true"></audio>
+    <audio src="./music/boom.mp3" id="boomSound" paused="true"></audio>
+    <audio src="./music/pause.mp3" id="pauseSound" paused="true"></audio>
+
+    <div id="allScore" class="allScore">
         <p style="left: 1280px; top: 10px;">
-        <img src="./img/cosmonaut_for_score.png" style="margin-bottom:-20px; width: 50px; height: 50px"  alt="Collected cosmonauts"> <span>x </span><span id="score">0</span>
+        <img src="./img/cosmonaut_for_score.png" alt="Collected cosmonauts"> <span>x </span><span id="score">0</span>
         </p>
         <p style="left: 580px; top: 10px;">
             <span>Best: </span><span id="bestScore">0</span>
         </p>
         <p style="left: 1000px; top: 10px;">
-            <span id="coins">0</span> <img src="./img/coin.png" style="margin-bottom:-10px; width: 40px; height: 40px">
+            <span id="coins">0</span> <img src="./img/coin.png">
         </p>
     </div>
 
-    <div id="menu" style="display: block; color: white; padding: 20px; position: fixed; top: 60%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
-        <div style="max-width: 448px; width: 100%; padding: 24px;">
+    <div id="menu" class="menu">
+        <div>
             <h1>Menu</h1>
-            <button style="width: 200px" onclick="play()">Play</button>
-            <button style="width: 200px" onclick="shop()">Shop</button>
+            <button onclick="play('canvas', 'allScore', 'imgLives')">Play</button>
+            <button onclick="shop()">Shop</button>
         </div>
     </div>
 
-    <div id="shop" style="display: none; color: white; padding: 20px; position: fixed; top: 60%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
-        <div style="max-width: 448px; width: 100%; padding: 24px;">
+    <div id="shop" class="shop">
+        <div>
             <h1>Shop</h1>
-            <h2 style="font-size: 40px">Power-Ups</h2>
-            <span id="costMulti" style="font-size: 30px; margin-left: 20px;">1</span><span style="font-size: 30px;"> coins</span>
-            <button style="width: 300px" onclick="upgradeMultiplier()">Upgrade Score</button>
-            <button style="width: 200px" onclick="back('menu')">Back</button>
+            <button onclick="buyLife()">Buy x1 Live</button>
+
+            <h2>Power-Ups</h2>
+            <span id="costMulti">1</span><span> coins</span>
+            <button onclick="upgradeMultiplier()">Upgrade Score</button>
+            <button onclick="back('menu')">Back</button>
         </div>
     </div>
 
-
-    <div id="screen" style="display: none; color: white; padding: 20px; position: fixed; top: 60%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
-        <div style="max-width: 448px; width: 100%; padding: 24px;">
+    <div id="screen" class="screen">
+        <div>
             <h1>Game Over</h1>
             <h1 id="scoreGameOver">0</h1>
-            <button style="width: 250px" onclick="refreshGame()">Try Again</button>
-            <button style="width: 250px" onclick="exit('pause', 'canvas', 'allScore', 'screen')">In Main Menu</button>
+            <button onclick="refreshGame()">Try Again</button>
+            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'imgLives')">In Main Menu</button>
         </div>
     </div>
 
-    <div id="countdown" style="display: none; color: white; padding: 20px; position: fixed; top: 50%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
-        <div style="max-width: 448px; width: 100%; padding: 24px;">
+    <div id="countdown" class="countdown">
+        <div>
             <h1>Starting in:</h1>
             <h1 id="countDownTimer" style="display: block">3</h1>
         </div>
     </div>
 
-    <div id="pause" style="display: none; color: white; padding: 20px; position: fixed; top: 50%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
-        <div style="max-width: 448px; width: 100%; padding: 24px;">
+    <div id="pause" class="pause">
+        <div>
             <h1>Paused</h1>
-            <button style="width: 200px" onclick="pause()">Resume</button>
-            <button style="width: 200px" onclick="exit('pause', 'canvas', 'allScore', 'screen')">Exit</button>
+            <button onclick="pause()">Resume</button>
+            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'imgLives')">Exit</button>
         </div>
     </div>
 
-    <div id="announcement" style="display: none; color: white; padding: 20px; position: fixed; top: 50%; left: 50%; margin-top: -300px; margin-left: -200px; height: 200px; width: 300px; text-align: center">
-        <h2 id="announcementText" style="font-size: 35px">Default</h2>
+    <div id="announcement" class="announcement">
+        <h2 id="announcementText">Null</h2>
     </div>
 
+    <div id="imgLives" class="imgLives"></div>
 
     <canvas style="display: none" id="canvas"></canvas>
+    <link rel="stylesheet" href="style.css">
     <script src="buttons.js"></script>
     <script src="class.js"></script>
     <script src="game.js"></script>
