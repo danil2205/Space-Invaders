@@ -42,6 +42,19 @@ const game = {
   over: false,
 };
 
+const saveProgress = () => {
+  localStorage.setItem('coins', coins);
+  localStorage.setItem('bestScore', bestScoreText.innerHTML);
+  localStorage.setItem('levelMultiplier', levelMultiplier);
+};
+
+const loadProgress = () => {
+  coins = ~~localStorage.getItem('coins');
+  bestScoreText.innerHTML = +localStorage.getItem('bestScore');
+  levelMultiplier = +localStorage.getItem('levelMultiplier');
+};
+loadProgress();
+
 const toggleAudio = () => {
   audio.muted = !audio.muted;
 };
