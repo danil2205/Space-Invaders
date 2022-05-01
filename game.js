@@ -25,6 +25,8 @@ let stones = [];
 let particles = [];
 let cosmonauts = [];
 let powerups = [];
+let bosses = [];
+let bossShots = [];
 const livesArray = [];
 const powerupList = ['Shield', 'Score Multiplier', 'Coin Multiplier'];
 const keys = {
@@ -51,6 +53,7 @@ const saveProgress = () => {
 const loadProgress = () => {
   coins = ~~localStorage.getItem('coins');
   bestScoreText.innerHTML = +localStorage.getItem('bestScore');
+  bestScore = bestScoreText.innerHTML;
   levelMultiplier = +localStorage.getItem('levelMultiplier');
 };
 loadProgress();
@@ -130,11 +133,13 @@ const spawnObjects = () => {
   const FRAMES_BIG_STONE = 150;
   const FRAMES_COSMONAUT = 80;
   const FRAMES_POWERUP = 1000;
+  const FRAMES_BOSS = 6000;
 
   spawnObject(FRAMES_LIL_STONE, stones, Stone, 0.02);
   spawnObject(FRAMES_BIG_STONE, stones, Stone, 0.07);
   spawnObject(FRAMES_COSMONAUT, cosmonauts, Cosmonaut, 0.02);
   spawnObject(FRAMES_POWERUP, powerups, PowerUp, 0.1);
+  if (bosses.length === 0) spawnObject(FRAMES_BOSS, bosses, Boss, 0.35);
 };
 
 const collectCosmonauts = (LEFT_PLAYER_SIDE, RIGHT_PLAYER_SIDE, PLAYER_HEIGHT) => {
@@ -235,6 +240,7 @@ const upgradeMultiplier = () => {
     coins -= costMulti.innerText;
     costMulti.innerText *= 2;
     levelMultiplier++;
+    saveProgress();
   }
 };
 
@@ -243,6 +249,7 @@ const buyLife = () => {
   if (coins >= LIFE_COST) {
     coins -= LIFE_COST;
     player.lives += 1;
+    saveProgress();
   }
 };
 
@@ -294,6 +301,34 @@ const getCoins = () => {
   }
 };
 
+const checkHit = () => {
+  for (const boss of bosses) {
+    const LEFT_BOSS_SIDE = boss.position.x;
+    const RIGHT_BOSS_SIDE = boss.position.x + boss.width;
+    const BOSS_HEIGHT = boss.position.y + boss.height;
+
+    if (
+      player.position.x + player.width >= LEFT_BOSS_SIDE &&
+      player.position.x <= RIGHT_BOSS_SIDE &&
+      player.position.y + player.height <= BOSS_HEIGHT
+    ) player.lives--;
+
+    // document.querySelector('#bossHP').style.width = boss.health;
+    // if (boss.health === 0) {
+    //   bosses = [];
+    //   toggleScreen(false, 'bossAlertovich');
+    // }
+
+    boss.update();
+  }
+};
+
+const bossShoot = () => {
+  if (frames % 100 === 0 && bosses.length !== 0) {
+    bosses.forEach((boss) => boss.shoot());
+  }
+};
+
 const animate = () => {
   if (!game.active) return;
   requestAnimationFrame(animate);
@@ -305,6 +340,10 @@ const animate = () => {
   const PLAYER_HEIGHT = player.position.y;
   if (frames % 500 === 0) speed += 0.1; // speed up
   audio.play();
+  checkHit();
+  if (bosses.length !== 0) toggleScreen(true, 'bossAlertovich');
+  bossShoot();
+  bossShots.forEach((bossShot) => bossShot.update());
   spawnObjects();
   updateBackgroundStars();
   getCoins();
@@ -324,6 +363,7 @@ const refreshGame = () => {
   particles = [];
   cosmonauts = [];
   powerups = [];
+  bosses = [];
   speed = 1;
   frames = 0;
   score = 0;

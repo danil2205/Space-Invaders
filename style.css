@@ -104,6 +104,19 @@ body {
     width: 200px;
 }
 
+.preparation {
+    display: none;
+    padding: 20px;
+    width: 300px;
+    position: fixed;
+    top: 70%;
+    left: 46%;
+    margin-top: -300px;
+    margin-left: -200px;
+    height: 200px;
+    text-align: center;
+}
+
 .screen {
     display: none;
     color: white;

@@ -55,6 +55,74 @@ class Player {
   }
 }
 
+class Boss {
+  constructor(scale, { position }) {
+    this.velocity = {
+      x: 5,
+      y: 3,
+    };
+    this.health = 200;
+    const image = new Image();
+    image.src = './img/boss.png';
+    image.onload = () => {
+      this.image = image;
+      this.width = image.width * scale;
+      this.height = image.height * scale;
+      this.position = position;
+    };
+  }
+
+  draw() {
+    ctx.drawImage(
+      this.image,
+      this.position.x,
+      this.position.y,
+      this.width,
+      this.height
+    );
+  };
+
+  move() {
+    if (this.position.x + this.width > canvas.width || this.position.x + canvas.width < canvas.width) this.velocity.x = -this.velocity.x;
+    if (this.position.y + this.height > canvas.height || this.position.y + canvas.height < canvas.height) this.velocity.y = -this.velocity.y;
+  }
+
+  shoot() {
+    bosses.forEach((boss) => {
+      bossShots.push(new BossShot({
+        position: {
+          x: boss.position.x + boss.width / 2,
+          y: boss.position.y + boss.height,
+        },
+        velocity: {
+          x: 0,
+          y: 5 * speed,
+        },
+        radius: 5,
+        color: 'red',
+      }));
+    });
+  }
+
+  deleteBoss() {
+    const TIME_TO_DISAPPEAR = 30000;
+    if (bosses.length > 0) setTimeout(() => {
+      bosses = [];
+      toggleScreen(false, 'bossAlertovich');
+    }, TIME_TO_DISAPPEAR);
+  }
+
+  update() {
+    if (this.image) {
+      this.draw();
+      this.move();
+      this.deleteBoss();
+      this.position.x += this.velocity.x;
+      this.position.y += this.velocity.y;
+    }
+  }
+}
+
 class Stone {
   constructor(scale, { position }) {
     const image = new Image();
@@ -141,6 +209,25 @@ class Particle {
 
   update() {
     this.draw();
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
+  }
+}
+
+class BossShot extends Particle {
+  constructor({ position, velocity, radius, color }) {
+    super({ position, velocity, radius, color });
+  }
+
+  deleteParticles() {
+    bossShots.forEach((bossShot, index) => {
+      if (bossShot.position.x >= canvas.height) bossShots.splice(index, 1);
+    });
+  }
+
+  update() {
+    this.draw();
+    this.deleteParticles();
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
   }

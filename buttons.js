@@ -17,8 +17,14 @@ const shop = () => {
   toggleScreen(true, 'shop');
 };
 
+const tutorial = () => {
+  toggleScreen(false, 'menu');
+  toggleScreen(true, 'tutorial');
+}
+
 const back = (id) => {
   toggleScreen(false, 'shop');
+  toggleScreen(false, 'tutorial');
   toggleScreen(true, id);
 };
 
@@ -29,4 +35,5 @@ const exit = (...ids) => {
   game.menu = true;
   game.active = false;
   refreshGame();
+  saveProgress();
 };
