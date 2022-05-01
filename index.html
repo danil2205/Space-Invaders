@@ -27,7 +27,7 @@
     <div id="tutorial" class="preparation">
         <div style="width: 500px;">
             <h2 style="color: red">COLLECT COSMONAUTS! <br /> DON'T FACE WITH STONES!</h2>
-            <h2 style="color: cyan">'A/D' -> MOVE <br /> 'M' -> TOGGLE MUSIC</h2>
+            <h2 style="color: cyan">'A/D' -> MOVE <br /> 'M' -> TOGGLE MUSIC <br /> 'SPACE' -> SHOOT</h2>
             <h2 style="color: yellow">GOOD LUCK!</h2>
             <button onclick="back('menu')">Back</button>
         </div>
@@ -50,7 +50,7 @@
             <h1>Game Over</h1>
             <h1 id="scoreGameOver">0</h1>
             <button onclick="refreshGame()">Try Again</button>
-            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'imgLives', 'bossAlertovich')">In Main Menu</button>
+            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'imgLives', 'bossAnnounce')">In Main Menu</button>
         </div>
     </div>
 
@@ -65,7 +65,7 @@
         <div>
             <h1>Paused</h1>
             <button onclick="pause()">Resume</button>
-            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'imgLives', 'bossAlertovich')">Exit</button>
+            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'imgLives', 'bossAnnounce')">Exit</button>
         </div>
     </div>
 
@@ -75,7 +75,7 @@
 
     <div id="imgLives" class="imgLives"></div>
 
-    <div id="bossAlertovich" style="display: none; position: fixed; width: 200px; top: 20%; left: 44.5%;">
+    <div id="bossAnnounce" style="display: none; position: fixed; width: 200px; top: 20%; left: 44.5%;">
         <h2 style="color: white; display: block; position: fixed; top:12%; left: 39%; text-align: center">Kill the Boss or Survive 30 Seconds</h2>
         <div id="bossHP" style="background-color: red; height: 15px; width: 100%"></div>
     </div>

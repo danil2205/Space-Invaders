@@ -26,7 +26,7 @@ let particles = [];
 let cosmonauts = [];
 let powerups = [];
 let bosses = [];
-let bossShots = [];
+let shots = [];
 const livesArray = [];
 const powerupList = ['Shield', 'Score Multiplier', 'Coin Multiplier'];
 const keys = {
@@ -75,7 +75,6 @@ const showLives = () => {
 
 const delLives = () => {
   player.removeLives();
-  livesArray.pop();
   if (player.lives > 0) {
     setTimeout(() => player.opacity = 0.1); // effect flash when ship faces with stone
     setTimeout(() => player.opacity = 1, 500);
@@ -142,27 +141,6 @@ const spawnObjects = () => {
   if (bosses.length === 0) spawnObject(FRAMES_BOSS, bosses, Boss, 0.35);
 };
 
-const collectCosmonauts = (LEFT_PLAYER_SIDE, RIGHT_PLAYER_SIDE, PLAYER_HEIGHT) => {
-  for (const [index, cosmonaut] of cosmonauts.entries()) {
-    cosmonaut.update();
-    if (cosmonaut.image && !game.over) {
-      const LEFT_COSMONAUT_SIDE = cosmonaut.position.x;
-      const RIGHT_COSMONAUT_SIDE = cosmonaut.position.x + cosmonaut.width;
-      const COSMONAUT_HEIGHT = cosmonaut.position.y + cosmonaut.height;
-
-      if (
-        RIGHT_PLAYER_SIDE >= LEFT_COSMONAUT_SIDE &&
-        LEFT_PLAYER_SIDE <= RIGHT_COSMONAUT_SIDE &&
-        PLAYER_HEIGHT <= COSMONAUT_HEIGHT
-      ) {
-        score += (player.powerUp === 'Score Multiplier') ? levelMultiplier : 1;
-        scoreText.innerHTML = score;
-        cosmonauts.splice(index, 1);
-      }
-    }
-  }
-};
-
 const changeBestScore = () => {
   if (score > bestScore && game.over) {
     bestScore = score;
@@ -212,28 +190,6 @@ const updateBackgroundStars = () => {
   }
 };
 
-const updateStone = (LEFT_PLAYER_SIDE, RIGHT_PLAYER_SIDE, PLAYER_HEIGHT) => {
-  for (const [index, stone] of stones.entries()) {
-    stone.update();
-    if (stone.image) {
-      const LEFT_SIDE_STONE = stone.position.x + stone.width;
-      const RIGHT_SIDE_STONE = stone.position.x + stone.width;
-      const STONE_HEIGHT = stone.position.y + stone.height;
-
-      // collision with stone
-      if (
-        RIGHT_PLAYER_SIDE >= LEFT_SIDE_STONE &&
-        LEFT_PLAYER_SIDE <= RIGHT_SIDE_STONE &&
-        PLAYER_HEIGHT <= STONE_HEIGHT
-      ) {
-        stones.splice(index, 1);
-        delLives();
-        if (player.lives === 0) lose();
-      }
-    }
-  }
-};
-
 const upgradeMultiplier = () => {
   const costMulti = document.querySelector('#costMulti');
   if (costMulti.innerText <= coins) {
@@ -272,26 +228,6 @@ const setPowerUp = () => {
   delPowerUp();
 };
 
-const updatePowerUps = (LEFT_PLAYER_SIDE, RIGHT_PLAYER_SIDE, PLAYER_HEIGHT) => {
-  for (const [index, powerup] of powerups.entries()) {
-    powerup.update();
-    if (powerup.image) {
-      const LEFT_POWERUP_SIDE = powerup.position.x;
-      const RIGHT_POWERUP_SIDE = powerup.position.x + powerup.width;
-      const POWERUP_HEIGHT = powerup.position.y + powerup.height;
-
-      if (
-        RIGHT_PLAYER_SIDE >= LEFT_POWERUP_SIDE &&
-        LEFT_PLAYER_SIDE <= RIGHT_POWERUP_SIDE &&
-        PLAYER_HEIGHT <= POWERUP_HEIGHT
-      ) {
-        setPowerUp();
-        powerups.splice(index, 1);
-      }
-    }
-  }
-};
-
 const getCoins = () => {
   if (frames % 150 === 0) {
     const COINS_WITHOUT_MULTIPLIER = 1;
@@ -301,30 +237,102 @@ const getCoins = () => {
   }
 };
 
-const checkHit = () => {
+const checkCollision = ({ object1, object2 }) => (
+  object1.position.x + object1.width >= object2.position.x &&
+  object1.position.x <= object2.position.x + object2.width &&
+  object1.position.y + object1.height >= object2.position.y
+);
+
+const updateCosmonaut = () => {
+  for (const [index, cosmonaut] of cosmonauts.entries()) {
+    cosmonaut.update();
+
+    if (cosmonaut.image && !game.over) {
+      if (checkCollision({ object1: cosmonaut, object2: player })) {
+        score += (player.powerUp === 'Score Multiplier') ? levelMultiplier : 1;
+        scoreText.innerHTML = score;
+        cosmonauts.splice(index, 1);
+      }
+    }
+  }
+};
+
+const updateStone = () => {
+  for (const [index, stone] of stones.entries()) {
+    stone.update();
+
+    if (stone.image) {
+      if (checkCollision({ object1: stone, object2: player })) {
+        stones.splice(index, 1);
+        delLives();
+        if (player.lives === 0) lose();
+      }
+    }
+  }
+};
+
+const updatePowerUps = () => {
+  for (const [index, powerup] of powerups.entries()) {
+    powerup.update();
+
+    if (powerup.image) {
+      if (checkCollision({ object1: powerup, object2: player })) {
+        setPowerUp();
+        powerups.splice(index, 1);
+      }
+    }
+  }
+};
+
+const updateBoss = () => {
+  if (bosses.length !== 0) toggleScreen(true, 'bossAnnounce');
   for (const boss of bosses) {
-    const LEFT_BOSS_SIDE = boss.position.x;
-    const RIGHT_BOSS_SIDE = boss.position.x + boss.width;
-    const BOSS_HEIGHT = boss.position.y + boss.height;
-
-    if (
-      player.position.x + player.width >= LEFT_BOSS_SIDE &&
-      player.position.x <= RIGHT_BOSS_SIDE &&
-      player.position.y + player.height <= BOSS_HEIGHT
-    ) player.lives--;
-
-    // document.querySelector('#bossHP').style.width = boss.health;
-    // if (boss.health === 0) {
-    //   bosses = [];
-    //   toggleScreen(false, 'bossAlertovich');
-    // }
-
     boss.update();
+
+    if (boss.image) {
+      if (checkCollision({ object1: boss, object2: player })) {
+        player.health--;
+      }
+    }
+  }
+};
+
+const checkCollisionShot = ({ object1, object2 }) => (
+  object1.position.x + object1.radius >= object2.position.x &&
+  object1.position.x <= object2.position.x + object2.width &&
+  object1.position.y >= object2.position.y
+);
+
+
+const updateShots = () => {
+  for (const [index, shot] of shots.entries()) {
+    shot.update();
+    if (checkCollisionShot({ object1: shot, object2: player })) { // shot from boss hit player
+      delLives();
+      if (player.lives === 0) lose();
+      shots.splice(index, 1);
+    }
+    for (const boss of bosses) {
+      if (
+        boss.position.x + boss.width >= shot.position.x &&
+        boss.position.x <= shot.position.x + shot.radius &&
+        boss.position.y >= shot.position.y
+      ) { // shot from player hit boss
+        boss.health -= 20;
+        document.querySelector('#bossHP').style.width = boss.health;
+        if (boss.health === 0) {
+          coins += 20;
+          toggleScreen(false, 'bossAnnounce');
+          bosses = [];
+        }
+        shots.splice(index, 1);
+      }
+    }
   }
 };
 
 const bossShoot = () => {
-  if (frames % 100 === 0 && bosses.length !== 0) {
+  if (frames % 100 === 0) {
     bosses.forEach((boss) => boss.shoot());
   }
 };
@@ -335,21 +343,17 @@ const animate = () => {
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   player.update();
-  const LEFT_PLAYER_SIDE = player.position.x + player.width / 3;
-  const RIGHT_PLAYER_SIDE = player.position.x + player.width / 1.5;
-  const PLAYER_HEIGHT = player.position.y;
   if (frames % 500 === 0) speed += 0.1; // speed up
   audio.play();
-  checkHit();
-  if (bosses.length !== 0) toggleScreen(true, 'bossAlertovich');
   bossShoot();
-  bossShots.forEach((bossShot) => bossShot.update());
   spawnObjects();
   updateBackgroundStars();
   getCoins();
-  collectCosmonauts(LEFT_PLAYER_SIDE, RIGHT_PLAYER_SIDE, PLAYER_HEIGHT);
-  updateStone(LEFT_PLAYER_SIDE, RIGHT_PLAYER_SIDE, PLAYER_HEIGHT);
-  updatePowerUps(LEFT_PLAYER_SIDE, RIGHT_PLAYER_SIDE, PLAYER_HEIGHT);
+  updateCosmonaut();
+  updateStone();
+  updatePowerUps();
+  updateBoss();
+  updateShots();
   changeBestScore();
   frames++;
 };
@@ -364,6 +368,7 @@ const refreshGame = () => {
   cosmonauts = [];
   powerups = [];
   bosses = [];
+  shots = [];
   speed = 1;
   frames = 0;
   score = 0;
@@ -393,7 +398,10 @@ window.addEventListener('keydown', event => {
   case 'm':
     toggleAudio();
     break;
-  }
+  case ' ':
+    player.shoot();
+    break;
+}
 });
 
 window.addEventListener('keyup', event => {

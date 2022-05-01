@@ -42,6 +42,27 @@ class Player {
     else player.velocity.x = 0;
   }
 
+  shoot() {
+    shots.push(new Shot({
+      position: {
+        x: this.position.x + this.width / 2,
+        y: this.position.y,
+      },
+      velocity: {
+        x: 0,
+        y: -5 * speed,
+      },
+      radius: 5,
+      color: 'yellow',
+    }));
+  }
+
+  deleteShots() {
+    shots.forEach((shot, index) => {
+      if (shot.position.x >= canvas.height) shots.splice(index, 1);
+    });
+  }
+
   removeLives() {
     if (!game.over && player.powerUp !== 'Shield') this.lives--;
   }
@@ -50,6 +71,7 @@ class Player {
     if (this.image) {
       this.draw();
       this.move();
+      this.deleteShots();
       this.position.x += this.velocity.x;
     }
   }
@@ -83,32 +105,36 @@ class Boss {
   };
 
   move() {
-    if (this.position.x + this.width > canvas.width || this.position.x + canvas.width < canvas.width) this.velocity.x = -this.velocity.x;
-    if (this.position.y + this.height > canvas.height || this.position.y + canvas.height < canvas.height) this.velocity.y = -this.velocity.y;
+    if (
+      this.position.x + this.width > canvas.width ||
+      this.position.x + canvas.width < canvas.width
+    ) this.velocity.x = -this.velocity.x;
+    if (
+      this.position.y + this.height > canvas.height ||
+      this.position.y + canvas.height < canvas.height
+    ) this.velocity.y = -this.velocity.y;
   }
 
   shoot() {
-    bosses.forEach((boss) => {
-      bossShots.push(new BossShot({
-        position: {
-          x: boss.position.x + boss.width / 2,
-          y: boss.position.y + boss.height,
-        },
-        velocity: {
-          x: 0,
-          y: 5 * speed,
-        },
-        radius: 5,
-        color: 'red',
-      }));
-    });
+    shots.push(new Shot({
+      position: {
+        x: this.position.x + this.width / 2,
+        y: this.position.y + this.height,
+      },
+      velocity: {
+        x: 0,
+        y: 7 * speed,
+      },
+      radius: 5,
+      color: 'white',
+    }));
   }
 
   deleteBoss() {
     const TIME_TO_DISAPPEAR = 30000;
     if (bosses.length > 0) setTimeout(() => {
       bosses = [];
-      toggleScreen(false, 'bossAlertovich');
+      toggleScreen(false, 'bossAnnounce');
     }, TIME_TO_DISAPPEAR);
   }
 
@@ -214,15 +240,16 @@ class Particle {
   }
 }
 
-class BossShot extends Particle {
+class Shot extends Particle {
   constructor({ position, velocity, radius, color }) {
     super({ position, velocity, radius, color });
   }
 
   deleteParticles() {
-    bossShots.forEach((bossShot, index) => {
-      if (bossShot.position.x >= canvas.height) bossShots.splice(index, 1);
-    });
+    if (
+      this.position.y >= canvas.height ||
+      this.position.y + canvas.height < canvas.height
+    ) shots.splice(0, 1);
   }
 
   update() {
