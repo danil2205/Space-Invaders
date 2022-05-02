@@ -6,7 +6,6 @@ class Player {
       x: 0,
       y: 0,
     };
-
     this.lives = 3;
     this.opacity = 1;
     const image = new Image();
@@ -245,7 +244,7 @@ class Shot extends Particle {
     super({ position, velocity, radius, color });
   }
 
-  deleteParticles() {
+  deleteShots() {
     if (
       this.position.y >= canvas.height ||
       this.position.y + canvas.height < canvas.height
@@ -254,7 +253,7 @@ class Shot extends Particle {
 
   update() {
     this.draw();
-    this.deleteParticles();
+    this.deleteShots();
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
   }

@@ -2,12 +2,7 @@
 
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
-const scoreText = document.querySelector('#score');
-const scoreGameOver = document.querySelector('#scoreGameOver');
 const bestScoreText = document.querySelector('#bestScore');
-const announcementText = document.querySelector('#announcementText');
-const coinText = document.querySelector('#coins');
-const imgLives = document.querySelector('#imgLives');
 const audio = document.querySelector('#audio');
 audio.volume = 0.1;
 
@@ -27,7 +22,7 @@ let cosmonauts = [];
 let powerups = [];
 let bosses = [];
 let shots = [];
-const livesArray = [];
+
 const powerupList = ['Shield', 'Score Multiplier', 'Coin Multiplier'];
 const keys = {
   a: {
@@ -63,13 +58,14 @@ const toggleAudio = () => {
 };
 
 const showLives = () => {
+  const imgLives = document.querySelector('#imgLives');
   imgLives.innerHTML = ''; // to delete all lives from screen
   for (let i = 0; i < player.lives; i++) {
-    livesArray[i] = new Image();
-    livesArray[i].src = './img/heart.png';
-    livesArray[i].width = 30;
-    livesArray[i].height = 30;
-    imgLives.append(livesArray[i]);
+    const image = new Image();
+    image.src = './img/heart.png';
+    image.width = 30;
+    image.height = 30;
+    imgLives.append(image);
   }
 };
 
@@ -149,8 +145,9 @@ const changeBestScore = () => {
 };
 
 const lose = () => {
+  const scoreGameOver = document.querySelector('#scoreGameOver');
+  const boomSound = document.querySelector('#boomSound');
   if (!game.over) {
-    const boomSound = document.querySelector('#boomSound');
     boomSound.play();
     player.opacity = 0;
     game.over = true;
@@ -158,6 +155,7 @@ const lose = () => {
       game.active = false;
       audio.pause();
       scoreGameOver.innerHTML = score;
+      toggleScreen(false, 'bossAnnounce');
       toggleScreen(false, 'canvas');
       toggleScreen(true, 'screen');
     }, 2000);
@@ -218,6 +216,7 @@ const delPowerUp = () => {
 };
 
 const setPowerUp = () => {
+  const announcementText = document.querySelector('#announcementText');
   const amountOfPowers = powerupList.length;
   const randomPowerUp = powerupList[Math.floor(Math.random() * amountOfPowers)];
   player.powerUp = randomPowerUp;
@@ -229,6 +228,7 @@ const setPowerUp = () => {
 };
 
 const getCoins = () => {
+  const coinText = document.querySelector('#coins');
   if (frames % 150 === 0) {
     const COINS_WITHOUT_MULTIPLIER = 1;
     const COINS_WITH_MULTIPLIER = 2;
@@ -244,6 +244,7 @@ const checkCollision = ({ object1, object2 }) => (
 );
 
 const updateCosmonaut = () => {
+  const scoreText = document.querySelector('#score');
   for (const [index, cosmonaut] of cosmonauts.entries()) {
     cosmonaut.update();
 
@@ -288,12 +289,6 @@ const updateBoss = () => {
   if (bosses.length !== 0) toggleScreen(true, 'bossAnnounce');
   for (const boss of bosses) {
     boss.update();
-
-    if (boss.image) {
-      if (checkCollision({ object1: boss, object2: player })) {
-        player.health--;
-      }
-    }
   }
 };
 
@@ -361,18 +356,17 @@ animate();
 
 const refreshGame = () => {
   player = new Player();
-  audio.load();
-  player.lives = 3;
+  speed = 1;
+  frames = 0;
+  score = 0;
   stones = [];
   particles = [];
   cosmonauts = [];
   powerups = [];
   bosses = [];
   shots = [];
-  speed = 1;
-  frames = 0;
-  score = 0;
-  scoreText.innerHTML = score;
+  audio.load();
+  document.querySelector('#score').innerHTML = score;
   game.active = true;
   game.over = false;
   showLives();
@@ -399,9 +393,9 @@ window.addEventListener('keydown', event => {
     toggleAudio();
     break;
   case ' ':
-    player.shoot();
+    if (!game.over) player.shoot();
     break;
-}
+  }
 });
 
 window.addEventListener('keyup', event => {

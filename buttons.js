@@ -8,7 +8,7 @@ const play = (...ids) => {
   for (const id of ids) toggleScreen(true, id);
   game.active = true;
   game.menu = false;
-  coinText.innerText = coins;
+  document.querySelector('#coins').innerText = coins;
   animate();
 };
 
@@ -20,7 +20,7 @@ const shop = () => {
 const tutorial = () => {
   toggleScreen(false, 'menu');
   toggleScreen(true, 'tutorial');
-}
+};
 
 const back = (id) => {
   toggleScreen(false, 'shop');
