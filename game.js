@@ -3,11 +3,14 @@
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 const bestScoreText = document.querySelector('#bestScore');
+const dailyMission = document.querySelector('#dailyMission');
+const progressMission = document.querySelector('#progressMission');
 const audio = document.querySelector('#audio');
 audio.volume = 0.1;
 
 canvas.width = 850;
 canvas.height = 960;
+
 
 let coins = 0;
 let levelMultiplier = 2;
@@ -22,8 +25,15 @@ let cosmonauts = [];
 let powerups = [];
 let bosses = [];
 let shots = [];
+const rewardMission = 100;
 
 const powerupList = ['Shield', 'Score Multiplier', 'Coin Multiplier'];
+const dailyMissions = [
+  'Collect 10 Cosmonauts',
+  'Kill 5 Bosses',
+  'Score 100 points',
+  'Beat Your Record',
+];
 const keys = {
   a: {
     pressed: false,
@@ -38,6 +48,57 @@ const game = {
   pause: false,
   over: false,
 };
+
+const randomNum = (maxNumber) => ~~(Math.random() * maxNumber);
+
+let counterMission = 0;
+let randomMission = dailyMissions[randomNum(dailyMissions.length)];
+dailyMission.innerHTML = randomMission;
+
+const setStatusMission = () => {
+  toggleScreen(true, 'claimReward');
+  progressMission.innerHTML = 'Progress - Completed';
+};
+
+const checkMissionProgress = () => {
+  switch (randomMission) {
+  case 'Collect 10 Cosmonauts':
+    if (counterMission >= 10) setStatusMission();
+    break;
+  case 'Kill 5 Bosses':
+    if (counterMission >= 5) setStatusMission();
+    break;
+  case 'Score 100 points':
+    if (score >= 100) setStatusMission();
+    break;
+  case 'Beat Your Record':
+    if (score > bestScore) setStatusMission();
+    break;
+  default:
+    console.log('Unknown mission');
+  }
+};
+
+const updateMissions = () => {
+  const timeRemains = document.querySelector('#timeRemains');
+  const currentTime = new Date();
+  let hours = 23 - currentTime.getHours();
+  let minutes = 60 - currentTime.getMinutes();
+  let seconds = 60 - currentTime.getSeconds();
+
+  hours = hours < 10 ? '0' + hours : hours;
+  minutes = minutes < 10 ? '0' + minutes : minutes;
+  seconds = seconds < 10 ? '0' + seconds : seconds;
+
+  const remainingTime = hours + ':' + minutes + ':' + seconds;
+  timeRemains.innerHTML = `Times remaining: ${remainingTime}`;
+  if (remainingTime === '00:00:00') {
+    randomMission = dailyMissions[randomNum(dailyMissions.length)];
+    dailyMission.innerHTML = randomMission;
+  }
+  setTimeout(updateMissions, 1000);
+};
+updateMissions();
 
 const saveProgress = () => {
   localStorage.setItem('coins', coins);
@@ -250,6 +311,7 @@ const updateCosmonaut = () => {
 
     if (cosmonaut.image && !game.over) {
       if (checkCollision({ object1: cosmonaut, object2: player })) {
+        randomMission === 'Collect 10 Cosmonauts' ? counterMission++ : randomMission;
         score += (player.powerUp === 'Score Multiplier') ? levelMultiplier : 1;
         scoreText.innerHTML = score;
         cosmonauts.splice(index, 1);
@@ -317,8 +379,9 @@ const updateShots = () => {
         document.querySelector('#bossHP').style.width = boss.health;
         if (boss.health === 0) {
           coins += 20;
-          toggleScreen(false, 'bossAnnounce');
+          randomMission === 'Kill 5 Bosses' ? counterMission++ : randomMission;
           bosses = [];
+          toggleScreen(false, 'bossAnnounce');
         }
         shots.splice(index, 1);
       }
@@ -350,6 +413,7 @@ const animate = () => {
   updateBoss();
   updateShots();
   changeBestScore();
+  checkMissionProgress();
   frames++;
 };
 animate();

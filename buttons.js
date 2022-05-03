@@ -17,6 +17,17 @@ const shop = () => {
   toggleScreen(true, 'shop');
 };
 
+const missions = () => {
+  toggleScreen(false, 'menu');
+  toggleScreen(true, 'missions');
+};
+
+const claimReward = () => {
+  coins += 100;
+  toggleScreen(false, 'claimReward');
+  document.querySelector('#claimReward').remove();
+};
+
 const tutorial = () => {
   toggleScreen(false, 'menu');
   toggleScreen(true, 'tutorial');
@@ -25,6 +36,7 @@ const tutorial = () => {
 const back = (id) => {
   toggleScreen(false, 'shop');
   toggleScreen(false, 'tutorial');
+  toggleScreen(false, 'missions');
   toggleScreen(true, id);
 };
 

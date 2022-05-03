@@ -104,6 +104,31 @@ body {
     width: 200px;
 }
 
+.missions {
+    display: none;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    top: 60%;
+    left: 50%;
+    margin-top: -300px;
+    margin-left: -200px;
+    height: 200px;
+    width: 300px;
+    text-align: center
+}
+
+.missions div {
+    max-width: 448px;
+    width: 100%;
+    margin-top: 50px;
+}
+
+.missions button {
+    margin-top: 50px;
+    width: 200px;
+}
+
 .preparation {
     display: none;
     padding: 20px;

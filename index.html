@@ -20,7 +20,21 @@
             <h1>Menu</h1>
             <button onclick="play('canvas', 'allScore', 'imgLives')">Play</button>
             <button onclick="shop()">Shop</button>
+            <button onclick="missions()">Missions</button>
             <button onclick="tutorial()">How To Play</button>
+        </div>
+    </div>
+
+    <div id="missions" class="missions">
+        <div>
+            <span style="font-size: 50px">Daily Mission:</span>
+            <h2 id="dailyMission">Unknown Daily Mission</h2>
+            <span id="progressMission" style="font-size: 30px">Progress - Uncompleted</span>
+            <span style="font-size: 30px">Reward: 100 coins <br /></span>
+            <span id="timeRemains" style="font-size: 30px">Times remaining: 00:00:00</span>
+            <button id="claimReward" style="display: none; margin-left: 50px;" onclick="claimReward()">Claim reward</button>
+            <button onclick="back('menu')">Back</button>
+
         </div>
     </div>
 
