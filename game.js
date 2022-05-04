@@ -3,6 +3,7 @@
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 const bestScoreText = document.querySelector('#bestScore');
+const costMulti = document.querySelector('#costMulti');
 const dailyMission = document.querySelector('#dailyMission');
 const progressMission = document.querySelector('#progressMission');
 const audio = document.querySelector('#audio');
@@ -49,6 +50,21 @@ const game = {
   over: false,
 };
 
+const skinsShip = [
+  'ship1.png',
+  'ship2.png',
+  'ship3.png',
+  'ship4.png',
+  'ship5.png',
+];
+
+const getSkinShip = () => {
+  const skinID = document.querySelector('#skinID');
+  skinID.oninput = () => {
+    if (skinID.value >= 0) player.image.src = `./img/${skinsShip[skinID.value]}`;
+  };
+};
+
 const randomNum = (maxNumber) => ~~(Math.random() * maxNumber);
 
 let counterMission = 0;
@@ -93,6 +109,8 @@ const updateMissions = () => {
   const remainingTime = hours + ':' + minutes + ':' + seconds;
   timeRemains.innerHTML = `Times remaining: ${remainingTime}`;
   if (remainingTime === '00:00:00') {
+    counterMission = 0; // reset counter
+    progressMission.innerHTML = 'Progress - Uncompleted';
     randomMission = dailyMissions[randomNum(dailyMissions.length)];
     dailyMission.innerHTML = randomMission;
   }
@@ -104,6 +122,7 @@ const saveProgress = () => {
   localStorage.setItem('coins', coins);
   localStorage.setItem('bestScore', bestScoreText.innerHTML);
   localStorage.setItem('levelMultiplier', levelMultiplier);
+  localStorage.setItem('costMultiplier', +costMulti.innerHTML);
 };
 
 const loadProgress = () => {
@@ -111,6 +130,7 @@ const loadProgress = () => {
   bestScoreText.innerHTML = +localStorage.getItem('bestScore');
   bestScore = bestScoreText.innerHTML;
   levelMultiplier = +localStorage.getItem('levelMultiplier');
+  costMulti.innerText = +localStorage.getItem('costMultiplier');
 };
 loadProgress();
 
@@ -178,7 +198,7 @@ const pause = () => {
 const spawnObject = (framesToSpawn, arrayName, className, scale) => {
   if (frames % Math.floor(framesToSpawn / speed) === 0) arrayName.push(new className(scale, {
     position: {
-      x: Math.floor(Math.random() * canvas.width),
+      x: randomNum(canvas.width),
       y: 0,
     }
   }));
@@ -227,14 +247,14 @@ const backgroundStars = () => {
   for (let i = 0; i < 100; i++) {
     particles.push(new Particle({
       position: {
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
+        x: randomNum(canvas.width),
+        y: randomNum(canvas.height),
       },
       velocity: {
         x: 0,
         y: 2,
       },
-      radius: Math.random() * 3,
+      radius: randomNum(3),
       color: 'white',
     }));
   }
@@ -250,7 +270,6 @@ const updateBackgroundStars = () => {
 };
 
 const upgradeMultiplier = () => {
-  const costMulti = document.querySelector('#costMulti');
   if (costMulti.innerText <= coins) {
     coins -= costMulti.innerText;
     costMulti.innerText *= 2;
@@ -279,7 +298,7 @@ const delPowerUp = () => {
 const setPowerUp = () => {
   const announcementText = document.querySelector('#announcementText');
   const amountOfPowers = powerupList.length;
-  const randomPowerUp = powerupList[Math.floor(Math.random() * amountOfPowers)];
+  const randomPowerUp = powerupList[randomNum(amountOfPowers)];
   player.powerUp = randomPowerUp;
   if (player.powerUp !== null) {
     announcementText.textContent = `${player.powerUp} Activated!`;
@@ -396,6 +415,7 @@ const bossShoot = () => {
 };
 
 const animate = () => {
+  getSkinShip();
   if (!game.active) return;
   requestAnimationFrame(animate);
   ctx.fillStyle = 'black';

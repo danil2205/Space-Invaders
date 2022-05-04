@@ -21,7 +21,6 @@ class Player {
       };
     };
   }
-
   draw() {
     ctx.save();
     ctx.globalAlpha = this.opacity;

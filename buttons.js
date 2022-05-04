@@ -23,9 +23,9 @@ const missions = () => {
 };
 
 const claimReward = () => {
-  coins += 100;
+  coins += rewardMission;
   toggleScreen(false, 'claimReward');
-  document.querySelector('#claimReward').remove();
+  counterMission = NaN; // blocking counter
 };
 
 const tutorial = () => {
