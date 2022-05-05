@@ -15,7 +15,7 @@ canvas.height = 960;
 
 let coins = 0;
 let levelMultiplier = 2;
-let speed = 1;
+let speed = 0;
 let frames = 0;
 let score = 0;
 let bestScore = 0;
@@ -58,10 +58,26 @@ const skinsShip = [
   'ship5.png',
 ];
 
+const difficulties = {
+  'easy': 0.7,
+  'medium': 1,
+  'hard': 1.2,
+  'master': 1.5,
+  'impossible': 2,
+};
+
+const changeSpeed = (difficultySpeed) => {
+  speed = difficultySpeed;
+  toggleScreen(false, 'difficulty');
+  toggleScreen(true, 'menu');
+};
+
 const getSkinShip = () => {
   const skinID = document.querySelector('#skinID');
+  const skinPNG = document.querySelector('#shipImg');
   skinID.oninput = () => {
-    if (skinID.value >= 0) player.image.src = `./img/${skinsShip[skinID.value]}`;
+    player.image.src = `./img/${skinsShip[skinID.value]}`;
+    skinPNG.src = `./img/${skinsShip[skinID.value]}`;
   };
 };
 

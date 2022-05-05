@@ -104,6 +104,29 @@ body {
     width: 200px;
 }
 
+.difficulty {
+    display: none;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    top: 65%;
+    left: 51.5%;
+    margin-top: -300px;
+    margin-left: -200px;
+    height: 200px;
+    width: 300px;
+    text-align: center
+}
+
+.difficulty h2 {
+    margin-right: 100px;
+}
+.difficulty button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .missions {
     display: none;
     color: white;

@@ -12,6 +12,11 @@ const play = (...ids) => {
   animate();
 };
 
+const changeDifficulty = () => {
+  toggleScreen(true, 'difficulty');
+  toggleScreen(false, 'menu');
+};
+
 const shop = () => {
   toggleScreen(false, 'menu');
   toggleScreen(true, 'shop');
@@ -37,6 +42,7 @@ const back = (id) => {
   toggleScreen(false, 'shop');
   toggleScreen(false, 'tutorial');
   toggleScreen(false, 'missions');
+  toggleScreen(false, 'difficulty');
   toggleScreen(true, id);
 };
 
