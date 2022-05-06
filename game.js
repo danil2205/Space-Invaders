@@ -472,7 +472,7 @@ const refreshGame = () => {
   }
 };
 
-window.addEventListener('keydown', event => {
+window.addEventListener('keydown', (event) => {
   switch (event.key) {
   case 'a':
     keys.a.pressed = true;
@@ -492,7 +492,7 @@ window.addEventListener('keydown', event => {
   }
 });
 
-window.addEventListener('keyup', event => {
+window.addEventListener('keyup', (event) => {
   switch (event.key) {
   case 'a':
     keys.a.pressed = false;
