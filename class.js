@@ -134,6 +134,13 @@ class Boss {
       bosses = [];
       toggleScreen(false, 'bossAnnounce');
     }, TIME_TO_DISAPPEAR);
+
+    if (this.health === 0) {
+      coins += 20;
+      randomMission === 'Kill 5 Bosses' ? counterMission++ : randomMission;
+      bosses = [];
+      toggleScreen(false, 'bossAnnounce');
+    }
   }
 
   update() {

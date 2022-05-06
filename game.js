@@ -15,7 +15,7 @@ canvas.height = 960;
 
 let coins = 0;
 let levelMultiplier = 2;
-let speed = 0;
+let speed = 1;
 let frames = 0;
 let score = 0;
 let bestScore = 0;
@@ -111,16 +111,14 @@ const checkMissionProgress = () => {
   }
 };
 
+const addZeroInTime = (time, n = 2) => `${time}`.padStart(n, '0');
+
 const updateMissions = () => {
   const timeRemains = document.querySelector('#timeRemains');
   const currentTime = new Date();
-  let hours = 23 - currentTime.getHours();
-  let minutes = 60 - currentTime.getMinutes();
-  let seconds = 60 - currentTime.getSeconds();
-
-  hours = hours < 10 ? '0' + hours : hours;
-  minutes = minutes < 10 ? '0' + minutes : minutes;
-  seconds = seconds < 10 ? '0' + seconds : seconds;
+  const hours = addZeroInTime(23 - currentTime.getHours());
+  const minutes = addZeroInTime(60 - currentTime.getMinutes());
+  const seconds = addZeroInTime(60 - currentTime.getSeconds());
 
   const remainingTime = hours + ':' + minutes + ':' + seconds;
   timeRemains.innerHTML = `Times remaining: ${remainingTime}`;
@@ -212,7 +210,7 @@ const pause = () => {
 };
 
 const spawnObject = (framesToSpawn, arrayName, className, scale) => {
-  if (frames % Math.floor(framesToSpawn / speed) === 0) arrayName.push(new className(scale, {
+  if (frames % Math.floor(framesToSpawn / speed) === 0 && frames !== 0) arrayName.push(new className(scale, {
     position: {
       x: randomNum(canvas.width),
       y: 0,
@@ -389,35 +387,31 @@ const updateBoss = () => {
   }
 };
 
-const checkCollisionShot = ({ object1, object2 }) => (
+const checkCollisionBossShot = ({ object1, object2 }) => (
   object1.position.x + object1.radius >= object2.position.x &&
   object1.position.x <= object2.position.x + object2.width &&
   object1.position.y >= object2.position.y
+);
+
+const checkCollisionPlayerShot = ({ object1, object2 }) => (
+  object1.position.x + object1.width >= object2.position.x &&
+  object1.position.x <= object2.position.x + object2.radius &&
+  object1.position.y >= object2.position.y + object2.radius
 );
 
 
 const updateShots = () => {
   for (const [index, shot] of shots.entries()) {
     shot.update();
-    if (checkCollisionShot({ object1: shot, object2: player })) { // shot from boss hit player
+    if (checkCollisionBossShot({ object1: shot, object2: player })) {
       delLives();
       if (player.lives === 0) lose();
       shots.splice(index, 1);
     }
     for (const boss of bosses) {
-      if (
-        boss.position.x + boss.width >= shot.position.x &&
-        boss.position.x <= shot.position.x + shot.radius &&
-        boss.position.y >= shot.position.y
-      ) { // shot from player hit boss
+      if (checkCollisionPlayerShot({ object1: boss, object2: shot })) {
         boss.health -= 20;
         document.querySelector('#bossHP').style.width = boss.health;
-        if (boss.health === 0) {
-          coins += 20;
-          randomMission === 'Kill 5 Bosses' ? counterMission++ : randomMission;
-          bosses = [];
-          toggleScreen(false, 'bossAnnounce');
-        }
         shots.splice(index, 1);
       }
     }
