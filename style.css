@@ -28,10 +28,15 @@ body {
     width: 200px;
 }
 
-.pause div, .countdown div, .menu div, .screen div, .shop div, .missions div {
+.pause div, .countdown div, .menu div, .screen div, .shop div, .missions div, .pet div {
     max-width: 448px;
     width: 100%;
     padding: 24px;
+}
+
+.pet button {
+    padding: 10px 24px;
+    cursor: pointer;
 }
 
 .allScore {
@@ -87,7 +92,7 @@ body {
     justify-content: center;
 }
 
-.missions, .screen, .shop {
+.missions, .screen, .shop, .pet {
     display: none;
     color: white;
     padding: 20px;
@@ -133,7 +138,7 @@ body {
     width: 265px;
 }
 
-.shop span {
+.shop span, .pet span {
     font-size: 30px;
     margin-left: 20px;
 }
@@ -157,6 +162,10 @@ button {
     margin-bottom: 15px;
     appearance: none;
     width: 200px
+}
+
+button:hover {
+    background-color: #3e8e41;
 }
 
 h1 {

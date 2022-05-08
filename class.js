@@ -36,7 +36,7 @@ class Player {
 
   move() {
     if (keys.a.pressed && player.position.x + canvas.width > canvas.width) player.velocity.x = -5;
-    else if (keys.d.pressed && player.position.x + player.width < canvas.width ) player.velocity.x = 5;
+    else if (keys.d.pressed && player.position.x + player.width < canvas.width) player.velocity.x = 5;
     else player.velocity.x = 0;
   }
 
@@ -62,7 +62,7 @@ class Player {
   }
 
   removeLives() {
-    if (!game.over && player.powerUp !== 'Shield') this.lives--;
+    if (player.powerUp !== 'Shield' && pet.ability !== 'Shield') this.lives--;
   }
 
   update() {
@@ -114,18 +114,20 @@ class Boss {
   }
 
   shoot() {
-    shots.push(new Shot({
-      position: {
-        x: this.position.x + this.width / 2,
-        y: this.position.y + this.height,
-      },
-      velocity: {
-        x: 0,
-        y: 7 * speed,
-      },
-      radius: 5,
-      color: 'white',
-    }));
+    if (frames % 100 === 0) {
+      shots.push(new Shot({
+        position: {
+          x: this.position.x + this.width / 2,
+          y: this.position.y + this.height,
+        },
+        velocity: {
+          x: 0,
+          y: 7 * speed,
+        },
+        radius: 5,
+        color: 'white',
+      }));
+    }
   }
 
   deleteBoss() {
@@ -147,6 +149,7 @@ class Boss {
     if (this.image) {
       this.draw();
       this.move();
+      this.shoot();
       this.deleteBoss();
       this.position.x += this.velocity.x;
       this.position.y += this.velocity.y;
@@ -211,6 +214,96 @@ class Cosmonaut extends Stone {
 
   delete() {
     if (this.position.y >= canvas.height) setTimeout(() => cosmonauts.splice(0, 1));
+  }
+}
+
+class Pet {
+  constructor() {
+    this.velocity = {
+      x: 0,
+      y: 0,
+    };
+    this.abilityMenu = null;
+    this.ability = null;
+    this.isCooldown = false;
+
+    const image = new Image();
+    image.src = `./img/satellite1.png`;
+    image.onload = () => {
+      const scale = 0.1;
+      this.image = image;
+      this.width = image.width * scale;
+      this.height = image.height * scale;
+      this.position = {
+        x: player.position.x - player.width,
+        y: player.position.y - player.height,
+      };
+    };
+  }
+
+  draw() {
+    ctx.drawImage(
+      this.image,
+      this.position.x,
+      this.position.y,
+      this.width,
+      this.height
+    );
+  }
+
+  move() {
+    if (this.position.x >= player.position.x + player.width) this.velocity.x = -3;
+    else if (this.position.x <= player.position.x - player.width) this.velocity.x = 3;
+  }
+
+  healShip() {
+    if (this.ability === 'Heal') {
+      player.lives += 1;
+      this.ability = null;
+    }
+  }
+
+  cosmonautsCollect() {
+    cosmonauts.forEach((cosmonaut, index) => {
+      if (!checkCollision({ object1: cosmonaut, object2: player })) {
+        getPoints();
+        cosmonauts.splice(index, 1);
+      }
+    });
+  }
+
+  coinDoubling() {
+    if (this.ability === 'Double Coins') getCoins();
+  }
+
+  setCooldown() {
+    if (this.isCooldown) setTimeout(() => {
+      this.isCooldown = false;
+      abilityPet.innerHTML = 'Ability of your Pet is Ready';
+    }, 30000);
+  }
+
+  getAbility() {
+    if (!this.isCooldown) {
+      this.isCooldown = true;
+      abilityPet.innerHTML = 'Ability of your Pet is NOT Ready';
+      this.ability = this.abilityMenu;
+      setTimeout(() => {
+        this.ability = null;
+      }, 2000 + 250 * levelPetUpgrade); // 2 seconds + 0.25 seconds for each upgrade
+    }
+  }
+
+  update() {
+    if (this.image) {
+      this.draw();
+      this.move();
+      this.setCooldown();
+      this.healShip();
+      if (this.ability === 'collectCosmonauts') this.cosmonautsCollect();
+      this.coinDoubling();
+      this.position.x += this.velocity.x;
+    }
   }
 }
 

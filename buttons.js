@@ -17,6 +17,11 @@ const changeDifficulty = () => {
   toggleScreen(false, 'menu');
 };
 
+const petMenu = () => {
+  toggleScreen(true, 'pet');
+  toggleScreen(false, 'menu');
+}
+
 const shop = () => {
   toggleScreen(false, 'menu');
   toggleScreen(true, 'shop');
@@ -42,6 +47,7 @@ const back = (id) => {
   toggleScreen(false, 'shop');
   toggleScreen(false, 'tutorial');
   toggleScreen(false, 'missions');
+  toggleScreen(false, 'pet');
   toggleScreen(false, 'difficulty');
   toggleScreen(true, id);
 };

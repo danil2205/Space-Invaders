@@ -13,6 +13,9 @@
         <p style="left: 1000px; top: 10px;">
             <span id="coins">0</span> <img src="./img/coin.png">
         </p>
+        <p style="left: 800px; top: 140px;">
+            <span id="abilityPet">Ability of your Pet is Ready</span>
+        </p>
     </div>
 
     <div id="menu" class="menu">
@@ -20,6 +23,7 @@
             <h1>Menu</h1>
             <button onclick="play('canvas', 'allScore', 'imgLives')">Play</button>
             <button onclick="changeDifficulty()">Difficulty</button>
+            <button onclick="petMenu()">Pet</button>
             <button onclick="shop()">Shop</button>
             <button onclick="missions()">Missions</button>
             <button onclick="tutorial()">How To Play</button>
@@ -50,10 +54,24 @@
         </div>
     </div>
 
+    <div id="pet" class="pet">
+        <div>
+            <h2>Pet and Ability Menu</h2>
+            <span id="costPetUpgrade">1000</span><span> coins</span>
+            <button onclick="upgradePet()">Upgrade pet</button>
+            <button onclick="pet.abilityMenu = 'Heal'">Heal Ship</button>
+            <button onclick="pet.abilityMenu = 'Shield'">Shield</button>
+            <button onclick="pet.abilityMenu = 'Double Coins'">x2 Coins</button>
+            <button onclick="pet.abilityMenu = 'collectCosmonauts'">Magnet Cosmonauts</button>
+            <button onclick="pet.abilityMenu = 'No Enemies'">No Enemies</button>
+            <button onclick="back('menu')">Back</button>
+        </div>
+    </div>
+
     <div id="tutorial" class="preparation">
         <div style="width: 500px;">
             <h2 style="color: red">COLLECT COSMONAUTS! <br /> DON'T FACE WITH STONES!</h2>
-            <h2 style="color: cyan">'A/D' -> MOVE <br /> 'M' -> TOGGLE MUSIC <br /> 'SPACE' -> SHOOT</h2>
+            <h2 style="color: cyan">'A/D' -> MOVE <br /> 'M' -> TOGGLE MUSIC <br /> 'SPACE' -> SHOOT <br /> 'X' -> Turn On Ability of Pet (In Future)</h2>
             <h2 style="color: yellow">GOOD LUCK!</h2>
             <button onclick="back('menu')">Back</button>
         </div>
@@ -63,7 +81,7 @@
         <div>
             <h1>Shop</h1>
             <span>Choose your skin: </span><input id="skinID" type="range" min="0" max="4" step="1">
-            <img id="shipImg" style="width: 100px; height: 100px;">
+            <img id="shipImg" style="width: 80px; height: 80px;">
             <button onclick="buyLife()" style="margin-top: 20px">Buy x1 Live</button>
 
             <h2>Power-Ups</h2>

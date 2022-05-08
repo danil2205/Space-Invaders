@@ -4,6 +4,8 @@ const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 const bestScoreText = document.querySelector('#bestScore');
 const costMulti = document.querySelector('#costMulti');
+const costPetUpgrade = document.querySelector('#costPetUpgrade');
+const abilityPet = document.querySelector('#abilityPet');
 const dailyMission = document.querySelector('#dailyMission');
 const progressMission = document.querySelector('#progressMission');
 const audio = document.querySelector('#audio');
@@ -15,11 +17,13 @@ canvas.height = 960;
 
 let coins = 0;
 let levelMultiplier = 2;
+let levelPetUpgrade = 0;
 let speed = 1;
 let frames = 0;
 let score = 0;
 let bestScore = 0;
 let player = new Player();
+let pet = new Pet();
 let stones = [];
 let particles = [];
 let cosmonauts = [];
@@ -137,6 +141,8 @@ const saveProgress = () => {
   localStorage.setItem('bestScore', bestScoreText.innerHTML);
   localStorage.setItem('levelMultiplier', levelMultiplier);
   localStorage.setItem('costMultiplier', +costMulti.innerHTML);
+  localStorage.setItem('levelPetUpgrade', levelPetUpgrade);
+  localStorage.setItem('costPetUpgrade', +costPetUpgrade.innerHTML);
 };
 
 const loadProgress = () => {
@@ -145,6 +151,8 @@ const loadProgress = () => {
   bestScore = bestScoreText.innerHTML;
   levelMultiplier = +localStorage.getItem('levelMultiplier');
   costMulti.innerText = +localStorage.getItem('costMultiplier');
+  levelPetUpgrade = +localStorage.getItem('levelPetUpgrade');
+  costPetUpgrade.innerText = +localStorage.getItem('costPetUpgrade');
 };
 loadProgress();
 
@@ -225,11 +233,14 @@ const spawnObjects = () => {
   const FRAMES_POWERUP = 1000;
   const FRAMES_BOSS = 6000;
 
-  spawnObject(FRAMES_LIL_STONE, stones, Stone, 0.02);
-  spawnObject(FRAMES_BIG_STONE, stones, Stone, 0.07);
+  if (pet.ability !== 'No Enemies') {
+    spawnObject(FRAMES_LIL_STONE, stones, Stone, 0.02);
+    spawnObject(FRAMES_BIG_STONE, stones, Stone, 0.07);
+    if (bosses.length === 0) spawnObject(FRAMES_BOSS, bosses, Boss, 0.35);
+  }
   spawnObject(FRAMES_COSMONAUT, cosmonauts, Cosmonaut, 0.02);
   spawnObject(FRAMES_POWERUP, powerups, PowerUp, 0.1);
-  if (bosses.length === 0) spawnObject(FRAMES_BOSS, bosses, Boss, 0.35);
+
 };
 
 const changeBestScore = () => {
@@ -292,6 +303,19 @@ const upgradeMultiplier = () => {
   }
 };
 
+const upgradePet = () => {
+  if (coins >= costPetUpgrade.innerText) {
+    coins -= costPetUpgrade.innerText;
+    costPetUpgrade.innerText *= 2;
+    levelPetUpgrade++;
+    saveProgress();
+  }
+};
+
+const setStatusAbilityPet = () => {
+
+};
+
 const buyLife = () => {
   const LIFE_COST = 100;
   if (coins >= LIFE_COST) {
@@ -327,8 +351,15 @@ const getCoins = () => {
     const COINS_WITHOUT_MULTIPLIER = 1;
     const COINS_WITH_MULTIPLIER = 2;
     coins += (player.powerUp === 'Coin Multiplier') ? COINS_WITH_MULTIPLIER : COINS_WITHOUT_MULTIPLIER;
+    coins += (pet.ability === 'Double Coins') ? COINS_WITH_MULTIPLIER : 0;
     coinText.innerText = coins;
   }
+};
+
+const getPoints = () => {
+  const scoreText = document.querySelector('#score');
+  score += (player.powerUp === 'Score Multiplier') ? levelMultiplier : 1;
+  scoreText.innerHTML = score;
 };
 
 const checkCollision = ({ object1, object2 }) => (
@@ -338,15 +369,13 @@ const checkCollision = ({ object1, object2 }) => (
 );
 
 const updateCosmonaut = () => {
-  const scoreText = document.querySelector('#score');
   for (const [index, cosmonaut] of cosmonauts.entries()) {
     cosmonaut.update();
 
     if (cosmonaut.image && !game.over) {
       if (checkCollision({ object1: cosmonaut, object2: player })) {
+        getPoints();
         randomMission === 'Collect 10 Cosmonauts' ? counterMission++ : randomMission;
-        score += (player.powerUp === 'Score Multiplier') ? levelMultiplier : 1;
-        scoreText.innerHTML = score;
         cosmonauts.splice(index, 1);
       }
     }
@@ -418,12 +447,6 @@ const updateShots = () => {
   }
 };
 
-const bossShoot = () => {
-  if (frames % 100 === 0) {
-    bosses.forEach((boss) => boss.shoot());
-  }
-};
-
 const animate = () => {
   getSkinShip();
   if (!game.active) return;
@@ -433,7 +456,8 @@ const animate = () => {
   player.update();
   if (frames % 500 === 0) speed += 0.1; // speed up
   audio.play();
-  bossShoot();
+  pet.update();
+  setStatusAbilityPet();
   spawnObjects();
   updateBackgroundStars();
   getCoins();
@@ -450,6 +474,8 @@ animate();
 
 const refreshGame = () => {
   player = new Player();
+  pet = new Pet();
+  pet.isCooldown = false;
   speed = 1;
   frames = 0;
   score = 0;
@@ -479,6 +505,9 @@ window.addEventListener('keydown', (event) => {
     break;
   case 'd':
     keys.d.pressed = true;
+    break;
+  case 'x':
+    pet.getAbility();
     break;
   case 'Escape':
     if (!game.pause) pause();
