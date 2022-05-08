@@ -100,7 +100,7 @@ class Boss {
       this.width,
       this.height
     );
-  };
+  }
 
   move() {
     if (

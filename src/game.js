@@ -33,12 +33,14 @@ let shots = [];
 const rewardMission = 100;
 
 const powerupList = ['Shield', 'Score Multiplier', 'Coin Multiplier'];
+
 const dailyMissions = [
   'Collect 10 Cosmonauts',
   'Kill 5 Bosses',
   'Score 100 points',
   'Beat Your Record',
 ];
+
 const keys = {
   a: {
     pressed: false,
@@ -47,6 +49,7 @@ const keys = {
     pressed: false,
   },
 };
+
 const game = {
   active: false,
   menu: true,
@@ -72,6 +75,7 @@ const difficulties = {
 
 const changeSpeed = (difficultySpeed) => {
   speed = difficultySpeed;
+  if (frames % 500 === 0) speed += 0.1; // speed up
   toggleScreen(false, 'difficulty');
   toggleScreen(true, 'menu');
 };
@@ -312,10 +316,6 @@ const upgradePet = () => {
   }
 };
 
-const setStatusAbilityPet = () => {
-
-};
-
 const buyLife = () => {
   const LIFE_COST = 100;
   if (coins >= LIFE_COST) {
@@ -368,6 +368,18 @@ const checkCollision = ({ object1, object2 }) => (
   object1.position.y + object1.height >= object2.position.y
 );
 
+const checkCollisionBossShot = ({ object1, object2 }) => (
+  object1.position.x + object1.radius >= object2.position.x &&
+  object1.position.x <= object2.position.x + object2.width &&
+  object1.position.y >= object2.position.y
+);
+
+const checkCollisionPlayerShot = ({ object1, object2 }) => (
+  object1.position.x + object1.width >= object2.position.x &&
+  object1.position.x <= object2.position.x + object2.radius &&
+  object1.position.y >= object2.position.y + object2.radius
+);
+
 const updateCosmonaut = () => {
   for (const [index, cosmonaut] of cosmonauts.entries()) {
     cosmonaut.update();
@@ -416,19 +428,6 @@ const updateBoss = () => {
   }
 };
 
-const checkCollisionBossShot = ({ object1, object2 }) => (
-  object1.position.x + object1.radius >= object2.position.x &&
-  object1.position.x <= object2.position.x + object2.width &&
-  object1.position.y >= object2.position.y
-);
-
-const checkCollisionPlayerShot = ({ object1, object2 }) => (
-  object1.position.x + object1.width >= object2.position.x &&
-  object1.position.x <= object2.position.x + object2.radius &&
-  object1.position.y >= object2.position.y + object2.radius
-);
-
-
 const updateShots = () => {
   for (const [index, shot] of shots.entries()) {
     shot.update();
@@ -454,10 +453,8 @@ const animate = () => {
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   player.update();
-  if (frames % 500 === 0) speed += 0.1; // speed up
   audio.play();
   pet.update();
-  setStatusAbilityPet();
   spawnObjects();
   updateBackgroundStars();
   getCoins();

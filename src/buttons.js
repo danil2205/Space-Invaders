@@ -20,7 +20,7 @@ const changeDifficulty = () => {
 const petMenu = () => {
   toggleScreen(true, 'pet');
   toggleScreen(false, 'menu');
-}
+};
 
 const shop = () => {
   toggleScreen(false, 'menu');
