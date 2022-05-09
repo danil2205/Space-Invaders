@@ -7,6 +7,7 @@ const costMulti = document.querySelector('#costMulti');
 const costPetUpgrade = document.querySelector('#costPetUpgrade');
 const abilityPet = document.querySelector('#abilityPet');
 const dailyMission = document.querySelector('#dailyMission');
+const dailyMissionText = document.querySelector('#dailyMission').innerText;
 const progressMission = document.querySelector('#progressMission');
 const audio = document.querySelector('#audio');
 audio.volume = 0.1;
@@ -31,6 +32,7 @@ let powerups = [];
 let bosses = [];
 let shots = [];
 const rewardMission = 100;
+let counterMission = 0;
 
 const powerupList = ['Shield', 'Score Multiplier', 'Coin Multiplier'];
 
@@ -73,13 +75,6 @@ const difficulties = {
   'impossible': 2,
 };
 
-const changeSpeed = (difficultySpeed) => {
-  speed = difficultySpeed;
-  if (frames % 500 === 0) speed += 0.1; // speed up
-  toggleScreen(false, 'difficulty');
-  toggleScreen(true, 'menu');
-};
-
 const getSkinShip = () => {
   const skinID = document.querySelector('#skinID');
   const skinPNG = document.querySelector('#shipImg');
@@ -91,35 +86,13 @@ const getSkinShip = () => {
 
 const randomNum = (maxNumber) => ~~(Math.random() * maxNumber);
 
-let counterMission = 0;
-let randomMission = dailyMissions[randomNum(dailyMissions.length)];
-dailyMission.innerHTML = randomMission;
-
-const setStatusMission = () => {
-  toggleScreen(true, 'claimReward');
-  progressMission.innerHTML = 'Progress - Completed';
-};
-
-const checkMissionProgress = () => {
-  switch (randomMission) {
-  case 'Collect 10 Cosmonauts':
-    if (counterMission >= 10) setStatusMission();
-    break;
-  case 'Kill 5 Bosses':
-    if (counterMission >= 5) setStatusMission();
-    break;
-  case 'Score 100 points':
-    if (score >= 100) setStatusMission();
-    break;
-  case 'Beat Your Record':
-    if (score > bestScore) setStatusMission();
-    break;
-  default:
-    console.log('Unknown mission');
-  }
-};
-
 const addZeroInTime = (time, n = 2) => `${time}`.padStart(n, '0');
+
+const setDailyMission = () => {
+  let randomMission = dailyMissions[randomNum(dailyMissions.length)];
+  dailyMission.innerHTML = randomMission;
+};
+setDailyMission();
 
 const updateMissions = () => {
   const timeRemains = document.querySelector('#timeRemains');
@@ -132,9 +105,8 @@ const updateMissions = () => {
   timeRemains.innerHTML = `Times remaining: ${remainingTime}`;
   if (remainingTime === '00:00:00') {
     counterMission = 0; // reset counter
+    setDailyMission();
     progressMission.innerHTML = 'Progress - Uncompleted';
-    randomMission = dailyMissions[randomNum(dailyMissions.length)];
-    dailyMission.innerHTML = randomMission;
   }
   setTimeout(updateMissions, 1000);
 };
@@ -193,32 +165,42 @@ const toggleScreen = (toggle, ...ids) => {
   }
 };
 
+const changeSpeed = (difficultySpeed) => {
+  speed = difficultySpeed;
+  toggleScreen(false, 'difficulty');
+  toggleScreen(true, 'menu');
+};
+
+const setStatusMission = () => {
+  toggleScreen(true, 'claimReward');
+  progressMission.innerHTML = 'Progress - Completed';
+};
+
+const checkMissionProgress = () => {
+  switch (dailyMissionText) {
+  case 'Collect 10 Cosmonauts':
+    if (counterMission >= 10) setStatusMission();
+    break;
+  case 'Kill 5 Bosses':
+    if (counterMission >= 5) setStatusMission();
+    break;
+  case 'Score 100 points':
+    if (score >= 100) setStatusMission();
+    break;
+  case 'Beat Your Record':
+    if (score > bestScore) setStatusMission();
+    break;
+  default:
+    console.log('Unknown mission');
+  }
+};
+
 const countDown = () => {
   const countDownTimer = document.querySelector('#countDownTimer');
   toggleScreen(true, 'countdown');
   setTimeout(() => countDownTimer.textContent = '2', 1000);
   setTimeout(() => countDownTimer.textContent = '1', 2000);
   countDownTimer.textContent = '3';
-};
-
-const pause = () => {
-  if (!game.active && !game.menu && !game.over) {
-    toggleScreen(false, 'pause');
-    countDown();
-    setTimeout(() => {
-      game.active = true;
-      game.pause = false;
-      toggleScreen(false, 'countdown');
-      animate();
-    }, 3000);
-  } else if (game.active && !game.menu && !game.over) {
-    const pauseSound = document.querySelector('#pauseSound');
-    pauseSound.play();
-    audio.pause();
-    game.active = false;
-    game.pause = true;
-    toggleScreen(true, 'pause');
-  }
 };
 
 const spawnObject = (framesToSpawn, arrayName, className, scale) => {
@@ -298,33 +280,6 @@ const updateBackgroundStars = () => {
   }
 };
 
-const upgradeMultiplier = () => {
-  if (costMulti.innerText <= coins) {
-    coins -= costMulti.innerText;
-    costMulti.innerText *= 2;
-    levelMultiplier++;
-    saveProgress();
-  }
-};
-
-const upgradePet = () => {
-  if (coins >= costPetUpgrade.innerText) {
-    coins -= costPetUpgrade.innerText;
-    costPetUpgrade.innerText *= 2;
-    levelPetUpgrade++;
-    saveProgress();
-  }
-};
-
-const buyLife = () => {
-  const LIFE_COST = 100;
-  if (coins >= LIFE_COST) {
-    coins -= LIFE_COST;
-    player.lives += 1;
-    saveProgress();
-  }
-};
-
 const delPowerUp = () => {
   const ACTION_TIME = 5000;
   setTimeout(() => {
@@ -387,7 +342,7 @@ const updateCosmonaut = () => {
     if (cosmonaut.image && !game.over) {
       if (checkCollision({ object1: cosmonaut, object2: player })) {
         getPoints();
-        randomMission === 'Collect 10 Cosmonauts' ? counterMission++ : randomMission;
+        dailyMissionText === 'Collect 10 Cosmonauts' ? counterMission++ : dailyMissionText;
         cosmonauts.splice(index, 1);
       }
     }
@@ -454,6 +409,7 @@ const animate = () => {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   player.update();
   audio.play();
+  if (frames % 500 === 0) speed += 0.1; // speed up
   pet.update();
   spawnObjects();
   updateBackgroundStars();
@@ -468,6 +424,26 @@ const animate = () => {
   frames++;
 };
 animate();
+
+const pause = () => {
+  if (!game.active && !game.menu && !game.over) {
+    toggleScreen(false, 'pause');
+    countDown();
+    setTimeout(() => {
+      game.active = true;
+      game.pause = false;
+      toggleScreen(false, 'countdown');
+      animate();
+    }, 3000);
+  } else if (game.active && !game.menu && !game.over) {
+    const pauseSound = document.querySelector('#pauseSound');
+    pauseSound.play();
+    audio.pause();
+    game.active = false;
+    game.pause = true;
+    toggleScreen(true, 'pause');
+  }
+};
 
 const refreshGame = () => {
   player = new Player();

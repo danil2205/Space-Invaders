@@ -27,6 +27,33 @@ const shop = () => {
   toggleScreen(true, 'shop');
 };
 
+const upgradeMultiplier = () => {
+  if (costMulti.innerText <= coins) {
+    coins -= costMulti.innerText;
+    costMulti.innerText *= 2;
+    levelMultiplier++;
+    saveProgress();
+  }
+};
+
+const upgradePet = () => {
+  if (coins >= costPetUpgrade.innerText) {
+    coins -= costPetUpgrade.innerText;
+    costPetUpgrade.innerText *= 2;
+    levelPetUpgrade++;
+    saveProgress();
+  }
+};
+
+const buyLife = () => {
+  const LIFE_COST = 100;
+  if (coins >= LIFE_COST) {
+    coins -= LIFE_COST;
+    player.lives += 1;
+    saveProgress();
+  }
+};
+
 const missions = () => {
   toggleScreen(false, 'menu');
   toggleScreen(true, 'missions');

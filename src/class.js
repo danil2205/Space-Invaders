@@ -139,7 +139,7 @@ class Boss {
 
     if (this.health === 0) {
       coins += 20;
-      randomMission === 'Kill 5 Bosses' ? counterMission++ : randomMission;
+      dailyMissionText === 'Kill 5 Bosses' ? counterMission++ : dailyMissionText;
       bosses = [];
       toggleScreen(false, 'bossAnnounce');
     }
