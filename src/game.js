@@ -7,7 +7,6 @@ const costMulti = document.querySelector('#costMulti');
 const costPetUpgrade = document.querySelector('#costPetUpgrade');
 const abilityPet = document.querySelector('#abilityPet');
 const dailyMission = document.querySelector('#dailyMission');
-const dailyMissionText = document.querySelector('#dailyMission').innerText;
 const progressMission = document.querySelector('#progressMission');
 const audio = document.querySelector('#audio');
 audio.volume = 0.1;
@@ -59,14 +58,6 @@ const game = {
   over: false,
 };
 
-const skinsShip = [
-  'ship1.png',
-  'ship2.png',
-  'ship3.png',
-  'ship4.png',
-  'ship5.png',
-];
-
 const difficulties = {
   'easy': 0.7,
   'medium': 1,
@@ -79,8 +70,9 @@ const getSkinShip = () => {
   const skinID = document.querySelector('#skinID');
   const skinPNG = document.querySelector('#shipImg');
   skinID.oninput = () => {
-    player.image.src = `./img/${skinsShip[skinID.value]}`;
-    skinPNG.src = `./img/${skinsShip[skinID.value]}`;
+    const img = `./ship${skinID.value}.png`;
+    player.image.src = `./img/${img}`;
+    skinPNG.src = `./img/${img}`;
   };
 };
 
@@ -112,13 +104,8 @@ const updateMissions = () => {
 };
 updateMissions();
 
-const saveProgress = () => {
-  localStorage.setItem('coins', coins);
-  localStorage.setItem('bestScore', bestScoreText.innerHTML);
-  localStorage.setItem('levelMultiplier', levelMultiplier);
-  localStorage.setItem('costMultiplier', +costMulti.innerHTML);
-  localStorage.setItem('levelPetUpgrade', levelPetUpgrade);
-  localStorage.setItem('costPetUpgrade', +costPetUpgrade.innerHTML);
+const saveProgress = (key, value) => {
+  localStorage.setItem(key, value);
 };
 
 const loadProgress = () => {
@@ -165,19 +152,13 @@ const toggleScreen = (toggle, ...ids) => {
   }
 };
 
-const changeSpeed = (difficultySpeed) => {
-  speed = difficultySpeed;
-  toggleScreen(false, 'difficulty');
-  toggleScreen(true, 'menu');
-};
-
 const setStatusMission = () => {
   toggleScreen(true, 'claimReward');
   progressMission.innerHTML = 'Progress - Completed';
 };
 
 const checkMissionProgress = () => {
-  switch (dailyMissionText) {
+  switch (dailyMission.innerText) {
   case 'Collect 10 Cosmonauts':
     if (counterMission >= 10) setStatusMission();
     break;
@@ -233,6 +214,7 @@ const changeBestScore = () => {
   if (score > bestScore && game.over) {
     bestScore = score;
     bestScoreText.innerHTML = bestScore;
+    saveProgress('bestScore', bestScoreText.innerHTML);
   }
 };
 
@@ -342,7 +324,7 @@ const updateCosmonaut = () => {
     if (cosmonaut.image && !game.over) {
       if (checkCollision({ object1: cosmonaut, object2: player })) {
         getPoints();
-        dailyMissionText === 'Collect 10 Cosmonauts' ? counterMission++ : dailyMissionText;
+        if (dailyMission.innerText === 'Collect 10 Cosmonauts') counterMission++;
         cosmonauts.splice(index, 1);
       }
     }

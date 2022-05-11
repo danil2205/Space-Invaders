@@ -17,6 +17,12 @@ const changeDifficulty = () => {
   toggleScreen(false, 'menu');
 };
 
+const changeSpeed = (difficultySpeed) => {
+  speed = difficultySpeed;
+  toggleScreen(false, 'difficulty');
+  toggleScreen(true, 'menu');
+};
+
 const petMenu = () => {
   toggleScreen(true, 'pet');
   toggleScreen(false, 'menu');
@@ -32,7 +38,9 @@ const upgradeMultiplier = () => {
     coins -= costMulti.innerText;
     costMulti.innerText *= 2;
     levelMultiplier++;
-    saveProgress();
+    saveProgress('costMultiplier', +costMulti.innerHTML);
+    saveProgress('levelMultiplier', levelMultiplier);
+    saveProgress('coins', coins);
   }
 };
 
@@ -41,7 +49,9 @@ const upgradePet = () => {
     coins -= costPetUpgrade.innerText;
     costPetUpgrade.innerText *= 2;
     levelPetUpgrade++;
-    saveProgress();
+    saveProgress('costPetUpgrade', +costPetUpgrade.innerHTML);
+    saveProgress('levelPetUpgrade', levelPetUpgrade);
+    saveProgress('coins', coins);
   }
 };
 
@@ -86,5 +96,5 @@ const exit = (...ids) => {
   game.menu = true;
   game.active = false;
   refreshGame();
-  saveProgress();
+  saveProgress('coins', coins);
 };

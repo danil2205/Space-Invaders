@@ -21,6 +21,7 @@ class Player {
       };
     };
   }
+
   draw() {
     ctx.save();
     ctx.globalAlpha = this.opacity;
@@ -56,9 +57,9 @@ class Player {
   }
 
   deleteShots() {
-    shots.forEach((shot, index) => {
+    for (const [index, shot] of shots.entries()) {
       if (shot.position.x >= canvas.height) shots.splice(index, 1);
-    });
+    }
   }
 
   removeLives() {
@@ -107,6 +108,7 @@ class Boss {
       this.position.x + this.width > canvas.width ||
       this.position.x + canvas.width < canvas.width
     ) this.velocity.x = -this.velocity.x;
+
     if (
       this.position.y + this.height > canvas.height ||
       this.position.y + canvas.height < canvas.height
@@ -131,17 +133,11 @@ class Boss {
   }
 
   deleteBoss() {
-    const TIME_TO_DISAPPEAR = 30000;
-    if (bosses.length > 0) setTimeout(() => {
-      bosses = [];
-      toggleScreen(false, 'bossAnnounce');
-    }, TIME_TO_DISAPPEAR);
-
     if (this.health === 0) {
       coins += 20;
-      dailyMissionText === 'Kill 5 Bosses' ? counterMission++ : dailyMissionText;
       bosses = [];
       toggleScreen(false, 'bossAnnounce');
+      if (dailyMission.innerText === 'Kill 5 Bosses') counterMission++;
     }
   }
 
@@ -184,9 +180,7 @@ class Stone {
   }
 
   delete() {
-    if (this.position.y >= canvas.height) {
-      setTimeout(() => stones.splice(0, 1));
-    }
+    if (this.position.y >= canvas.height) stones.splice(0, 1);
   }
 
   update() {
@@ -213,7 +207,7 @@ class Cosmonaut extends Stone {
   }
 
   delete() {
-    if (this.position.y >= canvas.height) setTimeout(() => cosmonauts.splice(0, 1));
+    if (this.position.y >= canvas.height) cosmonauts.splice(0, 1);
   }
 }
 
@@ -264,12 +258,12 @@ class Pet {
   }
 
   cosmonautsCollect() {
-    cosmonauts.forEach((cosmonaut, index) => {
+    for (const [index, cosmonaut] of cosmonauts.entries()) {
       if (!checkCollision({ object1: cosmonaut, object2: player })) {
         getPoints();
         cosmonauts.splice(index, 1);
       }
-    });
+    };
   }
 
   coinDoubling() {
@@ -391,7 +385,7 @@ class PowerUp {
   }
 
   delete() {
-    if (this.position.y >= canvas.height) setTimeout(() => powerups.splice(0, 1));
+    if (this.position.y >= canvas.height) powerups.splice(0, 1);
   }
 
   update() {
