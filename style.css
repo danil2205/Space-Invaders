@@ -150,6 +150,12 @@ body {
     left: 47.5%;
 }
 
+.imgLives img {
+    content: url("./img/heart.png");
+    width: 30px;
+    height: 30px;
+}
+
 button {
     border: none;
     font-family: 'VT323', sans-serif;

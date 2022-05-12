@@ -128,9 +128,6 @@ const showLives = () => {
   imgLives.innerHTML = ''; // to delete all lives from screen
   for (let i = 0; i < player.lives; i++) {
     const image = new Image();
-    image.src = './img/heart.png';
-    image.width = 30;
-    image.height = 30;
     imgLives.append(image);
   }
 };
@@ -177,15 +174,23 @@ const checkMissionProgress = () => {
 };
 
 const countDown = () => {
-  const countDownTimer = document.querySelector('#countDownTimer');
+  const countDownTimer = document.getElementById('countDownTimer');
   toggleScreen(true, 'countdown');
-  setTimeout(() => countDownTimer.textContent = '2', 1000);
-  setTimeout(() => countDownTimer.textContent = '1', 2000);
-  countDownTimer.textContent = '3';
+
+  const timer = setInterval(() => {
+    if (countDownTimer.innerHTML === '0') {
+      clearInterval(timer);
+      game.active = true;
+      game.pause = false;
+      toggleScreen(false, 'countdown');
+      animate();
+    }
+    countDownTimer.innerHTML--;
+  }, 1000);
 };
 
 const spawnObject = (framesToSpawn, arrayName, className, scale) => {
-  if (frames % Math.floor(framesToSpawn / speed) === 0 && frames !== 0) arrayName.push(new className(scale, {
+  if (frames % Math.floor(framesToSpawn / speed) === 0) arrayName.push(new className(scale, {
     position: {
       x: randomNum(canvas.width),
       y: 0,
@@ -218,7 +223,7 @@ const changeBestScore = () => {
   }
 };
 
-const lose = () => {
+const lose = (...ids) => {
   const scoreGameOver = document.querySelector('#scoreGameOver');
   const boomSound = document.querySelector('#boomSound');
   if (!game.over) {
@@ -229,8 +234,7 @@ const lose = () => {
       game.active = false;
       audio.pause();
       scoreGameOver.innerHTML = score;
-      toggleScreen(false, 'bossAnnounce');
-      toggleScreen(false, 'canvas');
+      for (const id of ids) toggleScreen(false, id);
       toggleScreen(true, 'screen');
     }, 2000);
   }
@@ -257,7 +261,7 @@ backgroundStars();
 const updateBackgroundStars = () => {
   for (const [index, particle] of particles.entries()) {
     if (particle.position.y - particle.radius >= canvas.height) particle.position.y = -particle.radius;
-    if (particle.opacity < 1) setTimeout(() => particles.splice(index, 1));
+    if (particle.opacity < 1) particles.splice(index, 1);
     particle.update();
   }
 };
@@ -339,7 +343,7 @@ const updateStone = () => {
       if (checkCollision({ object1: stone, object2: player })) {
         stones.splice(index, 1);
         delLives();
-        if (player.lives === 0) lose();
+        if (player.lives === 0) lose('bossAnnounce', 'abilityPet', 'canvas');
       }
     }
   }
@@ -370,7 +374,7 @@ const updateShots = () => {
     shot.update();
     if (checkCollisionBossShot({ object1: shot, object2: player })) {
       delLives();
-      if (player.lives === 0) lose();
+      if (player.lives === 0) lose('bossAnnounce', 'abilityPet', 'canvas');
       shots.splice(index, 1);
     }
     for (const boss of bosses) {
@@ -411,12 +415,6 @@ const pause = () => {
   if (!game.active && !game.menu && !game.over) {
     toggleScreen(false, 'pause');
     countDown();
-    setTimeout(() => {
-      game.active = true;
-      game.pause = false;
-      toggleScreen(false, 'countdown');
-      animate();
-    }, 3000);
   } else if (game.active && !game.menu && !game.over) {
     const pauseSound = document.querySelector('#pauseSound');
     pauseSound.play();
@@ -449,6 +447,7 @@ const refreshGame = () => {
   if (!game.menu) {
     toggleScreen(false, 'screen');
     toggleScreen(true, 'canvas');
+    toggleScreen(true, 'abilityPet');
     animate();
   }
 };
