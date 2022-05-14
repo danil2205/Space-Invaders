@@ -156,6 +156,25 @@ body {
     height: 30px;
 }
 
+.boss {
+    display: none;
+    position: fixed;
+    width: 200px;
+    top: 20%;
+    left: 44.5%;
+}
+
+.ammoType {
+    position: fixed;
+    left: 1400px;
+    display: none;
+}
+
+.ammoType img {
+    width: 50px;
+    height: 50px;
+}
+
 button {
     border: none;
     font-family: 'VT323', sans-serif;

@@ -8,6 +8,9 @@ const costPetUpgrade = document.querySelector('#costPetUpgrade');
 const abilityPet = document.querySelector('#abilityPet');
 const dailyMission = document.querySelector('#dailyMission');
 const progressMission = document.querySelector('#progressMission');
+const APShell = document.querySelector('#APShell');
+const HEASShell = document.querySelector('#HEASShell');
+const HEShell = document.querySelector('#HEShell');
 const audio = document.querySelector('#audio');
 audio.volume = 0.1;
 
@@ -64,6 +67,24 @@ const difficulties = {
   'hard': 1.2,
   'master': 1.5,
   'impossible': 2,
+};
+
+const ammoDamages = {
+  APShell: 15,
+  HEASShell: 10,
+  HEShell: 30,
+};
+
+const ammoTypesImage = [APShell, HEASShell, HEShell];
+
+const changeAmmoType = (ammoTypeImage) => {
+  for (const ammoImage of ammoTypesImage) ammoImage.style.border = '';
+  ammoTypeImage.style.border = '1px solid white';
+};
+
+const changeAmmoDamage = (ammoType) => {
+  player.ammoType = ammoType;
+  player.ammoDamage = ammoDamages[ammoType];
 };
 
 const getSkinShip = () => {
@@ -379,7 +400,7 @@ const updateShots = () => {
     }
     for (const boss of bosses) {
       if (checkCollisionPlayerShot({ object1: boss, object2: shot })) {
-        boss.health -= 20;
+        boss.health -= player.ammoDamage;
         document.querySelector('#bossHP').style.width = boss.health;
         shots.splice(index, 1);
       }
@@ -471,6 +492,18 @@ window.addEventListener('keydown', (event) => {
     break;
   case ' ':
     if (!game.over) player.shoot();
+    break;
+  case '1':
+    changeAmmoDamage('APShell');
+    changeAmmoType(APShell);
+    break;
+  case '2':
+    changeAmmoDamage('HEASShell');
+    changeAmmoType(HEASShell);
+    break;
+  case '3':
+    changeAmmoDamage('HEShell');
+    changeAmmoType(HEShell);
     break;
   }
 });

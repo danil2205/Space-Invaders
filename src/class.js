@@ -7,6 +7,8 @@ class Player {
       y: 0,
     };
     this.lives = 3;
+    this.ammoType = 'APShell';
+    this.ammoDamage = 15;
     this.opacity = 1;
     const image = new Image();
     image.src = './img/ship1.png';

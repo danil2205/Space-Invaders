@@ -13,7 +13,7 @@
         <p style="left: 1000px; top: 10px;">
             <span id="coins">0</span> <img src="./img/coin.png">
         </p>
-        <p style="left: 800px; top: 140px;">
+        <p style="left: 800px; top: 220px;">
             <span id="abilityPet">Ability of your Pet is Ready</span>
         </p>
     </div>
@@ -21,7 +21,7 @@
     <div id="menu" class="menu">
         <div>
             <h1>Menu</h1>
-            <button onclick="play('canvas', 'allScore', 'imgLives')">Play</button>
+            <button onclick="play('canvas', 'allScore', 'imgLives', 'ammoTypes')">Play</button>
             <button onclick="changeDifficulty()">Difficulty</button>
             <button onclick="petMenu()">Pet</button>
             <button onclick="shop()">Shop</button>
@@ -71,7 +71,7 @@
     <div id="tutorial" class="preparation">
         <div style="width: 500px;">
             <h2 style="color: red">COLLECT COSMONAUTS! <br /> DON'T FACE WITH STONES!</h2>
-            <h2 style="color: cyan">'A/D' -> MOVE <br /> 'M' -> TOGGLE MUSIC <br /> 'SPACE' -> SHOOT <br /> 'X' -> Turn On Ability of Pet (In Future)</h2>
+            <h2 style="color: cyan">'A/D' -> MOVE <br /> 'M' -> TOGGLE MUSIC <br /> 'SPACE' -> SHOOT <br /> 'X' -> Turn On Ability of Pet <br /> '1', '2', '3' -> Choose Ammo Type (in future)</h2>
             <h2 style="color: yellow">GOOD LUCK!</h2>
             <button onclick="back('menu')">Back</button>
         </div>
@@ -80,7 +80,7 @@
     <div id="shop" class="shop">
         <div>
             <h1>Shop</h1>
-            <span>Choose your skin: </span><input id="skinID" type="range" min="1" max="5" step="1">
+            <span>Choose your skin: </span><input id="skinID" type="range" min="1" max="4" step="1">
             <img id="shipImg" style="width: 80px; height: 80px;">
             <button onclick="buyLife()" style="margin-top: 20px">Buy x1 Live</button>
 
@@ -96,7 +96,7 @@
             <h1>Game Over</h1>
             <h1 id="scoreGameOver">0</h1>
             <button onclick="refreshGame()">Try Again</button>
-            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'imgLives', 'bossAnnounce')">In Main Menu</button>
+            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'imgLives', 'bossAnnounce', 'ammoTypes')">In Main Menu</button>
         </div>
     </div>
 
@@ -111,7 +111,7 @@
         <div>
             <h1>Paused</h1>
             <button onclick="pause()">Resume</button>
-            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'imgLives', 'bossAnnounce')">Exit</button>
+            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'imgLives', 'bossAnnounce', 'ammoTypes')">Exit</button>
         </div>
     </div>
 
@@ -121,9 +121,15 @@
 
     <div id="imgLives" class="imgLives"></div>
 
-    <div id="bossAnnounce" style="display: none; position: fixed; width: 200px; top: 20%; left: 44.5%;">
+    <div id="bossAnnounce" class="boss">
         <h2 style="color: white; display: block; position: fixed; top:12%; left: 39%; text-align: center">Kill the Boss or Survive 30 Seconds</h2>
         <div id="bossHP" style="background-color: red; height: 15px; width: 100%"></div>
+    </div>
+
+    <div id="ammoTypes" class="ammoType">
+        <div><img id="APShell" src="./img/AP.png"></div>
+        <div><img id="HEASShell" src="./img/HEAS.png"></div>
+        <div><img id="HEShell" src="./img/HE.png"></div>
     </div>
 
 
