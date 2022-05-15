@@ -170,9 +170,24 @@ body {
     display: none;
 }
 
-.ammoType img {
+.ammoType img, .consumables img {
     width: 50px;
     height: 50px;
+}
+
+.consumables {
+    position: fixed;
+    top: 650px;
+    left: 1400px;
+    display: none;
+}
+
+.consumables h2 {
+    display: none;
+    position: fixed;
+    color: red;
+    top: 627px;
+    left: 1420px;
 }
 
 .reload {

@@ -10,6 +10,7 @@ class Player {
     this.ammoType = 'APShell';
     this.ammoDamage = 15;
     this.ammoColor = 'red';
+    this.isAdrenalineUsed = false;
     this.opacity = 1;
     const image = new Image();
     image.src = './img/ship1.png';
@@ -45,8 +46,9 @@ class Player {
   }
 
   shoot() {
-    const reloadTime = 3;
-    if (progressBar.value === reloadTime) {
+    const RELOAD_TIME = 3;
+    const RELOAD_TIME_ADRENALINE = 2;
+    if (progressBar.value === RELOAD_TIME || (progressBar.value === RELOAD_TIME_ADRENALINE && this.isAdrenalineUsed)) {
       progressBar.value = 0;
       shots.push(new Shot({
         position: {
@@ -60,8 +62,8 @@ class Player {
         radius: 5,
         color: this.ammoColor,
       }));
+      changeProgressReload();
     }
-    changeProgressReload();
   }
 
   deleteShots() {

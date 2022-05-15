@@ -31,6 +31,7 @@ let bosses = [];
 let shots = [];
 const rewardMission = 100;
 let counterMission = 0;
+let adrenalineCooldown = false;
 
 const powerupList = ['Shield', 'Score Multiplier', 'Coin Multiplier'];
 
@@ -84,7 +85,6 @@ const changeProgressReload = () => {
   progressBar.value += 0.05;
   setTimeout(changeProgressReload, 50);
 };
-changeProgressReload();
 
 const changeAmmoType = (ammoTypeImage) => {
   for (const ammoImage of ammoTypesImage) ammoImage.style.border = '';
@@ -180,6 +180,30 @@ const toggleScreen = (toggle, ...ids) => {
   }
 };
 
+const useAdrenaline = () => {
+  if (adrenalineCooldown || !game.active) return;
+  const actionTimeAdrenaline = document.querySelector('#actionTimeAdrenaline');
+  toggleScreen(true, 'actionTimeAdrenaline');
+  const ACTION_OF_ADRENALINE = 10;
+  const ADRENALINE_COOLDOWN = 100000;
+  progressBar.max = 2;
+  player.isAdrenalineUsed = true;
+  adrenalineCooldown = true;
+
+  const timer = setInterval(() => {
+    if (actionTimeAdrenaline.innerHTML === '0') {
+      clearInterval(timer);
+      progressBar.max = 3;
+      player.isAdrenalineUsed = false;
+      toggleScreen(false, 'actionTimeAdrenaline');
+      actionTimeAdrenaline.innerHTML = ACTION_OF_ADRENALINE;
+    }
+    actionTimeAdrenaline.innerHTML--;
+  }, 1000);
+
+  setTimeout(() => adrenalineCooldown = false, ADRENALINE_COOLDOWN);
+};
+
 const setStatusMission = () => {
   toggleScreen(true, 'claimReward');
   progressMission.innerHTML = 'Progress - Completed';
@@ -221,7 +245,7 @@ const countDown = () => {
 };
 
 const spawnObject = (framesToSpawn, arrayName, className, scale) => {
-  if (frames % Math.floor(framesToSpawn / speed) === 0) arrayName.push(new className(scale, {
+  if (frames % Math.floor(framesToSpawn / speed) === 0 && frames !== 0) arrayName.push(new className(scale, {
     position: {
       x: randomNum(canvas.width),
       y: 0,
@@ -374,7 +398,7 @@ const updateStone = () => {
       if (checkCollision({ object1: stone, object2: player })) {
         stones.splice(index, 1);
         delLives();
-        if (player.lives === 0) lose('bossAnnounce', 'abilityPet', 'canvas', 'ammoTypes', 'reloadGun');
+        if (player.lives === 0) lose('bossAnnounce', 'abilityPet', 'canvas', 'ammoTypes', 'reloadGun', 'consumables');
       }
     }
   }
@@ -407,7 +431,7 @@ const updateShots = () => {
     if (checkCollisionBossShot({ object1: shot, object2: player })) {
       explosionSound.play();
       delLives();
-      if (player.lives === 0) lose('bossAnnounce', 'abilityPet', 'canvas', 'ammoTypes', 'reloadGun');
+      if (player.lives === 0) lose('bossAnnounce', 'abilityPet', 'canvas', 'ammoTypes', 'reloadGun', 'reloadGun');
       shots.splice(index, 1);
     }
     for (const boss of bosses) {
@@ -517,6 +541,9 @@ window.addEventListener('keydown', (event) => {
   case '3':
     changeAmmoStats('HEShell');
     changeAmmoType(HEShell);
+    break;
+  case '4':
+    useAdrenaline();
     break;
   }
 });
