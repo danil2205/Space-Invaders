@@ -9,6 +9,7 @@ class Player {
     this.lives = 3;
     this.ammoType = 'APShell';
     this.ammoDamage = 15;
+    this.ammoColor = 'red';
     this.opacity = 1;
     const image = new Image();
     image.src = './img/ship1.png';
@@ -44,18 +45,23 @@ class Player {
   }
 
   shoot() {
-    shots.push(new Shot({
-      position: {
-        x: this.position.x + this.width / 2,
-        y: this.position.y,
-      },
-      velocity: {
-        x: 0,
-        y: -5 * speed,
-      },
-      radius: 5,
-      color: 'yellow',
-    }));
+    const reloadTime = 3;
+    if (progressBar.value === reloadTime) {
+      progressBar.value = 0;
+      shots.push(new Shot({
+        position: {
+          x: this.position.x + this.width / 2,
+          y: this.position.y,
+        },
+        velocity: {
+          x: 0,
+          y: -5 * speed,
+        },
+        radius: 5,
+        color: this.ammoColor,
+      }));
+    }
+    changeProgressReload();
   }
 
   deleteShots() {
@@ -135,7 +141,7 @@ class Boss {
   }
 
   deleteBoss() {
-    if (this.health === 0) {
+    if (this.health <= 0) {
       coins += 20;
       bosses = [];
       toggleScreen(false, 'bossAnnounce');

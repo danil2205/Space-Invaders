@@ -2,6 +2,7 @@
     <audio src="./music/cool.mpeg" id="audio" paused="true"></audio>
     <audio src="./music/boom.mp3" id="boomSound" paused="true"></audio>
     <audio src="./music/pause.mp3" id="pauseSound" paused="true"></audio>
+    <audio src="./music/explosion.mp3" id="explosionSound" paused="true"></audio>
 
     <div id="allScore" class="allScore">
         <p style="left: 1280px; top: 10px;">
@@ -21,7 +22,7 @@
     <div id="menu" class="menu">
         <div>
             <h1>Menu</h1>
-            <button onclick="play('canvas', 'allScore', 'imgLives', 'ammoTypes')">Play</button>
+            <button onclick="play('canvas', 'allScore', 'imgLives', 'ammoTypes', 'reloadGun')">Play</button>
             <button onclick="changeDifficulty()">Difficulty</button>
             <button onclick="petMenu()">Pet</button>
             <button onclick="shop()">Shop</button>
@@ -71,7 +72,7 @@
     <div id="tutorial" class="preparation">
         <div style="width: 500px;">
             <h2 style="color: red">COLLECT COSMONAUTS! <br /> DON'T FACE WITH STONES!</h2>
-            <h2 style="color: cyan">'A/D' -> MOVE <br /> 'M' -> TOGGLE MUSIC <br /> 'SPACE' -> SHOOT <br /> 'X' -> Turn On Ability of Pet <br /> '1', '2', '3' -> Choose Ammo Type (in future)</h2>
+            <h2 style="color: cyan">'A/D' -> MOVE <br /> 'M' -> TOGGLE MUSIC <br /> 'SPACE' -> SHOOT <br /> 'X' -> TURN ON ABILITY OF PET <br /> '1', '2', '3' -> CHOOSE AMMO TYPE</h2>
             <h2 style="color: yellow">GOOD LUCK!</h2>
             <button onclick="back('menu')">Back</button>
         </div>
@@ -96,7 +97,7 @@
             <h1>Game Over</h1>
             <h1 id="scoreGameOver">0</h1>
             <button onclick="refreshGame()">Try Again</button>
-            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'imgLives', 'bossAnnounce', 'ammoTypes')">In Main Menu</button>
+            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'imgLives', 'bossAnnounce', 'ammoTypes', 'reloadGun')">In Main Menu</button>
         </div>
     </div>
 
@@ -111,7 +112,7 @@
         <div>
             <h1>Paused</h1>
             <button onclick="pause()">Resume</button>
-            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'imgLives', 'bossAnnounce', 'ammoTypes')">Exit</button>
+            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'imgLives', 'bossAnnounce', 'ammoTypes', 'reloadGun')">Exit</button>
         </div>
     </div>
 
@@ -132,6 +133,7 @@
         <div><img id="HEShell" src="./img/HE.png"></div>
     </div>
 
+    <progress id="reloadGun" class="reload" value="3" max="3"></progress>
 
 
     <canvas style="display: none" id="canvas"></canvas>

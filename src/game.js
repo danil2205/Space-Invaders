@@ -3,14 +3,12 @@
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 const bestScoreText = document.querySelector('#bestScore');
-const costMulti = document.querySelector('#costMulti');
-const costPetUpgrade = document.querySelector('#costPetUpgrade');
-const abilityPet = document.querySelector('#abilityPet');
 const dailyMission = document.querySelector('#dailyMission');
 const progressMission = document.querySelector('#progressMission');
 const APShell = document.querySelector('#APShell');
 const HEASShell = document.querySelector('#HEASShell');
 const HEShell = document.querySelector('#HEShell');
+const progressBar = document.querySelector('#reloadGun');
 const audio = document.querySelector('#audio');
 audio.volume = 0.1;
 
@@ -19,8 +17,6 @@ canvas.height = 960;
 
 
 let coins = 0;
-let levelMultiplier = 2;
-let levelPetUpgrade = 0;
 let speed = 1;
 let frames = 0;
 let score = 0;
@@ -75,16 +71,30 @@ const ammoDamages = {
   HEShell: 30,
 };
 
+const ammoColors = {
+  APShell: 'red',
+  HEASShell: 'yellow',
+  HEShell: 'orange',
+};
+
 const ammoTypesImage = [APShell, HEASShell, HEShell];
+
+const changeProgressReload = () => {
+  if (progressBar.value >= progressBar.max) return;
+  progressBar.value += 0.05;
+  setTimeout(changeProgressReload, 50);
+};
+changeProgressReload();
 
 const changeAmmoType = (ammoTypeImage) => {
   for (const ammoImage of ammoTypesImage) ammoImage.style.border = '';
   ammoTypeImage.style.border = '1px solid white';
 };
 
-const changeAmmoDamage = (ammoType) => {
+const changeAmmoStats = (ammoType) => {
   player.ammoType = ammoType;
   player.ammoDamage = ammoDamages[ammoType];
+  player.ammoColor = ammoColors[ammoType];
 };
 
 const getSkinShip = () => {
@@ -364,7 +374,7 @@ const updateStone = () => {
       if (checkCollision({ object1: stone, object2: player })) {
         stones.splice(index, 1);
         delLives();
-        if (player.lives === 0) lose('bossAnnounce', 'abilityPet', 'canvas');
+        if (player.lives === 0) lose('bossAnnounce', 'abilityPet', 'canvas', 'ammoTypes', 'reloadGun');
       }
     }
   }
@@ -391,15 +401,18 @@ const updateBoss = () => {
 };
 
 const updateShots = () => {
+  const explosionSound = document.querySelector('#explosionSound');
   for (const [index, shot] of shots.entries()) {
     shot.update();
     if (checkCollisionBossShot({ object1: shot, object2: player })) {
+      explosionSound.play();
       delLives();
-      if (player.lives === 0) lose('bossAnnounce', 'abilityPet', 'canvas');
+      if (player.lives === 0) lose('bossAnnounce', 'abilityPet', 'canvas', 'ammoTypes', 'reloadGun');
       shots.splice(index, 1);
     }
     for (const boss of bosses) {
       if (checkCollisionPlayerShot({ object1: boss, object2: shot })) {
+        explosionSound.play();
         boss.health -= player.ammoDamage;
         document.querySelector('#bossHP').style.width = boss.health;
         shots.splice(index, 1);
@@ -494,15 +507,15 @@ window.addEventListener('keydown', (event) => {
     if (!game.over) player.shoot();
     break;
   case '1':
-    changeAmmoDamage('APShell');
+    changeAmmoStats('APShell');
     changeAmmoType(APShell);
     break;
   case '2':
-    changeAmmoDamage('HEASShell');
+    changeAmmoStats('HEASShell');
     changeAmmoType(HEASShell);
     break;
   case '3':
-    changeAmmoDamage('HEShell');
+    changeAmmoStats('HEShell');
     changeAmmoType(HEShell);
     break;
   }

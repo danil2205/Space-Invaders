@@ -1,5 +1,11 @@
 'use strict';
 
+const costMulti = document.querySelector('#costMulti');
+const costPetUpgrade = document.querySelector('#costPetUpgrade');
+const abilityPet = document.querySelector('#abilityPet');
+let levelMultiplier = 2;
+let levelPetUpgrade = 0;
+
 const play = (...ids) => {
   showLives();
   audio.load();

@@ -175,6 +175,13 @@ body {
     height: 50px;
 }
 
+.reload {
+    display: none;
+    top: 960px;
+    position: fixed;
+    width: 100px;
+}
+
 button {
     border: none;
     font-family: 'VT323', sans-serif;
