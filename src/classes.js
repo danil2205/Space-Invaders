@@ -1,5 +1,33 @@
 'use strict';
 
+class Game {
+  constructor() {
+    this.player = new Player();
+    this.pet = new Pet();
+    this.levelMultiplier = 2 || localStorage['levelMultiplier'];
+    this.levelPetUpgrade = 0 || localStorage['levelPetUpgrade'];
+    this.bestScore = 0 || localStorage['bestScore'];
+    this.coins = 0 || +localStorage['coins'];
+    this.speed = 1;
+    this.frames = 0;
+    this.score = 0;
+    this.adrenalineCooldown = false;
+    this.counterMission = 0;
+    this.stones = [];
+    this.particles = [];
+    this.cosmonauts = [];
+    this.powerups = [];
+    this.bosses = [];
+    this.shots = [];
+  }
+
+  speedUp() {
+    const SPEED_BOOST = 0.1;
+    if (this.frames % 500 === 0) this.speed += SPEED_BOOST;
+  }
+
+}
+
 class Player {
   constructor() {
     this.velocity = {
@@ -11,6 +39,7 @@ class Player {
     this.ammoDamage = 15;
     this.ammoColor = 'red';
     this.isAdrenalineUsed = false;
+    this.powerUp = null;
     this.opacity = 1;
     const image = new Image();
     image.src = './img/ship1.png';
@@ -40,9 +69,9 @@ class Player {
   }
 
   move() {
-    if (keys.a.pressed && player.position.x + canvas.width > canvas.width) player.velocity.x = -5;
-    else if (keys.d.pressed && player.position.x + player.width < canvas.width) player.velocity.x = 5;
-    else player.velocity.x = 0;
+    if (keys.a.pressed && this.position.x + canvas.width > canvas.width) this.velocity.x = -5;
+    else if (keys.d.pressed && this.position.x + this.width < canvas.width) this.velocity.x = 5;
+    else this.velocity.x = 0;
   }
 
   shoot() {
@@ -50,14 +79,14 @@ class Player {
     const RELOAD_TIME_ADRENALINE = 2;
     if (progressBar.value === RELOAD_TIME || (progressBar.value === RELOAD_TIME_ADRENALINE && this.isAdrenalineUsed)) {
       progressBar.value = 0;
-      shots.push(new Shot({
+      game.shots.push(new Shot({
         position: {
           x: this.position.x + this.width / 2,
           y: this.position.y,
         },
         velocity: {
           x: 0,
-          y: -5 * speed,
+          y: -5 * game.speed,
         },
         radius: 5,
         color: this.ammoColor,
@@ -67,13 +96,13 @@ class Player {
   }
 
   deleteShots() {
-    for (const [index, shot] of shots.entries()) {
-      if (shot.position.x >= canvas.height) shots.splice(index, 1);
+    for (const [index, shot] of game.shots.entries()) {
+      if (shot.position.x >= canvas.height) game.shots.splice(index, 1);
     }
   }
 
   removeLives() {
-    if (player.powerUp !== 'Shield' && pet.ability !== 'Shield') this.lives--;
+    if (this.powerUp !== 'Shield' && game.pet.ability !== 'Shield') this.lives--;
   }
 
   update() {
@@ -126,15 +155,15 @@ class Boss {
   }
 
   shoot() {
-    if (frames % 100 === 0) {
-      shots.push(new Shot({
+    if (game.frames % 100 === 0) {
+      game.shots.push(new Shot({
         position: {
           x: this.position.x + this.width / 2,
           y: this.position.y + this.height,
         },
         velocity: {
           x: 0,
-          y: 7 * speed,
+          y: 7 * game.speed,
         },
         radius: 5,
         color: 'white',
@@ -144,10 +173,10 @@ class Boss {
 
   deleteBoss() {
     if (this.health <= 0) {
-      coins += 20;
-      bosses = [];
+      game.coins += 20;
+      game.bosses = [];
       toggleScreen(false, 'bossAnnounce');
-      if (dailyMission.innerText === 'Kill 5 Bosses') counterMission++;
+      if (dailyMission.innerText === 'Kill 5 Bosses') game.counterMission++;
     }
   }
 
@@ -185,12 +214,13 @@ class Stone {
     );
   }
 
+
   move() {
-    this.position.y += 3 * speed;
+    this.position.y += 3 * game.speed;
   }
 
   delete() {
-    if (this.position.y >= canvas.height) stones.splice(0, 1);
+    if (this.position.y >= canvas.height) game.stones.splice(0, 1);
   }
 
   update() {
@@ -217,7 +247,7 @@ class Cosmonaut extends Stone {
   }
 
   delete() {
-    if (this.position.y >= canvas.height) cosmonauts.splice(0, 1);
+    if (this.position.y >= canvas.height) game.cosmonauts.splice(0, 1);
   }
 }
 
@@ -239,8 +269,8 @@ class Pet {
       this.width = image.width * scale;
       this.height = image.height * scale;
       this.position = {
-        x: player.position.x - player.width,
-        y: player.position.y - player.height,
+        x: game.player.position.x - game.player.width,
+        y: game.player.position.y - game.player.height,
       };
     };
   }
@@ -256,24 +286,24 @@ class Pet {
   }
 
   move() {
-    if (this.position.x >= player.position.x + player.width) this.velocity.x = -3;
-    else if (this.position.x <= player.position.x - player.width) this.velocity.x = 3;
+    if (this.position.x >= game.player.position.x + game.player.width) this.velocity.x = -3;
+    else if (this.position.x <= game.player.position.x - game.player.width) this.velocity.x = 3;
   }
 
   healShip() {
     if (this.ability === 'Heal') {
-      player.lives += 1;
+      game.player.lives += 1;
       this.ability = null;
     }
   }
 
   cosmonautsCollect() {
-    for (const [index, cosmonaut] of cosmonauts.entries()) {
-      if (!checkCollision({ object1: cosmonaut, object2: player })) {
+    for (const [index, cosmonaut] of game.cosmonauts.entries()) {
+      if (!checkCollision({ object1: cosmonaut, object2: game.player })) {
         getPoints();
-        cosmonauts.splice(index, 1);
+        game.cosmonauts.splice(index, 1);
       }
-    };
+    }
   }
 
   coinDoubling() {
@@ -294,7 +324,7 @@ class Pet {
       this.ability = this.abilityMenu;
       setTimeout(() => {
         this.ability = null;
-      }, 2000 + 250 * levelPetUpgrade); // 2 seconds + 0.25 seconds for each upgrade
+      }, 2000 + 250 * game.levelPetUpgrade); // 2 seconds + 0.25 seconds for each upgrade
     }
   }
 
@@ -351,7 +381,7 @@ class Shot extends Particle {
     if (
       this.position.y >= canvas.height ||
       this.position.y + canvas.height < canvas.height
-    ) shots.splice(0, 1);
+    ) game.shots.splice(0, 1);
   }
 
   update() {
@@ -391,11 +421,11 @@ class PowerUp {
   }
 
   move() {
-    this.position.y += this.velocity.y * speed;
+    this.position.y += this.velocity.y * game.speed;
   }
 
   delete() {
-    if (this.position.y >= canvas.height) powerups.splice(0, 1);
+    if (this.position.y >= canvas.height) game.powerups.splice(0, 1);
   }
 
   update() {

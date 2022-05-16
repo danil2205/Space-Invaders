@@ -3,8 +3,6 @@
 const costMulti = document.querySelector('#costMulti');
 const costPetUpgrade = document.querySelector('#costPetUpgrade');
 const abilityPet = document.querySelector('#abilityPet');
-let levelMultiplier = 2;
-let levelPetUpgrade = 0;
 
 const play = (...ids) => {
   showLives();
@@ -12,9 +10,9 @@ const play = (...ids) => {
   audio.play();
   toggleScreen(false, 'menu');
   for (const id of ids) toggleScreen(true, id);
-  game.active = true;
-  game.menu = false;
-  document.querySelector('#coins').innerText = coins;
+  gameStates.active = true;
+  gameStates.menu = false;
+  document.querySelector('#coins').innerText = game.coins;
   animate();
 };
 
@@ -24,7 +22,7 @@ const changeDifficulty = () => {
 };
 
 const changeSpeed = (difficultySpeed) => {
-  speed = difficultySpeed;
+  game.speed = difficultySpeed;
   toggleScreen(false, 'difficulty');
   toggleScreen(true, 'menu');
 };
@@ -40,32 +38,32 @@ const shop = () => {
 };
 
 const upgradeMultiplier = () => {
-  if (costMulti.innerText <= coins) {
-    coins -= costMulti.innerText;
+  if (costMulti.innerText <= game.coins) {
+    game.coins -= costMulti.innerText;
     costMulti.innerText *= 2;
-    levelMultiplier++;
+    game.levelMultiplier++;
     saveProgress('costMultiplier', +costMulti.innerHTML);
-    saveProgress('levelMultiplier', levelMultiplier);
-    saveProgress('coins', coins);
+    saveProgress('levelMultiplier', game.levelMultiplier);
+    saveProgress('coins', game.coins);
   }
 };
 
 const upgradePet = () => {
-  if (coins >= costPetUpgrade.innerText) {
-    coins -= costPetUpgrade.innerText;
+  if (game.coins >= costPetUpgrade.innerText) {
+    game.coins -= costPetUpgrade.innerText;
     costPetUpgrade.innerText *= 2;
-    levelPetUpgrade++;
+    game.levelPetUpgrade++;
     saveProgress('costPetUpgrade', +costPetUpgrade.innerHTML);
-    saveProgress('levelPetUpgrade', levelPetUpgrade);
-    saveProgress('coins', coins);
+    saveProgress('levelPetUpgrade', game.levelPetUpgrade);
+    saveProgress('coins', game.coins);
   }
 };
 
 const buyLife = () => {
   const LIFE_COST = 100;
-  if (coins >= LIFE_COST) {
-    coins -= LIFE_COST;
-    player.lives += 1;
+  if (game.coins >= LIFE_COST) {
+    game.coins -= LIFE_COST;
+    game.player.lives += 1;
     saveProgress();
   }
 };
@@ -76,7 +74,8 @@ const missions = () => {
 };
 
 const claimReward = () => {
-  coins += rewardMission;
+  const rewardMission = 100;
+  game.coins += rewardMission;
   toggleScreen(false, 'claimReward');
   counterMission = NaN; // blocking counter
 };
@@ -98,9 +97,9 @@ const back = (id) => {
 const exit = (...ids) => {
   for (const id of ids) toggleScreen(false, id);
   toggleScreen(true, 'menu');
-  game.pause = false;
-  game.menu = true;
-  game.active = false;
+  gameStates.pause = false;
+  gameStates.menu = true;
+  gameStates.active = false;
   refreshGame();
-  saveProgress('coins', coins);
+  saveProgress('coins', game.coins);
 };
