@@ -344,6 +344,7 @@ const getCoins = () => {
 
 const getPoints = () => {
   const scoreText = document.querySelector('#score');
+  if (dailyMission.innerText === 'Collect 10 Cosmonauts') game.counterMission++;
   game.score += (game.player.powerUp === 'Score Multiplier') ? game.levelMultiplier : 1;
   scoreText.innerHTML = game.score;
 };
@@ -366,80 +367,50 @@ const checkCollisionPlayerShot = ({ object1, object2 }) => (
   object1.position.y >= object2.position.y + object2.radius
 );
 
-// const updateObject = (nameArray) => {
-//   for (const object of nameArray) {
-//     object.update();
+const updateFunctions = (nameArray) => {
+  const functionCollection = {
+    [game.cosmonauts]: () => getPoints(),
+    [game.stones]: () => delLives(),
+    [game.powerups]: () => setPowerUp(),
+    [game.bosses]: () => console.log('No actions'),
+    [game.shots]: () => delLives(),
+  };
+  return functionCollection[nameArray]();
+};
+
+const updateObject = (nameArray) => {
+  for (const [index, object] of nameArray.entries()) {
+    object.update();
+    if (object.image && checkCollision({ object1: object, object2: game.player })) {
+      nameArray.splice(index, 1);
+      updateFunctions(nameArray);
+    }
+  }
+};
+
+//   const explosionSound = document.querySelector('#explosionSound');
+//   explosionSound.play();
+
+//
+// const updateShots = () => {
+//   const explosionSound = document.querySelector('#explosionSound');
+//   for (const [index, shot] of game.shots.entries()) {
+//     shot.update();
+//     if (checkCollisionBossShot({ object1: shot, object2: game.player })) {
+//       explosionSound.play();
+//       delLives();
+//       game.shots.splice(index, 1);
+//     }
+//     for (const boss of game.bosses) {
+//       if (checkCollisionPlayerShot({ object1: boss, object2: shot })) {
+//         explosionSound.play();
+//         boss.health -= game.player.ammoDamage;
+//         document.querySelector('#bossHP').style.width = boss.health;
+//         game.shots.splice(index, 1);
+//       }
+//     }
 //   }
 // };
-
-const updateCosmonaut = () => {
-  for (const [index, cosmonaut] of game.cosmonauts.entries()) {
-    cosmonaut.update();
-
-    if (cosmonaut.image && !game.over) {
-      if (checkCollision({ object1: cosmonaut, object2: game.player })) {
-        getPoints();
-        if (dailyMission.innerText === 'Collect 10 Cosmonauts') game.counterMission++;
-        game.cosmonauts.splice(index, 1);
-      }
-    }
-  }
-};
-
-const updateStone = () => {
-  for (const [index, stone] of game.stones.entries()) {
-    stone.update();
-
-    if (stone.image) {
-      if (checkCollision({ object1: stone, object2: game.player })) {
-        game.stones.splice(index, 1);
-        delLives();
-        if (game.player.lives === 0) lose('bossAnnounce', 'abilityPet', 'canvas', 'ammoTypes', 'reloadGun', 'consumables');
-      }
-    }
-  }
-};
-
-const updatePowerUps = () => {
-  for (const [index, powerup] of game.powerups.entries()) {
-    powerup.update();
-
-    if (powerup.image) {
-      if (checkCollision({ object1: powerup, object2: game.player })) {
-        setPowerUp();
-        game.powerups.splice(index, 1);
-      }
-    }
-  }
-};
-
-const updateBoss = () => {
-  if (game.bosses.length !== 0) toggleScreen(true, 'bossAnnounce');
-  for (const boss of game.bosses) {
-    boss.update();
-  }
-};
-
-const updateShots = () => {
-  const explosionSound = document.querySelector('#explosionSound');
-  for (const [index, shot] of game.shots.entries()) {
-    shot.update();
-    if (checkCollisionBossShot({ object1: shot, object2: game.player })) {
-      explosionSound.play();
-      delLives();
-      if (game.player.lives === 0) lose('bossAnnounce', 'abilityPet', 'canvas', 'ammoTypes', 'reloadGun', 'consumables');
-      game.shots.splice(index, 1);
-    }
-    for (const boss of game.bosses) {
-      if (checkCollisionPlayerShot({ object1: boss, object2: shot })) {
-        explosionSound.play();
-        boss.health -= game.player.ammoDamage;
-        document.querySelector('#bossHP').style.width = boss.health;
-        game.shots.splice(index, 1);
-      }
-    }
-  }
-};
 
 const animate = () => {
   getSkinShip();
@@ -454,12 +425,11 @@ const animate = () => {
   spawnObjects();
   updateBackgroundStars();
   getCoins();
-  updateCosmonaut();
-  updateStone();
-  updatePowerUps();
-  updateBoss();
-  updateShots();
-  // updateObject(game.cosmonauts);
+  updateObject(game.cosmonauts);
+  updateObject(game.bosses);
+  updateObject(game.powerups);
+  updateObject(game.shots);
+  updateObject(game.stones);
   changeBestScore();
   checkMissionProgress();
   game.frames++;

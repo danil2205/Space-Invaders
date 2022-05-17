@@ -74,6 +74,10 @@ class Player {
     else this.velocity.x = 0;
   }
 
+  playerDie() {
+    if (game.player.lives === 0) lose('bossAnnounce', 'abilityPet', 'canvas', 'ammoTypes', 'reloadGun', 'consumables');
+  }
+
   shoot() {
     const RELOAD_TIME = 3;
     const RELOAD_TIME_ADRENALINE = 2;
@@ -110,6 +114,7 @@ class Player {
       this.draw();
       this.move();
       this.deleteShots();
+      this.playerDie();
       this.position.x += this.velocity.x;
     }
   }
@@ -171,11 +176,15 @@ class Boss {
     }
   }
 
+  toggleBossAnnounce() {
+    if (game.bosses.length !== 0) toggleScreen(true, 'bossAnnounce');
+    else toggleScreen(false, 'bossAnnounce');
+  }
+
   deleteBoss() {
     if (this.health <= 0) {
       game.coins += 20;
       game.bosses = [];
-      toggleScreen(false, 'bossAnnounce');
       if (dailyMission.innerText === 'Kill 5 Bosses') game.counterMission++;
     }
   }
@@ -185,6 +194,7 @@ class Boss {
       this.draw();
       this.move();
       this.shoot();
+      this.toggleBossAnnounce();
       this.deleteBoss();
       this.position.x += this.velocity.x;
       this.position.y += this.velocity.y;
