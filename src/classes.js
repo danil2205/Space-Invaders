@@ -4,6 +4,7 @@ class Game {
   constructor() {
     this.player = new Player();
     this.pet = new Pet();
+    this.boss = new Boss();
     this.levelMultiplier = 2 || localStorage['levelMultiplier'];
     this.levelPetUpgrade = 0 || localStorage['levelPetUpgrade'];
     this.bestScore = 0 || localStorage['bestScore'];
@@ -17,7 +18,6 @@ class Game {
     this.particles = [];
     this.cosmonauts = [];
     this.powerups = [];
-    this.bosses = [];
     this.shots = [];
   }
 
@@ -121,19 +121,23 @@ class Player {
 }
 
 class Boss {
-  constructor(scale, { position }) {
+  constructor() {
     this.velocity = {
       x: 5,
       y: 3,
     };
     this.health = 200;
+    this.scale = 0.35;
     const image = new Image();
     image.src = './img/boss.png';
     image.onload = () => {
       this.image = image;
-      this.width = image.width * scale;
-      this.height = image.height * scale;
-      this.position = position;
+      this.width = image.width * this.scale;
+      this.height = image.height * this.scale;
+      this.position = {
+        x: randomNum(canvas.width),
+        y: 0,
+      };
     };
   }
 
@@ -176,15 +180,15 @@ class Boss {
     }
   }
 
-  toggleBossAnnounce() {
-    if (game.bosses.length !== 0) toggleScreen(true, 'bossAnnounce');
-    else toggleScreen(false, 'bossAnnounce');
+  enableAnnounce() {
+    if (game.boss.health === 0) toggleScreen(false, 'bossAnnounce');
+    else toggleScreen(true, 'bossAnnounce');
   }
 
   deleteBoss() {
     if (this.health <= 0) {
       game.coins += 20;
-      game.bosses = [];
+      game.boss = undefined;
       if (dailyMission.innerText === 'Kill 5 Bosses') game.counterMission++;
     }
   }
@@ -194,7 +198,7 @@ class Boss {
       this.draw();
       this.move();
       this.shoot();
-      this.toggleBossAnnounce();
+      this.enableAnnounce();
       this.deleteBoss();
       this.position.x += this.velocity.x;
       this.position.y += this.velocity.y;
@@ -375,8 +379,15 @@ class Particle {
     ctx.closePath();
   }
 
+  saveParticles() {
+    if (this.position.y - this.radius >= canvas.height) {
+      this.position.y = -this.radius;
+    }
+  }
+
   update() {
     this.draw();
+    this.saveParticles();
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
   }

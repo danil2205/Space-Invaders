@@ -247,12 +247,10 @@ const spawnObjects = () => {
   const FRAMES_BIG_STONE = 150;
   const FRAMES_COSMONAUT = 80;
   const FRAMES_POWERUP = 1000;
-  const FRAMES_BOSS = 6000;
 
   if (game.pet.ability !== 'No Enemies') {
     spawnObject(FRAMES_LIL_STONE, game.stones, Stone, 0.02);
     spawnObject(FRAMES_BIG_STONE, game.stones, Stone, 0.07);
-    if (game.bosses.length === 0) spawnObject(FRAMES_BOSS, game.bosses, Boss, 0.35);
   }
   spawnObject(FRAMES_COSMONAUT, game.cosmonauts, Cosmonaut, 0.02);
   spawnObject(FRAMES_POWERUP, game.powerups, PowerUp, 0.1);
@@ -300,16 +298,6 @@ const backgroundStars = () => {
   }
 };
 backgroundStars();
-
-const updateBackgroundStars = () => {
-  for (const [index, particle] of game.particles.entries()) {
-    if (particle.position.y - particle.radius >= canvas.height) {
-      particle.position.y = -particle.radius;
-    }
-    if (particle.opacity < 1) game.particles.splice(index, 1);
-    particle.update();
-  }
-};
 
 const delPowerUp = () => {
   const ACTION_TIME = 5000;
@@ -364,7 +352,7 @@ const checkCollisionBossShot = ({ object1, object2 }) => (
 const checkCollisionPlayerShot = ({ object1, object2 }) => (
   object1.position.x + object1.width >= object2.position.x &&
   object1.position.x <= object2.position.x + object2.radius &&
-  object1.position.y >= object2.position.y + object2.radius
+  object1.position.y >= object2.position.y
 );
 
 const updateFunctions = (nameArray) => {
@@ -372,7 +360,6 @@ const updateFunctions = (nameArray) => {
     [game.cosmonauts]: () => getPoints(),
     [game.stones]: () => delLives(),
     [game.powerups]: () => setPowerUp(),
-    [game.bosses]: () => console.log('No actions'),
     [game.shots]: () => delLives(),
   };
   return functionCollection[nameArray]();
@@ -388,29 +375,21 @@ const updateObject = (nameArray) => {
   }
 };
 
-//   const explosionSound = document.querySelector('#explosionSound');
-//   explosionSound.play();
-
-//
-// const updateShots = () => {
-//   const explosionSound = document.querySelector('#explosionSound');
-//   for (const [index, shot] of game.shots.entries()) {
-//     shot.update();
-//     if (checkCollisionBossShot({ object1: shot, object2: game.player })) {
-//       explosionSound.play();
-//       delLives();
-//       game.shots.splice(index, 1);
-//     }
-//     for (const boss of game.bosses) {
-//       if (checkCollisionPlayerShot({ object1: boss, object2: shot })) {
-//         explosionSound.play();
-//         boss.health -= game.player.ammoDamage;
-//         document.querySelector('#bossHP').style.width = boss.health;
-//         game.shots.splice(index, 1);
-//       }
-//     }
-//   }
-// };
+const updateShots = () => {
+  for (const [index, shot] of game.shots.entries()) {
+    shot.update();
+    if (checkCollisionBossShot({ object1: shot, object2: game.player })) {
+      delLives();
+      game.shots.splice(index, 1);
+    }
+    if (checkCollisionPlayerShot({ object1: game.boss, object2: shot })) {
+      console.log(game.boss.health)
+      game.boss.health -= game.player.ammoDamage;
+      document.querySelector('#bossHP').style.width = game.boss.health;
+      game.shots.splice(index, 1);
+    }
+  }
+};
 
 const animate = () => {
   getSkinShip();
@@ -420,15 +399,15 @@ const animate = () => {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   game.player.update();
   game.pet.update();
+  if (game.boss.health > 0) game.boss.update();
   audio.play();
   game.speedUp();
   spawnObjects();
-  updateBackgroundStars();
   getCoins();
+  updateShots();
+  updateObject(game.particles);
   updateObject(game.cosmonauts);
-  updateObject(game.bosses);
   updateObject(game.powerups);
-  updateObject(game.shots);
   updateObject(game.stones);
   changeBestScore();
   checkMissionProgress();
@@ -459,7 +438,10 @@ const refreshGame = () => {
   toggleScreen(false, 'screen');
   showLives();
   backgroundStars();
-  if (!gameStates.menu) animate();
+  if (!gameStates.menu) {
+    toggleScreen(true, 'canvas');
+    animate();
+  }
 };
 
 const getKeyFunc = (keydown) => {

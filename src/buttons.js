@@ -77,7 +77,7 @@ const claimReward = () => {
   const rewardMission = 100;
   game.coins += rewardMission;
   toggleScreen(false, 'claimReward');
-  counterMission = NaN; // blocking counter
+  game.counterMission = NaN; // blocking counter
 };
 
 const tutorial = () => {
