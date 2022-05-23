@@ -10,6 +10,7 @@ const play = (...ids) => {
   audio.play();
   toggleScreen(false, 'menu');
   for (const id of ids) toggleScreen(true, id);
+  game.loadProgress();
   gameStates.active = true;
   gameStates.menu = false;
   document.querySelector('#coins').innerText = game.coins;
@@ -100,6 +101,7 @@ const exit = (...ids) => {
   gameStates.pause = false;
   gameStates.menu = true;
   gameStates.active = false;
+  checkMissionProgress();
   refreshGame();
   saveProgress('coins', game.coins);
 };

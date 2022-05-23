@@ -7,12 +7,11 @@ class Game {
     this.boss = new Boss();
     this.levelMultiplier = 2 || localStorage['levelMultiplier'];
     this.levelPetUpgrade = 0 || localStorage['levelPetUpgrade'];
-    this.bestScore = 0 || localStorage['bestScore'];
-    this.coins = 0 || +localStorage['coins'];
+    this.bestScore = 0;
+    this.coins = 0;
     this.speed = 1;
     this.frames = 0;
     this.score = 0;
-    this.adrenalineCooldown = false;
     this.counterMission = 0;
     this.stones = [];
     this.particles = [];
@@ -24,6 +23,24 @@ class Game {
   speedUp() {
     const SPEED_BOOST = 0.1;
     if (this.frames % 500 === 0) this.speed += SPEED_BOOST;
+  }
+
+  loadProgress() {
+    if (this.bestScore !== undefined) {
+      this.bestScore = localStorage['bestScore'];
+      this.coins = +localStorage['coins'];
+    }
+  }
+
+  updateObjects() {
+    this.player.update();
+    this.pet.update();
+    if (this.boss.health > 0) this.boss.update();
+    updateShots();
+    updateObject(this.particles);
+    updateObject(this.cosmonauts);
+    updateObject(this.powerups);
+    updateObject(this.stones);
   }
 
 }
@@ -39,6 +56,7 @@ class Player {
     this.ammoDamage = 15;
     this.ammoColor = 'red';
     this.isAdrenalineUsed = false;
+    this.adrenalineCooldown = false;
     this.powerUp = null;
     this.opacity = 1;
     const image = new Image();
@@ -79,9 +97,7 @@ class Player {
   }
 
   shoot() {
-    const RELOAD_TIME = 3;
-    const RELOAD_TIME_ADRENALINE = 2;
-    if (progressBar.value === RELOAD_TIME || (progressBar.value === RELOAD_TIME_ADRENALINE && this.isAdrenalineUsed)) {
+    if (progressBar.value === progressBar.max) {
       progressBar.value = 0;
       game.shots.push(new Shot({
         position: {
@@ -189,7 +205,7 @@ class Boss {
     if (this.health <= 0) {
       game.coins += 20;
       game.boss = undefined;
-      if (dailyMission.innerText === 'Kill 5 Bosses') game.counterMission++;
+      if (dailyMission.innerText === 'Kill 1 Bosses') game.counterMission++;
     }
   }
 
