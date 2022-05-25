@@ -7,13 +7,12 @@ const APShell = document.querySelector('#APShell');
 const HEASShell = document.querySelector('#HEASShell');
 const HEShell = document.querySelector('#HEShell');
 const progressBar = document.querySelector('#reloadGun');
-const audio = document.querySelector('#audio');
-audio.volume = 0.1;
 
 canvas.width = 850;
 canvas.height = 960;
 
 let game = new Game();
+game.loadProgress();
 
 const powerupList = ['Shield', 'Score Multiplier', 'Coin Multiplier'];
 
@@ -51,6 +50,13 @@ const ammoColors = {
 
 const ammoTypesImage = [APShell, HEASShell, HEShell];
 
+const playAudio = (nameAudio) => {
+  const audio = new Audio();
+  audio.src = `./music/${nameAudio}.mp3`;
+  audio.volume = 0.1;
+  audio.play(); // bug: play background music from previous game
+};
+
 const changeProgressReload = () => {
   const DELAY = 50;
   if (progressBar.value >= progressBar.max) return;
@@ -61,8 +67,6 @@ const changeProgressReload = () => {
 const changeAmmo = (ammoType, ammoTypeImage) => {
   for (const ammoImage of ammoTypesImage) ammoImage.style.border = '';
   ammoTypeImage.style.border = '1px solid white';
-
-  game.player.ammoType = ammoType;
   game.player.ammoDamage = ammoDamages[ammoType];
   game.player.ammoColor = ammoColors[ammoType];
 };
@@ -84,13 +88,6 @@ const addZeroInTime = (time, n = 2) => `${time}`.padStart(n, '0');
 const saveProgress = (key, value) => {
   localStorage.setItem(key, value);
 };
-
-const loadProgress = () => {
-  bestScoreText.innerHTML = game.bestScore;
-  costMulti.innerText = +localStorage.getItem('costMultiplier');
-  costPetUpgrade.innerText = +localStorage.getItem('costPetUpgrade');
-};
-loadProgress();
 
 const toggleAudio = () => {
   audio.muted = !audio.muted;
@@ -199,10 +196,9 @@ const changeBestScore = () => {
 
 const lose = (...ids) => {
   const scoreGameOver = document.querySelector('#scoreGameOver');
-  const boomSound = document.querySelector('#boomSound');
   const DELAY_TO_DIE = 2000;
   if (!gameStates.over) {
-    boomSound.play();
+    playAudio('boom');
     setOpacity(0);
     gameStates.over = true;
     setTimeout(() => {
@@ -265,7 +261,7 @@ const getCoins = () => {
 
 const getPoints = () => {
   const scoreText = document.querySelector('#score');
-  if (dailyMission.innerText === 'Collect 10 Cosmonauts') game.counterMission++;
+  if (dailyMission.innerText === 'Collect 10 Cosmonauts') counterMission++;
   game.score += (game.player.powerUp === 'Score Multiplier') ? game.levelMultiplier : 1;
   scoreText.innerHTML = game.score;
 };
@@ -344,8 +340,7 @@ const pause = () => {
     toggleScreen(false, 'pause');
     countDown();
   } else if (gameStates.active && !gameStates.menu) {
-    const pauseSound = document.querySelector('#pauseSound');
-    pauseSound.play();
+    playAudio('pause');
     gameStates.active = false;
     gameStates.pause = true;
     toggleScreen(true, 'pause');
@@ -354,7 +349,6 @@ const pause = () => {
 
 const refreshGame = () => {
   game = new Game();
-  audio.load();
   document.querySelector('#score').innerHTML = game.score;
   gameStates.active = true;
   gameStates.over = false;

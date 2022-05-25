@@ -6,8 +6,7 @@ const abilityPet = document.querySelector('#abilityPet');
 
 const play = (...ids) => {
   showLives();
-  audio.load();
-  audio.play();
+  playAudio('background');
   toggleScreen(false, 'menu');
   for (const id of ids) toggleScreen(true, id);
   game.loadProgress();
@@ -38,24 +37,14 @@ const shop = () => {
   toggleScreen(true, 'shop');
 };
 
-const upgradeMultiplier = () => {
-  if (costMulti.innerText <= game.coins) {
-    game.coins -= costMulti.innerText;
-    costMulti.innerText *= 2;
-    game.levelMultiplier++;
-    saveProgress('costMultiplier', +costMulti.innerHTML);
-    saveProgress('levelMultiplier', game.levelMultiplier);
-    saveProgress('coins', game.coins);
-  }
-};
-
-const upgradePet = () => {
-  if (game.coins >= costPetUpgrade.innerText) {
-    game.coins -= costPetUpgrade.innerText;
-    costPetUpgrade.innerText *= 2;
-    game.levelPetUpgrade++;
-    saveProgress('costPetUpgrade', +costPetUpgrade.innerHTML);
-    saveProgress('levelPetUpgrade', game.levelPetUpgrade);
+const upgradeItem = (itemName, price, itemLevel) => {
+  if (game.coins >= price.innerText) {
+    game.coins -= price.innerText;
+    price.innerText *= 2;
+    if (itemName === 'pet') game.levelPetUpgrade++;
+    else game.levelMultiplier++;
+    saveProgress(itemName.concat('Price'), +price.innerText);
+    saveProgress(itemName.concat('Level'), itemLevel);
     saveProgress('coins', game.coins);
   }
 };
@@ -102,6 +91,6 @@ const exit = (...ids) => {
   gameStates.menu = true;
   gameStates.active = false;
   checkMissionProgress();
-  refreshGame();
   saveProgress('coins', game.coins);
+  refreshGame();
 };

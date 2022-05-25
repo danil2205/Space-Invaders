@@ -5,8 +5,8 @@ class Game {
     this.player = new Player();
     this.pet = new Pet();
     this.boss = new Boss();
-    this.levelMultiplier = 2 || localStorage['levelMultiplier'];
-    this.levelPetUpgrade = 0 || localStorage['levelPetUpgrade'];
+    this.levelMultiplier = 2;
+    this.levelPetUpgrade = 0;
     this.bestScore = 0;
     this.coins = 0;
     this.speed = 1;
@@ -26,9 +26,14 @@ class Game {
   }
 
   loadProgress() {
-    if (this.bestScore !== undefined) {
+    bestScoreText.innerHTML = this.bestScore;
+    if (localStorage['bestScore'] !== undefined) {
       this.bestScore = localStorage['bestScore'];
       this.coins = +localStorage['coins'];
+      this.levelMultiplier = localStorage['multiplierLevel'];
+      this.levelPetUpgrade = localStorage['petLevel'];
+      costMulti.innerText = +localStorage['multiplierPrice'];
+      costPetUpgrade.innerText = +localStorage['petPrice'];
     }
   }
 
@@ -52,7 +57,6 @@ class Player {
       y: 0,
     };
     this.lives = 3;
-    this.ammoType = 'APShell';
     this.ammoDamage = 15;
     this.ammoColor = 'red';
     this.isAdrenalineUsed = false;

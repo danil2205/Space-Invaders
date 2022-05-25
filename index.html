@@ -1,8 +1,4 @@
 <body>
-    <audio src="./music/cool.mpeg" id="audio" paused="true"></audio>
-    <audio src="./music/boom.mp3" id="boomSound" paused="true"></audio>
-    <audio src="./music/pause.mp3" id="pauseSound" paused="true"></audio>
-    <audio src="./music/explosion.mp3" id="explosionSound" paused="true"></audio>
 
     <div id="allScore" class="allScore">
         <p style="left: 1280px; top: 10px;">
@@ -59,7 +55,7 @@
         <div>
             <h2>Pet and Ability Menu</h2>
             <span id="costPetUpgrade">1000</span><span> coins</span>
-            <button onclick="upgradePet()">Upgrade pet</button>
+            <button onclick="upgradeItem('pet', costPetUpgrade, game.levelPetUpgrade);">Upgrade pet</button>
             <button onclick="pet.abilityMenu = 'Heal'">Heal Ship</button>
             <button onclick="pet.abilityMenu = 'Shield'">Shield</button>
             <button onclick="pet.abilityMenu = 'Double Coins'">x2 Coins</button>
@@ -88,7 +84,7 @@
 
             <h2>Power-Ups</h2>
             <span id="costMulti">1</span><span> coins</span>
-            <button onclick="upgradeMultiplier()">Upgrade Score</button>
+            <button onclick="upgradeItem('multiplier', costMulti, game.levelMultiplier)">Upgrade Score</button>
             <button onclick="back('menu')">Back</button>
         </div>
     </div>
