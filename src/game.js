@@ -161,9 +161,20 @@ const countDown = () => {
   }, DELAY);
 };
 
-const spawnObject = (framesToSpawn, arrayName, className, scale) => {
+// const spawnObject = (framesToSpawn, arrayName, className, scale) => {
+//   if (game.frames % Math.floor(framesToSpawn / game.speed) === 0) {
+//     arrayName.push(new className(scale, {
+//       position: {
+//         x: randomNum(canvas.width),
+//         y: 0,
+//       }
+//     }));
+//   }
+// };
+
+const spawnObject = (framesToSpawn, nameObject, arrayObjects, scale) => {
   if (game.frames % Math.floor(framesToSpawn / game.speed) === 0) {
-    arrayName.push(new className(scale, {
+    arrayObjects.push(new GameObject(nameObject, arrayObjects, scale, {
       position: {
         x: randomNum(canvas.width),
         y: 0,
@@ -179,11 +190,11 @@ const spawnObjects = () => {
   const FRAMES_POWERUP = 1000;
 
   if (game.pet.ability !== 'No Enemies') {
-    spawnObject(FRAMES_LIL_STONE, game.stones, Stone, 0.02);
-    spawnObject(FRAMES_BIG_STONE, game.stones, Stone, 0.07);
+    spawnObject(FRAMES_LIL_STONE, 'mars', game.stones, 0.02);
+    spawnObject(FRAMES_BIG_STONE, 'mars', game.stones, 0.07);
   }
-  spawnObject(FRAMES_COSMONAUT, game.cosmonauts, Cosmonaut, 0.02);
-  spawnObject(FRAMES_POWERUP, game.powerups, PowerUp, 0.1);
+  spawnObject(FRAMES_COSMONAUT, 'cosmonaut', game.cosmonauts, 0.02);
+  spawnObject(FRAMES_POWERUP, 'powerup', game.powerups, 0.1);
 };
 
 const changeBestScore = () => {

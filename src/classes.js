@@ -226,65 +226,6 @@ class Boss {
   }
 }
 
-class Stone {
-  constructor(scale, { position }) {
-    const image = new Image();
-    image.src = `./img/mars.png`;
-    image.onload = () => {
-      this.image = image;
-      this.width = image.width * scale;
-      this.height = image.height * scale;
-      this.position = position;
-    };
-  }
-
-  draw() {
-    ctx.drawImage(
-      this.image,
-      this.position.x,
-      this.position.y,
-      this.width,
-      this.height
-    );
-  }
-
-
-  move() {
-    this.position.y += 3 * game.speed;
-  }
-
-  delete() {
-    if (this.position.y >= canvas.height) game.stones.splice(0, 1);
-  }
-
-  update() {
-    if (this.image) {
-      this.draw();
-      this.move();
-      this.delete();
-    }
-  }
-}
-
-class Cosmonaut extends Stone {
-  constructor(scale, { position }) {
-    super(scale, position);
-
-    const image = new Image();
-    image.src = `./img/cosmonaut.png`;
-    image.onload = () => {
-      this.image = image;
-      this.width = image.width * scale;
-      this.height = image.height * scale;
-      this.position = position;
-    };
-  }
-
-  delete() {
-    if (this.position.y >= canvas.height) game.cosmonauts.splice(0, 1);
-  }
-}
-
 class Pet {
   constructor() {
     this.velocity = {
@@ -433,16 +374,15 @@ class Shot extends Particle {
   }
 }
 
-class PowerUp {
-  constructor(scale, { position }) {
-    this.position = position;
+class GameObject {
+  constructor(nameObject, arrayObjects, scale, { position }) {
     this.velocity = {
       x: 0,
-      y: 5,
+      y: 3,
     };
-
+    this.arrayObjects = arrayObjects;
     const image = new Image();
-    image.src = `./img/powerup.png`;
+    image.src = `./img/${nameObject}.png`;
     image.onload = () => {
       this.image = image;
       this.width = image.width * scale;
@@ -452,13 +392,15 @@ class PowerUp {
   }
 
   draw() {
-    if (this.image) ctx.drawImage(
-      this.image,
-      this.position.x,
-      this.position.y,
-      this.width,
-      this.height
-    );
+    if (this.image) {
+      ctx.drawImage(
+        this.image,
+        this.position.x,
+        this.position.y,
+        this.width,
+        this.height
+      );
+    }
   }
 
   move() {
@@ -466,7 +408,7 @@ class PowerUp {
   }
 
   delete() {
-    if (this.position.y >= canvas.height) game.powerups.splice(0, 1);
+    if (this.position.y >= canvas.height) this.arrayObjects.splice(0, 1);
   }
 
   update() {
