@@ -7,6 +7,8 @@ const APShell = document.querySelector('#APShell');
 const HEASShell = document.querySelector('#HEASShell');
 const HEShell = document.querySelector('#HEShell');
 const progressBar = document.querySelector('#reloadGun');
+const backgroundAudio = document.querySelector('#background');
+backgroundAudio.volume = 0.1;
 
 canvas.width = 850;
 canvas.height = 960;
@@ -54,7 +56,7 @@ const playAudio = (nameAudio) => {
   const audio = new Audio();
   audio.src = `./music/${nameAudio}.mp3`;
   audio.volume = 0.1;
-  audio.play(); // bug: play background music from previous game
+  audio.play();
 };
 
 const changeProgressReload = () => {
@@ -64,9 +66,9 @@ const changeProgressReload = () => {
   setTimeout(changeProgressReload, DELAY);
 };
 
-const changeAmmo = (ammoType, ammoTypeImage) => {
+const changeAmmo = (ammoType, selectedAmmo) => {
   for (const ammoImage of ammoTypesImage) ammoImage.style.border = '';
-  ammoTypeImage.style.border = '1px solid white';
+  selectedAmmo.style.border = '1px solid white';
   game.player.ammoDamage = ammoDamages[ammoType];
   game.player.ammoColor = ammoColors[ammoType];
 };
@@ -83,14 +85,12 @@ const getSkinShip = () => {
 
 const randomNum = (maxNumber) => ~~(Math.random() * maxNumber);
 
-const addZeroInTime = (time, n = 2) => `${time}`.padStart(n, '0');
-
 const saveProgress = (key, value) => {
   localStorage.setItem(key, value);
 };
 
 const toggleAudio = () => {
-  audio.muted = !audio.muted;
+  backgroundAudio.muted = !backgroundAudio.muted;
 };
 
 const showLives = () => {
@@ -124,10 +124,16 @@ const toggleScreen = (toggle, ...ids) => {
   }
 };
 
+const reloadAdrenaline = () => {
+  const ADRENALINE_COOLDOWN = 100000;
+  setTimeout(() => {
+    game.player.adrenalineCooldown = false;
+  }, ADRENALINE_COOLDOWN);
+};
+
 const useAdrenaline = () => {
   if (game.player.adrenalineCooldown && gameStates.active) return;
   const ACTION_OF_ADRENALINE = 10000;
-  const ADRENALINE_COOLDOWN = 100000;
   progressBar.max = 2;
   game.player.isAdrenalineUsed = true;
   game.player.adrenalineCooldown = true;
@@ -136,10 +142,7 @@ const useAdrenaline = () => {
     progressBar.max = 3;
     game.player.isAdrenalineUsed = false;
   }, ACTION_OF_ADRENALINE);
-
-  setTimeout(() => {
-    game.player.adrenalineCooldown = false;
-  }, ADRENALINE_COOLDOWN);
+  reloadAdrenaline();
 };
 
 const countDown = () => {
@@ -161,17 +164,6 @@ const countDown = () => {
   }, DELAY);
 };
 
-// const spawnObject = (framesToSpawn, arrayName, className, scale) => {
-//   if (game.frames % Math.floor(framesToSpawn / game.speed) === 0) {
-//     arrayName.push(new className(scale, {
-//       position: {
-//         x: randomNum(canvas.width),
-//         y: 0,
-//       }
-//     }));
-//   }
-// };
-
 const spawnObject = (framesToSpawn, nameObject, arrayObjects, scale) => {
   if (game.frames % Math.floor(framesToSpawn / game.speed) === 0) {
     arrayObjects.push(new GameObject(nameObject, arrayObjects, scale, {
@@ -192,6 +184,7 @@ const spawnObjects = () => {
   if (game.pet.ability !== 'No Enemies') {
     spawnObject(FRAMES_LIL_STONE, 'mars', game.stones, 0.02);
     spawnObject(FRAMES_BIG_STONE, 'mars', game.stones, 0.07);
+    game.spawnBoss();
   }
   spawnObject(FRAMES_COSMONAUT, 'cosmonaut', game.cosmonauts, 0.02);
   spawnObject(FRAMES_POWERUP, 'powerup', game.powerups, 0.1);
@@ -205,7 +198,7 @@ const changeBestScore = () => {
   }
 };
 
-const lose = (...ids) => {
+const lose = () => {
   const scoreGameOver = document.querySelector('#scoreGameOver');
   const DELAY_TO_DIE = 2000;
   if (!gameStates.over) {
@@ -215,27 +208,14 @@ const lose = (...ids) => {
     setTimeout(() => {
       gameStates.active = false;
       scoreGameOver.innerHTML = game.score;
-      for (const id of ids) toggleScreen(false, id);
+      toggleScreen(false, 'gameInterface');
       toggleScreen(true, 'screen');
     }, DELAY_TO_DIE);
   }
 };
 
 const backgroundStars = () => {
-  for (let i = 0; i < 100; i++) {
-    game.particles.push(new Particle({
-      position: {
-        x: randomNum(canvas.width),
-        y: randomNum(canvas.height),
-      },
-      velocity: {
-        x: 0,
-        y: 2,
-      },
-      radius: randomNum(3),
-      color: 'white',
-    }));
-  }
+  for (let i = 0; i < 100; i++) game.particles.push(new Particle());
 };
 backgroundStars();
 
@@ -272,7 +252,7 @@ const getCoins = () => {
 
 const getPoints = () => {
   const scoreText = document.querySelector('#score');
-  if (dailyMission.innerText === 'Collect 10 Cosmonauts') counterMission++;
+  if (dailyMission.innerText === 'Collect 10 Cosmonauts') game.counterMission++;
   game.score += (game.player.powerUp === 'Score Multiplier') ? game.levelMultiplier : 1;
   scoreText.innerHTML = game.score;
 };
@@ -283,13 +263,7 @@ const checkCollision = ({ object1, object2 }) => (
   object1.position.y + object1.height >= object2.position.y
 );
 
-const checkCollisionBossShot = ({ object1, object2 }) => (
-  object1.position.x + object1.radius >= object2.position.x &&
-  object1.position.x <= object2.position.x + object2.width &&
-  object1.position.y >= object2.position.y
-);
-
-const checkCollisionPlayerShot = ({ object1, object2 }) => (
+const checkCollisionShot = ({ object1, object2 }) => (
   object1.position.x + object1.width >= object2.position.x &&
   object1.position.x <= object2.position.x + object2.radius &&
   object1.position.y >= object2.position.y
@@ -299,8 +273,8 @@ const updateFunctions = (nameArray) => {
   const functionCollection = {
     [game.cosmonauts]: () => getPoints(),
     [game.stones]: () => delLives(),
+    [game.bosses]: () => delLives(),
     [game.powerups]: () => setPowerUp(),
-    [game.shots]: () => delLives(),
   };
   return functionCollection[nameArray]();
 };
@@ -308,7 +282,10 @@ const updateFunctions = (nameArray) => {
 const updateObject = (nameArray) => {
   for (const [index, object] of nameArray.entries()) {
     object.update();
-    if (object.image && checkCollision({ object1: object, object2: game.player })) {
+    if (object.image && checkCollision({
+      object1: object,
+      object2: game.player
+    })) {
       nameArray.splice(index, 1);
       updateFunctions(nameArray);
     }
@@ -316,16 +293,14 @@ const updateObject = (nameArray) => {
 };
 
 const updateShots = () => {
+  const boss = game.bosses[0];
   for (const [index, shot] of game.shots.entries()) {
     shot.update();
-    if (checkCollisionBossShot({ object1: shot, object2: game.player })) {
-      delLives();
-      game.shots.splice(index, 1);
-    }
-    if (checkCollisionPlayerShot({ object1: game.boss, object2: shot })) {
-      console.log(game.boss.health)
-      game.boss.health -= game.player.ammoDamage;
-      document.querySelector('#bossHP').style.width = game.boss.health;
+    if (checkCollisionShot({
+      object1: boss,
+      object2: shot
+    })) {
+      boss.health -= game.player.ammoDamage;
       game.shots.splice(index, 1);
     }
   }
@@ -359,6 +334,7 @@ const pause = () => {
 };
 
 const refreshGame = () => {
+  saveProgress('coins', game.coins);
   game = new Game();
   document.querySelector('#score').innerHTML = game.score;
   gameStates.active = true;
@@ -367,7 +343,7 @@ const refreshGame = () => {
   showLives();
   backgroundStars();
   if (!gameStates.menu) {
-    toggleScreen(true, 'canvas');
+    toggleScreen(true, 'gameInterface');
     animate();
   }
 };
@@ -387,7 +363,6 @@ const getKeyFunc = (keydown) => {
   };
   return keyCollection[keydown]();
 };
-
 
 window.addEventListener('keydown', (event) => {
   getKeyFunc(event.key);

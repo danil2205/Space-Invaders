@@ -4,7 +4,6 @@ class Game {
   constructor() {
     this.player = new Player();
     this.pet = new Pet();
-    this.boss = new Boss();
     this.levelMultiplier = 2;
     this.levelPetUpgrade = 0;
     this.bestScore = 0;
@@ -14,6 +13,7 @@ class Game {
     this.score = 0;
     this.counterMission = 0;
     this.stones = [];
+    this.bosses = [];
     this.particles = [];
     this.cosmonauts = [];
     this.powerups = [];
@@ -30,24 +30,35 @@ class Game {
     if (localStorage['bestScore'] !== undefined) {
       this.bestScore = localStorage['bestScore'];
       this.coins = +localStorage['coins'];
-      this.levelMultiplier = localStorage['multiplierLevel'];
+    }
+    if (localStorage['multiplierLevel'] > 0) {
+      this.levelMultiplier = +localStorage['multiplierLevel'];
       this.levelPetUpgrade = localStorage['petLevel'];
       costMulti.innerText = +localStorage['multiplierPrice'];
       costPetUpgrade.innerText = +localStorage['petPrice'];
     }
   }
 
-  updateObjects() {
-    this.player.update();
-    this.pet.update();
-    if (this.boss.health > 0) this.boss.update();
-    updateShots();
-    updateObject(this.particles);
-    updateObject(this.cosmonauts);
-    updateObject(this.powerups);
-    updateObject(this.stones);
+  spawnBoss() {
+    const framesToSpawn = 10000;
+    if (game.frames % framesToSpawn === 0) {
+      game.bosses.push(new Boss());
+    }
   }
 
+  updateObjects() {
+    const arrayOfObjects = [
+      this.particles,
+      this.bosses,
+      this.cosmonauts,
+      this.powerups,
+      this.stones,
+    ];
+    this.player.update();
+    this.pet.update();
+    updateShots();
+    for (const object of arrayOfObjects) updateObject(object);
+  }
 }
 
 class Player {
@@ -91,37 +102,22 @@ class Player {
   }
 
   move() {
-    if (keys.a.pressed && this.position.x + canvas.width > canvas.width) this.velocity.x = -5;
-    else if (keys.d.pressed && this.position.x + this.width < canvas.width) this.velocity.x = 5;
-    else this.velocity.x = 0;
+    if (keys.a.pressed && this.position.x + canvas.width > canvas.width) {
+      this.velocity.x = -5;
+    } else if (keys.d.pressed && this.position.x + this.width < canvas.width) {
+      this.velocity.x = 5;
+    } else this.velocity.x = 0;
   }
 
   playerDie() {
-    if (game.player.lives === 0) lose('bossAnnounce', 'abilityPet', 'canvas', 'ammoTypes', 'reloadGun', 'consumables');
+    if (game.player.lives === 0) lose();
   }
 
   shoot() {
-    if (progressBar.value === progressBar.max) {
+    if (progressBar.value === progressBar.max && game.bosses.length !== 0) {
       progressBar.value = 0;
-      game.shots.push(new Shot({
-        position: {
-          x: this.position.x + this.width / 2,
-          y: this.position.y,
-        },
-        velocity: {
-          x: 0,
-          y: -5 * game.speed,
-        },
-        radius: 5,
-        color: this.ammoColor,
-      }));
+      game.shots.push(new Shot());
       changeProgressReload();
-    }
-  }
-
-  deleteShots() {
-    for (const [index, shot] of game.shots.entries()) {
-      if (shot.position.x >= canvas.height) game.shots.splice(index, 1);
     }
   }
 
@@ -133,7 +129,6 @@ class Player {
     if (this.image) {
       this.draw();
       this.move();
-      this.deleteShots();
       this.playerDie();
       this.position.x += this.velocity.x;
     }
@@ -147,13 +142,13 @@ class Boss {
       y: 3,
     };
     this.health = 200;
-    this.scale = 0.35;
     const image = new Image();
     image.src = './img/boss.png';
     image.onload = () => {
+      const scale = 0.35;
       this.image = image;
-      this.width = image.width * this.scale;
-      this.height = image.height * this.scale;
+      this.width = image.width * scale;
+      this.height = image.height * scale;
       this.position = {
         x: randomNum(canvas.width),
         y: 0,
@@ -183,33 +178,15 @@ class Boss {
     ) this.velocity.y = -this.velocity.y;
   }
 
-  shoot() {
-    if (game.frames % 100 === 0) {
-      game.shots.push(new Shot({
-        position: {
-          x: this.position.x + this.width / 2,
-          y: this.position.y + this.height,
-        },
-        velocity: {
-          x: 0,
-          y: 7 * game.speed,
-        },
-        radius: 5,
-        color: 'white',
-      }));
-    }
-  }
-
-  enableAnnounce() {
-    if (game.boss.health === 0) toggleScreen(false, 'bossAnnounce');
-    else toggleScreen(true, 'bossAnnounce');
-  }
-
   deleteBoss() {
-    if (this.health <= 0) {
+    if (this.health <= 0 || game.bosses.length === 0) {
       game.coins += 20;
-      game.boss = undefined;
+      game.bosses = [];
+      toggleScreen(false, 'bossAnnounce');
       if (dailyMission.innerText === 'Kill 1 Bosses') game.counterMission++;
+    } else {
+      document.querySelector('#bossHP').style.width = game.bosses[0].health;
+      toggleScreen(true, 'bossAnnounce');
     }
   }
 
@@ -217,9 +194,7 @@ class Boss {
     if (this.image) {
       this.draw();
       this.move();
-      this.shoot();
-      this.enableAnnounce();
-      this.deleteBoss();
+      this.deleteBoss(); // bug: after collision with player, announce don't disappear
       this.position.x += this.velocity.x;
       this.position.y += this.velocity.y;
     }
@@ -317,16 +292,20 @@ class Pet {
 }
 
 class Particle {
-  constructor({ position, velocity, radius, color }) {
-    this.position = position;
-    this.velocity = velocity;
-    this.radius = radius;
-    this.color = color;
-    this.opacity = 1;
+  constructor() {
+    this.position = {
+      x: randomNum(canvas.width),
+      y: randomNum(canvas.height),
+    };
+    this.velocity = {
+      x: 0,
+      y: 2,
+    };
+    this.radius = randomNum(3);
+    this.color = 'white';
   }
 
   draw() {
-    ctx.globalAlpha = this.opacity;
     ctx.beginPath();
     ctx.arc(
       this.position.x,
@@ -355,8 +334,18 @@ class Particle {
 }
 
 class Shot extends Particle {
-  constructor({ position, velocity, radius, color }) {
-    super({ position, velocity, radius, color });
+  constructor() {
+    super();
+    this.position = {
+      x: game.player.position.x + game.player.width / 2,
+      y: game.player.position.y,
+    };
+    this.velocity = {
+      x: 0,
+      y: -5 * game.speed,
+    };
+    this.radius = 5;
+    this.color = game.player.ammoColor;
   }
 
   deleteShots() {

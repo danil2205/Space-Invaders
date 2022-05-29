@@ -24,6 +24,8 @@ const setDailyMission = () => {
 };
 setDailyMission();
 
+const addZeroInTime = (time, n = 2) => `${time}`.padStart(n, '0');
+
 const updateMissions = () => {
   const timeRemains = document.querySelector('#timeRemains');
   const DELAY = 1000;

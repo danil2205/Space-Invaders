@@ -157,7 +157,7 @@ body {
 }
 
 .boss {
-    display: none;
+    display: block;
     position: fixed;
     width: 200px;
     top: 20%;
@@ -167,7 +167,8 @@ body {
 .ammoType {
     position: fixed;
     left: 1400px;
-    display: none;
+    top: 480px;
+    display: block;
 }
 
 .ammoType img, .consumables img {
@@ -179,19 +180,25 @@ body {
     position: fixed;
     top: 650px;
     left: 1400px;
-    display: none;
+    display: block;
 }
 
 .consumables h2 {
-    display: none;
+    display: block;
     position: fixed;
     color: red;
     top: 627px;
     left: 1420px;
 }
 
-.reload {
+.gameInterface {
+    position: fixed;
     display: none;
+}
+
+.reload {
+    display: block;
+    left: 910px;
     top: 960px;
     position: fixed;
     width: 100px;

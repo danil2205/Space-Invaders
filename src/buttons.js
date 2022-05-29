@@ -6,7 +6,7 @@ const abilityPet = document.querySelector('#abilityPet');
 
 const play = (...ids) => {
   showLives();
-  playAudio('background');
+  backgroundAudio.load();
   toggleScreen(false, 'menu');
   for (const id of ids) toggleScreen(true, id);
   game.loadProgress();

@@ -1,8 +1,9 @@
 <body>
 
+    <audio src="./music/background.mp3" id="background" autoplay="true" volume="0.1"></audio>
     <div id="allScore" class="allScore">
         <p style="left: 1280px; top: 10px;">
-        <img src="./img/cosmonaut_for_score.png" alt="Collected cosmonauts"> <span>x </span><span id="score">0</span>
+            <img src="./img/cosmonaut_for_score.png" alt="Collected cosmonauts"> <span>x </span><span id="score">0</span>
         </p>
         <p style="left: 580px; top: 10px;">
             <span>Best: </span><span id="bestScore">0</span>
@@ -10,15 +11,12 @@
         <p style="left: 1000px; top: 10px;">
             <span id="coins">0</span> <img src="./img/coin.png">
         </p>
-        <p style="left: 800px; top: 220px;">
-            <span id="abilityPet">Ability of your Pet is Ready</span>
-        </p>
     </div>
 
     <div id="menu" class="menu">
         <div>
             <h1>Menu</h1>
-            <button onclick="play('canvas', 'allScore', 'imgLives', 'ammoTypes', 'reloadGun', 'consumables')">Play</button>
+            <button onclick="play('gameInterface', 'canvas', 'allScore')">Play</button>
             <button onclick="changeDifficulty()">Difficulty</button>
             <button onclick="petMenu()">Pet</button>
             <button onclick="shop()">Shop</button>
@@ -56,11 +54,11 @@
             <h2>Pet and Ability Menu</h2>
             <span id="costPetUpgrade">1000</span><span> coins</span>
             <button onclick="upgradeItem('pet', costPetUpgrade, game.levelPetUpgrade);">Upgrade pet</button>
-            <button onclick="pet.abilityMenu = 'Heal'">Heal Ship</button>
-            <button onclick="pet.abilityMenu = 'Shield'">Shield</button>
-            <button onclick="pet.abilityMenu = 'Double Coins'">x2 Coins</button>
-            <button onclick="pet.abilityMenu = 'collectCosmonauts'">Magnet Cosmonauts</button>
-            <button onclick="pet.abilityMenu = 'No Enemies'">No Enemies</button>
+            <button onclick="game.pet.abilityMenu = 'Heal'">Heal Ship</button>
+            <button onclick="game.pet.abilityMenu = 'Shield'">Shield</button>
+            <button onclick="game.pet.abilityMenu = 'Double Coins'">x2 Coins</button>
+            <button onclick="game.pet.abilityMenu = 'collectCosmonauts'">Magnet Cosmonauts</button>
+            <button onclick="game.pet.abilityMenu = 'No Enemies'">No Enemies</button>
             <button onclick="back('menu')">Back</button>
         </div>
     </div>
@@ -69,7 +67,7 @@
         <div style="width: 500px;">
             <h2 style="color: red">COLLECT COSMONAUTS! <br /> DON'T FACE WITH STONES!</h2>
             <h2 style="color: cyan">'A/D' -> MOVE <br /> 'M' -> TOGGLE MUSIC <br /> 'SPACE' -> SHOOT <br /> 'X' -> TURN ON ABILITY OF PET <br />
-                '1', '2', '3' -> CHOOSE AMMO TYPE <br /> '4' -> USE ADRENALINE (in future)</h2>
+                '1', '2', '3' -> CHOOSE AMMO TYPE <br /> '4' -> USE ADRENALINE</h2>
             <h2 style="color: yellow">GOOD LUCK!</h2>
             <button onclick="back('menu')">Back</button>
         </div>
@@ -94,7 +92,7 @@
             <h1>Game Over</h1>
             <h1 id="scoreGameOver">0</h1>
             <button onclick="refreshGame()">Try Again</button>
-            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'imgLives', 'bossAnnounce', 'ammoTypes', 'reloadGun', 'consumables')">In Main Menu</button>
+            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'gameInterface')">In Main Menu</button>
         </div>
     </div>
 
@@ -109,35 +107,40 @@
         <div>
             <h1>Paused</h1>
             <button onclick="pause()">Resume</button>
-            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'imgLives', 'bossAnnounce', 'ammoTypes', 'reloadGun', 'consumables')">Exit</button>
+            <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'gameInterface')">Exit</button>
         </div>
     </div>
 
-    <div id="announcement" class="announcement">
-        <h2 id="announcementText">Null</h2>
-    </div>
 
-    <div id="imgLives" class="imgLives"></div>
 
-    <div id="bossAnnounce" class="boss">
-        <h2 style="color: white; display: block; position: fixed; top:12%; left: 45%; text-align: center">Kill the Boss</h2>
-        <div id="bossHP" style="background-color: red; height: 15px; width: 100%"></div>
-    </div>
+    <div id="gameInterface" class="gameInterface">
+        <p style="display: block; position: fixed; left: 800px; top: 220px;">
+            <span id="abilityPet">Ability of your Pet is Ready</span>
+        </p>
 
-    <div id="ammoTypes" class="ammoType">
-        <div><img id="APShell" src="./img/AP.png"></div>
-        <div><img id="HEASShell" src="./img/HEAS.png"></div>
-        <div><img id="HEShell" src="./img/HE.png"></div>
-    </div>
+        <div id="announcement" class="announcement">
+            <h2 id="announcementText">Null</h2>
+        </div>
 
-    <div id="consumables" class="consumables">
-        <div>
+        <div id="imgLives" class="imgLives"></div>
+
+        <div id="bossAnnounce" class="boss">
+            <h2 style="color: white; display: block; position: fixed; top:12%; left: 45%; text-align: center">Kill the Boss</h2>
+            <div id="bossHP" style="background-color: red; height: 15px; width: 100%"></div>
+        </div>
+
+        <div id="consumables" class="consumables">
             <img id="adrenaline" src="./img/adrenaline.png">
         </div>
+
+        <div id="ammoTypes" class="ammoType">
+            <div><img id="APShell" src="./img/AP.png"></div>
+            <div><img id="HEASShell" src="./img/HEAS.png"></div>
+            <div><img id="HEShell" src="./img/HE.png"></div>
+        </div>
+
+        <progress id="reloadGun" class="reload" value="3" max="3"></progress>
     </div>
-
-    <progress id="reloadGun" class="reload" value="3" max="3"></progress>
-
 
     <canvas style="display: none" id="canvas"></canvas>
     <link rel="stylesheet" href="style.css">
