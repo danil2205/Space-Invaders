@@ -194,7 +194,7 @@ class Boss {
     if (this.image) {
       this.draw();
       this.move();
-      this.deleteBoss(); // bug: after collision with player, announce don't disappear
+      this.deleteBoss(); // bug: after collision with player, announce doesn't disappear
       this.position.x += this.velocity.x;
       this.position.y += this.velocity.y;
     }
@@ -236,8 +236,11 @@ class Pet {
   }
 
   move() {
-    if (this.position.x >= game.player.position.x + game.player.width) this.velocity.x = -3;
-    else if (this.position.x <= game.player.position.x - game.player.width) this.velocity.x = 3;
+    if (this.position.x >= game.player.position.x + game.player.width) {
+      this.velocity.x = -3;
+    } else if (this.position.x <= game.player.position.x - game.player.width) {
+      this.velocity.x = 3;
+    }
   }
 
   healShip() {
@@ -249,7 +252,10 @@ class Pet {
 
   cosmonautsCollect() {
     for (const [index, cosmonaut] of game.cosmonauts.entries()) {
-      if (!checkCollision({ object1: cosmonaut, object2: game.player })) {
+      if (!checkCollision({
+        object1: cosmonaut,
+        object2: game.player
+      })) {
         getPoints();
         game.cosmonauts.splice(index, 1);
       }

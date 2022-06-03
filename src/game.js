@@ -337,10 +337,8 @@ const refreshGame = () => {
   saveProgress('coins', game.coins);
   game = new Game();
   document.querySelector('#score').innerHTML = game.score;
-  gameStates.active = true;
   gameStates.over = false;
   toggleScreen(false, 'screen');
-  showLives();
   backgroundStars();
   if (!gameStates.menu) {
     toggleScreen(true, 'gameInterface');
@@ -348,24 +346,25 @@ const refreshGame = () => {
   }
 };
 
-const getKeyFunc = (keydown) => {
-  const keyCollection = {
-    'a': () => keys.a.pressed = true,
-    'd': () => keys.d.pressed = true,
-    'x': () => game.pet.getAbility(),
-    'Escape': () => pause(),
-    'm': () => toggleAudio(),
-    ' ': () => game.player.shoot(),
-    '1': () => changeAmmo('APShell', APShell),
-    '2': () => changeAmmo('HEASShell', HEASShell),
-    '3': () => changeAmmo('HEShell', HEShell),
-    '4': () => useAdrenaline(),
-  };
-  return keyCollection[keydown]();
+const keyFunctions = {
+  'a': () => keys.a.pressed = true,
+  'd': () => keys.d.pressed = true,
+  'x': () => game.pet.getAbility(),
+  'Escape': () => pause(),
+  'm': () => toggleAudio(),
+  ' ': () => game.player.shoot(),
+  '1': () => changeAmmo('APShell', APShell),
+  '2': () => changeAmmo('HEASShell', HEASShell),
+  '3': () => changeAmmo('HEShell', HEShell),
+  '4': () => useAdrenaline(),
 };
 
 window.addEventListener('keydown', (event) => {
-  getKeyFunc(event.key);
+  try {
+    keyFunctions[event.key]();
+  } catch {
+    return true;
+  }
 });
 
 window.addEventListener('keyup', (event) => {

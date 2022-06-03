@@ -16,25 +16,14 @@ const play = (...ids) => {
   animate();
 };
 
-const changeDifficulty = () => {
-  toggleScreen(true, 'difficulty');
+const changeTab = (tabName) => {
+  toggleScreen(true, tabName);
   toggleScreen(false, 'menu');
 };
 
-const changeSpeed = (difficultySpeed) => {
+const changeDifficulty = (difficultySpeed) => {
   game.speed = difficultySpeed;
-  toggleScreen(false, 'difficulty');
-  toggleScreen(true, 'menu');
-};
-
-const petMenu = () => {
-  toggleScreen(true, 'pet');
-  toggleScreen(false, 'menu');
-};
-
-const shop = () => {
-  toggleScreen(false, 'menu');
-  toggleScreen(true, 'shop');
+  changeTab('difficulty');
 };
 
 const upgradeItem = (itemName, price, itemLevel) => {
@@ -58,11 +47,6 @@ const buyLife = () => {
   }
 };
 
-const missions = () => {
-  toggleScreen(false, 'menu');
-  toggleScreen(true, 'missions');
-};
-
 const claimReward = () => {
   const rewardMission = 100;
   game.coins += rewardMission;
@@ -70,18 +54,9 @@ const claimReward = () => {
   game.counterMission = NaN; // blocking counter
 };
 
-const tutorial = () => {
-  toggleScreen(false, 'menu');
-  toggleScreen(true, 'tutorial');
-};
-
-const back = (id) => {
-  toggleScreen(false, 'shop');
-  toggleScreen(false, 'tutorial');
-  toggleScreen(false, 'missions');
-  toggleScreen(false, 'pet');
-  toggleScreen(false, 'difficulty');
-  toggleScreen(true, id);
+const back = (tabName) => {
+  toggleScreen(false, tabName);
+  toggleScreen(true, 'menu');
 };
 
 const exit = (...ids) => {

@@ -18,73 +18,12 @@
             <h1>Menu</h1>
             <button onclick="play('gameInterface', 'canvas', 'allScore')">Play</button>
             <button onclick="changeDifficulty()">Difficulty</button>
-            <button onclick="petMenu()">Pet</button>
-            <button onclick="shop()">Shop</button>
-            <button onclick="missions()">Missions</button>
-            <button onclick="tutorial()">How To Play</button>
+            <button onclick="changeTab('pet')">Pet</button>
+            <button onclick="changeTab('shop')">Shop</button>
+            <button onclick="changeTab('missions')">Missions</button>
+            <button onclick="changeTab('tutorial')">How To Play</button>
         </div>
 
-    </div>
-
-    <div id="difficulty" class="difficulty">
-        <h2>Choose Difficulty:</h2>
-        <button onclick="changeSpeed(difficulties.easy)">Easy</button>
-        <button onclick="changeSpeed(difficulties.medium)">Medium</button>
-        <button onclick="changeSpeed(difficulties.hard)">Hard</button>
-        <button onclick="changeSpeed(difficulties.master)">Master</button>
-        <button onclick="changeSpeed(difficulties.impossible)">Impossible</button>
-        <button onclick="back('menu')">Back</button>
-    </div>
-
-    <div id="missions" class="missions">
-        <div>
-            <span style="font-size: 50px">Daily Mission:</span>
-            <h2 id="dailyMission">Unknown Daily Mission</h2>
-            <span id="progressMission" style="font-size: 30px">Progress - Uncompleted</span>
-            <span style="font-size: 30px">Reward: 100 coins <br /></span>
-            <span id="timeRemains" style="font-size: 30px">Times remaining: 00:00:00</span>
-            <button id="claimReward" style="display: none; margin-left: 50px;" onclick="claimReward()">Claim reward</button>
-            <button onclick="back('menu')">Back</button>
-
-        </div>
-    </div>
-
-    <div id="pet" class="pet">
-        <div>
-            <h2>Pet and Ability Menu</h2>
-            <span id="costPetUpgrade">1000</span><span> coins</span>
-            <button onclick="upgradeItem('pet', costPetUpgrade, game.levelPetUpgrade);">Upgrade pet</button>
-            <button onclick="game.pet.abilityMenu = 'Heal'">Heal Ship</button>
-            <button onclick="game.pet.abilityMenu = 'Shield'">Shield</button>
-            <button onclick="game.pet.abilityMenu = 'Double Coins'">x2 Coins</button>
-            <button onclick="game.pet.abilityMenu = 'collectCosmonauts'">Magnet Cosmonauts</button>
-            <button onclick="game.pet.abilityMenu = 'No Enemies'">No Enemies</button>
-            <button onclick="back('menu')">Back</button>
-        </div>
-    </div>
-
-    <div id="tutorial" class="preparation">
-        <div style="width: 500px;">
-            <h2 style="color: red">COLLECT COSMONAUTS! <br /> DON'T FACE WITH STONES!</h2>
-            <h2 style="color: cyan">'A/D' -> MOVE <br /> 'M' -> TOGGLE MUSIC <br /> 'SPACE' -> SHOOT <br /> 'X' -> TURN ON ABILITY OF PET <br />
-                '1', '2', '3' -> CHOOSE AMMO TYPE <br /> '4' -> USE ADRENALINE</h2>
-            <h2 style="color: yellow">GOOD LUCK!</h2>
-            <button onclick="back('menu')">Back</button>
-        </div>
-    </div>
-
-    <div id="shop" class="shop">
-        <div>
-            <h1>Shop</h1>
-            <span>Choose your skin: </span><input id="skinID" type="range" min="1" max="4" step="1">
-            <img id="shipImg" style="width: 80px; height: 80px;">
-            <button onclick="buyLife()" style="margin-top: 20px">Buy x1 Live</button>
-
-            <h2>Power-Ups</h2>
-            <span id="costMulti">1</span><span> coins</span>
-            <button onclick="upgradeItem('multiplier', costMulti, game.levelMultiplier)">Upgrade Score</button>
-            <button onclick="back('menu')">Back</button>
-        </div>
     </div>
 
     <div id="screen" class="screen">
@@ -109,6 +48,71 @@
             <button onclick="pause()">Resume</button>
             <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'gameInterface')">Exit</button>
         </div>
+    </div>
+
+    <div id="menuInterface" class="menuInterface">
+
+        <div id="difficulty" class="difficulty">
+            <h2>Choose Difficulty:</h2>
+            <button onclick="changeDifficulty(difficulties.easy)">Easy</button>
+            <button onclick="changeDifficulty(difficulties.medium)">Medium</button>
+            <button onclick="changeDifficulty(difficulties.hard)">Hard</button>
+            <button onclick="changeDifficulty(difficulties.master)">Master</button>
+            <button onclick="changeDifficulty(difficulties.impossible)">Impossible</button>
+            <button onclick="back('difficulty')">Back</button>
+        </div>
+
+        <div id="missions" class="missions">
+            <div>
+                <span style="font-size: 50px">Daily Mission:</span>
+                <h2 id="dailyMission">Unknown Daily Mission</h2>
+                <span id="progressMission" style="font-size: 30px">Progress - Uncompleted</span>
+                <span style="font-size: 30px">Reward: 100 coins <br /></span>
+                <span id="timeRemains" style="font-size: 30px">Times remaining: 00:00:00</span>
+                <button id="claimReward" style="display: none; margin-left: 50px;" onclick="claimReward()">Claim reward</button>
+                <button onclick="back('missions')">Back</button>
+
+            </div>
+        </div>
+
+        <div id="pet" class="pet">
+            <div>
+                <h2>Pet and Ability Menu</h2>
+                <span id="costPetUpgrade">1000</span><span> coins</span>
+                <button onclick="upgradeItem('pet', costPetUpgrade, game.levelPetUpgrade);">Upgrade pet</button>
+                <button onclick="game.pet.abilityMenu = 'Heal'">Heal Ship</button>
+                <button onclick="game.pet.abilityMenu = 'Shield'">Shield</button>
+                <button onclick="game.pet.abilityMenu = 'Double Coins'">x2 Coins</button>
+                <button onclick="game.pet.abilityMenu = 'collectCosmonauts'">Magnet Cosmonauts</button>
+                <button onclick="game.pet.abilityMenu = 'No Enemies'">No Enemies</button>
+                <button onclick="back('pet')">Back</button>
+            </div>
+        </div>
+
+        <div id="tutorial" class="preparation">
+            <div style="width: 500px;">
+                <h2 style="color: red">COLLECT COSMONAUTS! <br /> DON'T FACE WITH STONES!</h2>
+                <h2 style="color: cyan">'A/D' -> MOVE <br /> 'M' -> TOGGLE MUSIC <br /> 'SPACE' -> SHOOT <br /> 'X' -> TURN ON ABILITY OF PET <br />
+                    '1', '2', '3' -> CHOOSE AMMO TYPE <br /> '4' -> USE ADRENALINE</h2>
+                <h2 style="color: yellow">GOOD LUCK!</h2>
+                <button onclick="back('menu')">Back</button>
+            </div>
+        </div>
+
+        <div id="shop" class="shop">
+            <div>
+                <h1>Shop</h1>
+                <span>Choose your skin: </span><input id="skinID" type="range" min="1" max="4" step="1">
+                <img id="shipImg" style="width: 80px; height: 80px;">
+                <button onclick="buyLife()" style="margin-top: 20px">Buy x1 Live</button>
+
+                <h2>Power-Ups</h2>
+                <span id="costMulti">1</span><span> coins</span>
+                <button onclick="upgradeItem('multiplier', costMulti, game.levelMultiplier)">Upgrade Score</button>
+                <button onclick="back('shop')">Back</button>
+            </div>
+        </div>
+
     </div>
 
 
