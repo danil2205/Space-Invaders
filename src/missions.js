@@ -59,7 +59,7 @@ const checkMissionProgress = () => {
     if (game.score >= 100) setStatusMission();
     break;
   case 'Beat Your Record':
-    if (game.score > game.bestScore) setStatusMission();
+    if (game.score > bestScoreText.innerHTML) setStatusMission();
     break;
   default:
     console.log('Unknown mission');

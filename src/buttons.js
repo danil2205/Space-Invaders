@@ -7,8 +7,7 @@ const abilityPet = document.querySelector('#abilityPet');
 const play = (...ids) => {
   showLives();
   backgroundAudio.load();
-  toggleScreen(false, 'menu');
-  for (const id of ids) toggleScreen(true, id);
+  for (const id of ids) changeTab(id);
   game.loadProgress();
   gameStates.active = true;
   gameStates.menu = false;
@@ -43,7 +42,7 @@ const buyLife = () => {
   if (game.coins >= LIFE_COST) {
     game.coins -= LIFE_COST;
     game.player.lives += 1;
-    saveProgress();
+    saveProgress('coins', game.coins);
   }
 };
 
@@ -52,6 +51,7 @@ const claimReward = () => {
   game.coins += rewardMission;
   toggleScreen(false, 'claimReward');
   game.counterMission = NaN; // blocking counter
+  saveProgress('coins', game.coins);
 };
 
 const back = (tabName) => {

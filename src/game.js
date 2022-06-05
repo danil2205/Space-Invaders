@@ -7,6 +7,7 @@ const APShell = document.querySelector('#APShell');
 const HEASShell = document.querySelector('#HEASShell');
 const HEShell = document.querySelector('#HEShell');
 const progressBar = document.querySelector('#reloadGun');
+const imgLives = document.querySelector('#imgLives');
 const backgroundAudio = document.querySelector('#background');
 backgroundAudio.volume = 0.1;
 
@@ -77,9 +78,9 @@ const getSkinShip = () => {
   const skinID = document.querySelector('#skinID');
   const skinPNG = document.querySelector('#shipImg');
   skinID.oninput = () => {
-    const img = `./ship${skinID.value}.png`;
-    game.player.image.src = `./img/${img}`;
-    skinPNG.src = `./img/${img}`;
+    const img = `./img/ship${skinID.value}.png`;
+    game.player.image.src = img;
+    skinPNG.src = img;
   };
 };
 
@@ -94,8 +95,7 @@ const toggleAudio = () => {
 };
 
 const showLives = () => {
-  const imgLives = document.querySelector('#imgLives');
-  imgLives.innerHTML = ''; // to delete all lives from screen
+  imgLives.innerHTML = '';
   for (let i = 0; i < game.player.lives; i++) {
     const image = new Image();
     imgLives.append(image);
@@ -109,11 +109,11 @@ const setOpacity = (opacity) => () => {
 const delLives = () => {
   const FLASH_DELAY = 500;
   game.player.removeLives();
-  if (game.player.lives > 0) {
+  if (game.player.lives >= 0) {
     setTimeout(setOpacity(0.1), 0);
     setTimeout(setOpacity(1), FLASH_DELAY);
+    imgLives.removeChild(imgLives.lastElementChild);
   }
-  showLives(); // to show lives again, but -1 live
 };
 
 const toggleScreen = (toggle, ...ids) => {
@@ -132,15 +132,13 @@ const reloadAdrenaline = () => {
 };
 
 const useAdrenaline = () => {
-  if (game.player.adrenalineCooldown && gameStates.active) return;
+  if (game.player.adrenalineCooldown) return;
   const ACTION_OF_ADRENALINE = 10000;
-  progressBar.max = 2;
-  game.player.isAdrenalineUsed = true;
+  progressBar.max--;
   game.player.adrenalineCooldown = true;
 
   setTimeout(() => {
-    progressBar.max = 3;
-    game.player.isAdrenalineUsed = false;
+    progressBar.max++;
   }, ACTION_OF_ADRENALINE);
   reloadAdrenaline();
 };
@@ -153,8 +151,8 @@ const countDown = () => {
 
   const timer = setInterval(() => {
     if (countDownTimer.innerHTML === '0') {
-      countDownTimer.innerHTML = DEFAULT_VALUE;
       clearInterval(timer);
+      countDownTimer.innerHTML = DEFAULT_VALUE;
       gameStates.active = true;
       gameStates.pause = false;
       toggleScreen(false, 'countdown');
@@ -191,33 +189,29 @@ const spawnObjects = () => {
 };
 
 const changeBestScore = () => {
-  if (game.score > game.bestScore && gameStates.over) {
-    game.bestScore = game.score;
-    bestScoreText.innerHTML = game.bestScore;
+  if (game.score > bestScoreText.innerHTML) {
+    bestScoreText.innerHTML = game.score;
     saveProgress('bestScore', bestScoreText.innerHTML);
   }
 };
 
 const lose = () => {
   const scoreGameOver = document.querySelector('#scoreGameOver');
-  const DELAY_TO_DIE = 2000;
   if (!gameStates.over) {
     playAudio('boom');
+    changeBestScore();
     setOpacity(0);
     gameStates.over = true;
-    setTimeout(() => {
-      gameStates.active = false;
-      scoreGameOver.innerHTML = game.score;
-      toggleScreen(false, 'gameInterface');
-      toggleScreen(true, 'screen');
-    }, DELAY_TO_DIE);
+    gameStates.active = false;
+    scoreGameOver.innerHTML = game.score;
+    toggleScreen(false, 'gameInterface');
+    toggleScreen(true, 'screen');
   }
 };
 
 const backgroundStars = () => {
   for (let i = 0; i < 100; i++) game.particles.push(new Particle());
 };
-backgroundStars();
 
 const delPowerUp = () => {
   const ACTION_TIME = 5000;
@@ -273,8 +267,8 @@ const updateFunctions = (nameArray) => {
   const functionCollection = {
     [game.cosmonauts]: () => getPoints(),
     [game.stones]: () => delLives(),
-    [game.bosses]: () => delLives(),
     [game.powerups]: () => setPowerUp(),
+    [game.bosses]: () => delLives(),
   };
   return functionCollection[nameArray]();
 };
@@ -282,7 +276,7 @@ const updateFunctions = (nameArray) => {
 const updateObject = (nameArray) => {
   for (const [index, object] of nameArray.entries()) {
     object.update();
-    if (object.image && checkCollision({
+    if (checkCollision({
       object1: object,
       object2: game.player
     })) {
@@ -307,7 +301,6 @@ const updateShots = () => {
 };
 
 const animate = () => {
-  getSkinShip();
   if (!gameStates.active) return;
   requestAnimationFrame(animate);
   ctx.fillStyle = 'black';
@@ -316,10 +309,8 @@ const animate = () => {
   game.speedUp();
   spawnObjects();
   getCoins();
-  changeBestScore();
   game.frames++;
 };
-animate();
 
 const pause = () => {
   if (!gameStates.active && !gameStates.menu) {
@@ -338,6 +329,7 @@ const refreshGame = () => {
   game = new Game();
   document.querySelector('#score').innerHTML = game.score;
   gameStates.over = false;
+  gameStates.active = true;
   toggleScreen(false, 'screen');
   backgroundStars();
   if (!gameStates.menu) {
@@ -377,3 +369,7 @@ window.addEventListener('keyup', (event) => {
     break;
   }
 });
+
+getSkinShip();
+backgroundStars();
+animate();
