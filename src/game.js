@@ -15,7 +15,6 @@ canvas.width = 850;
 canvas.height = 960;
 
 let game = new Game();
-game.loadProgress();
 
 const powerupList = ['Shield', 'Score Multiplier', 'Coin Multiplier'];
 
@@ -27,7 +26,6 @@ const keys = {
 const gameStates = {
   active: false,
   menu: true,
-  pause: false,
   over: false,
 };
 
@@ -52,6 +50,29 @@ const ammoColors = {
 };
 
 const ammoTypesImage = [APShell, HEASShell, HEShell];
+
+const saveProgress = () => {
+  const saveState = {
+    coins: game.coins,
+    bestScore: bestScoreText.innerHTML,
+    petLevel: game.levelPet,
+    petPrice: costPetUpgrade.innerHTML,
+    multiplierLevel: game.levelMultiplier,
+    multiplierPrice: costMulti.innerHTML,
+  };
+  const saveStateString = JSON.stringify(saveState);
+  localStorage.setItem('saveState', saveStateString);
+};
+
+const loadProgress = () => {
+  const saveFile = JSON.parse(localStorage.getItem('saveState'));
+  game.coins = saveFile.coins;
+  bestScoreText.innerHTML = saveFile.bestScore;
+  game.levelPet = saveFile.petLevel;
+  game.levelMultiplier = saveFile.multiplierLevel;
+  costPetUpgrade.innerHTML = saveFile.petPrice;
+  costMulti.innerHTML = saveFile.multiplierPrice;
+};
 
 const playAudio = (nameAudio) => {
   const audio = new Audio();
@@ -86,10 +107,6 @@ const getSkinShip = () => {
 
 const randomNum = (maxNumber) => ~~(Math.random() * maxNumber);
 
-const saveProgress = (key, value) => {
-  localStorage.setItem(key, value);
-};
-
 const toggleAudio = () => {
   backgroundAudio.muted = !backgroundAudio.muted;
 };
@@ -104,16 +121,6 @@ const showLives = () => {
 
 const setOpacity = (opacity) => () => {
   game.player.opacity = opacity;
-};
-
-const delLives = () => {
-  const FLASH_DELAY = 500;
-  game.player.removeLives();
-  if (game.player.lives >= 0) {
-    setTimeout(setOpacity(0.1), 0);
-    setTimeout(setOpacity(1), FLASH_DELAY);
-    imgLives.removeChild(imgLives.lastElementChild);
-  }
 };
 
 const toggleScreen = (toggle, ...ids) => {
@@ -154,7 +161,6 @@ const countDown = () => {
       clearInterval(timer);
       countDownTimer.innerHTML = DEFAULT_VALUE;
       gameStates.active = true;
-      gameStates.pause = false;
       toggleScreen(false, 'countdown');
       animate();
     }
@@ -191,7 +197,6 @@ const spawnObjects = () => {
 const changeBestScore = () => {
   if (game.score > bestScoreText.innerHTML) {
     bestScoreText.innerHTML = game.score;
-    saveProgress('bestScore', bestScoreText.innerHTML);
   }
 };
 
@@ -257,6 +262,25 @@ const checkCollision = ({ object1, object2 }) => (
   object1.position.y + object1.height >= object2.position.y
 );
 
+// const checkCollision = ({ object1 }) => {
+//  const playerPosition = {
+//   right: game.player.position.x + game.player.width,
+//   left: game.player.position.x,
+//   top: game.player.position.y,
+// };
+//   const objectPosition = {
+//     right: object1.position.x + object1.width,
+//     left: object1.position.x,
+//     top: object1.position.y + object1.height,
+//   };
+//
+//   return (
+//     objectPosition.right >= playerPosition.left &&
+//     objectPosition.left <= playerPosition.right &&
+//     objectPosition.top >= playerPosition.top
+//   );
+// };
+
 const checkCollisionShot = ({ object1, object2 }) => (
   object1.position.x + object1.width >= object2.position.x &&
   object1.position.x <= object2.position.x + object2.radius &&
@@ -266,9 +290,9 @@ const checkCollisionShot = ({ object1, object2 }) => (
 const updateFunctions = (nameArray) => {
   const functionCollection = {
     [game.cosmonauts]: () => getPoints(),
-    [game.stones]: () => delLives(),
+    [game.stones]: () => game.player.removeLives(),
     [game.powerups]: () => setPowerUp(),
-    [game.bosses]: () => delLives(),
+    [game.bosses]: () => game.player.removeLives(),
   };
   return functionCollection[nameArray]();
 };
@@ -319,14 +343,15 @@ const pause = () => {
   } else if (gameStates.active && !gameStates.menu) {
     playAudio('pause');
     gameStates.active = false;
-    gameStates.pause = true;
     toggleScreen(true, 'pause');
   }
 };
 
 const refreshGame = () => {
-  saveProgress('coins', game.coins);
+  saveProgress();
   game = new Game();
+  loadProgress();
+  showLives();
   document.querySelector('#score').innerHTML = game.score;
   gameStates.over = false;
   gameStates.active = true;
@@ -372,4 +397,5 @@ window.addEventListener('keyup', (event) => {
 
 getSkinShip();
 backgroundStars();
+loadProgress();
 animate();

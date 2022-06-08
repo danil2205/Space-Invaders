@@ -22,7 +22,6 @@ const setDailyMission = () => {
   dailyMission.innerHTML = randomMission;
   progressMission.innerHTML = 'Progress - Uncompleted';
 };
-setDailyMission();
 
 const addZeroInTime = (time, n = 2) => `${time}`.padStart(n, '0');
 
@@ -40,7 +39,6 @@ const updateMissions = () => {
   if (remainingTime === '00:00:00') setDailyMission();
   setTimeout(updateMissions, DELAY);
 };
-updateMissions();
 
 const setStatusMission = () => {
   toggleScreen(true, 'claimReward');
@@ -65,3 +63,6 @@ const checkMissionProgress = () => {
     console.log('Unknown mission');
   }
 };
+
+setDailyMission();
+updateMissions();

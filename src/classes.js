@@ -5,7 +5,7 @@ class Game {
     this.player = new Player();
     this.pet = new Pet();
     this.levelMultiplier = 2;
-    this.levelPetUpgrade = 0;
+    this.levelPet = 0;
     this.coins = 0;
     this.speed = 1;
     this.frames = 0;
@@ -24,25 +24,10 @@ class Game {
     if (this.frames % 500 === 0) this.speed += SPEED_BOOST;
   }
 
-  loadProgress() {
-    if (localStorage['bestScore'] !== undefined) {
-      bestScoreText.innerHTML = localStorage['bestScore'];
-      this.coins = +localStorage['coins'];
-    }
-    if (localStorage['multiplierLevel'] > 0) {
-      this.levelMultiplier = localStorage['multiplierLevel'];
-      costMulti.innerText = +localStorage['multiplierPrice'];
-    }
-    if (localStorage['petLevel'] > 0) {
-      this.levelPetUpgrade = localStorage['petLevel'];
-      costPetUpgrade.innerText = +localStorage['petPrice'];
-    }
-  }
-
   spawnBoss() {
     const framesToSpawn = 10000;
-    if (game.frames % framesToSpawn === 0) {
-      game.bosses.push(new Boss());
+    if (this.frames % framesToSpawn === 0 && this.bosses.length === 0) {
+      this.bosses.push(new Boss());
     }
   }
 
@@ -73,6 +58,7 @@ class Player {
     this.adrenalineCooldown = false;
     this.powerUp = null;
     this.opacity = 1;
+
     const image = new Image();
     image.src = './img/ship1.png';
     image.onload = () => {
@@ -109,7 +95,7 @@ class Player {
   }
 
   playerDie() {
-    if (game.player.lives === 0) lose();
+    if (this.lives === 0) lose();
   }
 
   shoot() {
@@ -121,7 +107,13 @@ class Player {
   }
 
   removeLives() {
-    if (this.powerUp !== 'Shield' && game.pet.ability !== 'Shield') this.lives--;
+    if (this.powerUp !== 'Shield' && game.pet.ability !== 'Shield') {
+      this.lives--;
+      const FLASH_DELAY = 500;
+      setTimeout(setOpacity(0.1), 0);
+      setTimeout(setOpacity(1), FLASH_DELAY);
+      imgLives.removeChild(imgLives.lastElementChild);
+    }
   }
 
   update() {
@@ -279,7 +271,7 @@ class Pet {
       this.ability = this.abilityMenu;
       setTimeout(() => {
         this.ability = null;
-      }, 2000 + 250 * game.levelPetUpgrade); // 2 seconds + 0.25 seconds for each upgrade
+      }, 2000 + 250 * game.levelPet); // 2 seconds + 0.25 seconds for each upgrade
     }
   }
 
