@@ -5,6 +5,7 @@ const costPetUpgrade = document.querySelector('#costPetUpgrade');
 const abilityPet = document.querySelector('#abilityPet');
 
 const play = (...ids) => {
+  showLives();
   backgroundAudio.load();
   for (const id of ids) changeTab(id);
   gameStates.active = true;

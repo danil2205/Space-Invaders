@@ -364,32 +364,32 @@ const refreshGame = () => {
 };
 
 const keyFunctions = {
-  'a': () => keys.a.pressed = true,
-  'd': () => keys.d.pressed = true,
-  'x': () => game.pet.getAbility(),
+  'KeyA': () => keys.a.pressed = true,
+  'KeyD': () => keys.d.pressed = true,
+  'KeyX': () => game.pet.getAbility(),
   'Escape': () => pause(),
-  'm': () => toggleAudio(),
-  ' ': () => game.player.shoot(),
-  '1': () => changeAmmo('APShell', APShell),
-  '2': () => changeAmmo('HEASShell', HEASShell),
-  '3': () => changeAmmo('HEShell', HEShell),
-  '4': () => useAdrenaline(),
+  'KeyM': () => toggleAudio(),
+  'Space': () => game.player.shoot(),
+  'Digit1': () => changeAmmo('APShell', APShell),
+  'Digit2': () => changeAmmo('HEASShell', HEASShell),
+  'Digit3': () => changeAmmo('HEShell', HEShell),
+  'Digit4': () => useAdrenaline(),
 };
 
 window.addEventListener('keydown', (event) => {
   try {
-    keyFunctions[event.key]();
+    keyFunctions[event.code]();
   } catch {
     return true;
   }
 });
 
 window.addEventListener('keyup', (event) => {
-  switch (event.key) {
-  case 'a':
+  switch (event.code) {
+  case 'KeyA':
     keys.a.pressed = false;
     break;
-  case 'd':
+  case 'KeyD':
     keys.d.pressed = false;
     break;
   }
