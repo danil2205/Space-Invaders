@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 body {
     background-image: url("./img/background_menu.png");
+    background-repeat: no-repeat;
+    background-size: cover;
     margin: 0;
     overflow: hidden;
     display: flex;
