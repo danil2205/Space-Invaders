@@ -1,5 +1,7 @@
 'use strict';
 
+const canvasPos = canvas.getBoundingClientRect();
+
 class Game {
   constructor() {
     this.player = new Player();
@@ -17,6 +19,13 @@ class Game {
     this.cosmonauts = [];
     this.powerups = [];
     this.shots = [];
+    this.arrayOfObjects = [
+      this.particles,
+      this.bosses,
+      this.cosmonauts,
+      this.powerups,
+      this.stones,
+    ];
   }
 
   speedUp() {
@@ -32,17 +41,10 @@ class Game {
   }
 
   updateObjects() {
-    const arrayOfObjects = [
-      this.particles,
-      this.bosses,
-      this.cosmonauts,
-      this.powerups,
-      this.stones,
-    ];
     this.player.update();
     this.pet.update();
     updateShots();
-    for (const object of arrayOfObjects) updateObject(object);
+    for (const object of this.arrayOfObjects) updateObject(object);
   }
 }
 
@@ -68,7 +70,7 @@ class Player {
       this.height = image.height * scale;
       this.position = {
         x: canvas.width / 2 - this.width / 2,
-        y: canvas.height / 2 + this.height + 250,  // magic
+        y: canvas.height / 2 + this.height + 250,
       };
     };
   }
@@ -87,7 +89,7 @@ class Player {
   }
 
   move() {
-    if (keys.a.pressed && this.position.x + canvas.width > canvas.width) {
+    if (keys.a.pressed && this.position.x > canvasPos.right) {
       this.velocity.x = -5;
     } else if (keys.d.pressed && this.position.x + this.width < canvas.width) {
       this.velocity.x = 5;
@@ -104,6 +106,14 @@ class Player {
       game.shots.push(new Shot());
       changeProgressReload();
     }
+  }
+
+  collideWith(obj) {
+    return (
+      obj.position.x + obj.width >= this.position.x &&
+      obj.position.x <= this.position.x + this.width &&
+      obj.position.y + this.height / 2 >= this.position.y
+    );
   }
 
   removeLives() {
@@ -160,12 +170,12 @@ class Boss {
   move() {
     if (
       this.position.x + this.width > canvas.width ||
-      this.position.x + canvas.width < canvas.width
+      this.position.x < canvasPos.right
     ) this.velocity.x = -this.velocity.x;
 
     if (
       this.position.y + this.height > canvas.height ||
-      this.position.y + canvas.height < canvas.height
+      this.position.y < canvasPos.top
     ) this.velocity.y = -this.velocity.y;
   }
 
@@ -348,8 +358,16 @@ class Shot extends Particle {
   deleteShots() {
     if (
       this.position.y >= canvas.height ||
-      this.position.y + canvas.height < canvas.height
+      this.position.y < canvasPos.top
     ) game.shots.splice(0, 1);
+  }
+
+  collideWith(obj) {
+    return (
+      obj.position.x + obj.width >= this.position.x &&
+      obj.position.x <= this.position.x + this.radius &&
+      obj.position.y >= this.position.y
+    );
   }
 
   update() {

@@ -205,7 +205,6 @@ const lose = () => {
   if (!gameStates.over) {
     playAudio('boom');
     changeBestScore();
-    setOpacity(0);
     gameStates.over = true;
     gameStates.active = false;
     scoreGameOver.innerHTML = game.score;
@@ -244,7 +243,9 @@ const getCoins = () => {
     const COINS_WITHOUT_MULTIPLIER = 1;
     const COINS_WITH_MULTIPLIER = 2;
     game.coins += (game.player.powerUp === 'Coin Multiplier') ? COINS_WITH_MULTIPLIER : COINS_WITHOUT_MULTIPLIER;
-    game.coins += (game.pet.ability === 'Double Coins') ? COINS_WITH_MULTIPLIER : 0;
+    if (game.pet.ability === 'Double Coins') {
+      game.coins += COINS_WITH_MULTIPLIER;
+    }
     coinText.innerText = game.coins;
   }
 };
@@ -255,37 +256,6 @@ const getPoints = () => {
   game.score += (game.player.powerUp === 'Score Multiplier') ? game.levelMultiplier : 1;
   scoreText.innerHTML = game.score;
 };
-
-const checkCollision = ({ object1, object2 }) => (
-  object1.position.x + object1.width >= object2.position.x &&
-  object1.position.x <= object2.position.x + object2.width &&
-  object1.position.y + object1.height >= object2.position.y
-);
-
-// const checkCollision = ({ object1 }) => {
-//  const playerPosition = {
-//   right: game.player.position.x + game.player.width,
-//   left: game.player.position.x,
-//   top: game.player.position.y,
-// };
-//   const objectPosition = {
-//     right: object1.position.x + object1.width,
-//     left: object1.position.x,
-//     top: object1.position.y + object1.height,
-//   };
-//
-//   return (
-//     objectPosition.right >= playerPosition.left &&
-//     objectPosition.left <= playerPosition.right &&
-//     objectPosition.top >= playerPosition.top
-//   );
-// };
-
-const checkCollisionShot = ({ object1, object2 }) => (
-  object1.position.x + object1.width >= object2.position.x &&
-  object1.position.x <= object2.position.x + object2.radius &&
-  object1.position.y >= object2.position.y
-);
 
 const updateFunctions = (nameArray) => {
   const functionCollection = {
@@ -300,10 +270,7 @@ const updateFunctions = (nameArray) => {
 const updateObject = (nameArray) => {
   for (const [index, object] of nameArray.entries()) {
     object.update();
-    if (checkCollision({
-      object1: object,
-      object2: game.player
-    })) {
+    if (game.player.collideWith(object)) {
       nameArray.splice(index, 1);
       updateFunctions(nameArray);
     }
@@ -314,10 +281,7 @@ const updateShots = () => {
   const boss = game.bosses[0];
   for (const [index, shot] of game.shots.entries()) {
     shot.update();
-    if (checkCollisionShot({
-      object1: boss,
-      object2: shot
-    })) {
+    if (shot.collideWith(boss)) {
       boss.health -= game.player.ammoDamage;
       game.shots.splice(index, 1);
     }
