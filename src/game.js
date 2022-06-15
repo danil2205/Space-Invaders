@@ -132,21 +132,21 @@ const toggleScreen = (toggle, ...ids) => {
 };
 
 const reloadAdrenaline = () => {
-  const ADRENALINE_COOLDOWN = 100000;
+  const cooldown = 100000;
   setTimeout(() => {
     game.player.adrenalineCooldown = false;
-  }, ADRENALINE_COOLDOWN);
+  }, cooldown);
 };
 
 const useAdrenaline = () => {
   if (game.player.adrenalineCooldown) return;
-  const ACTION_OF_ADRENALINE = 10000;
+  const actionTime = 10000;
   progressBar.max--;
   game.player.adrenalineCooldown = true;
 
   setTimeout(() => {
     progressBar.max++;
-  }, ACTION_OF_ADRENALINE);
+  }, actionTime);
   reloadAdrenaline();
 };
 
@@ -180,18 +180,18 @@ const spawnObject = (framesToSpawn, nameObject, arrayObjects, scale) => {
 };
 
 const spawnObjects = () => {
-  const FRAMES_LIL_STONE = 50;
-  const FRAMES_BIG_STONE = 150;
-  const FRAMES_COSMONAUT = 80;
-  const FRAMES_POWERUP = 1000;
+  const framesStone = 50;
+  const framesBigStone = 150;
+  const framesCosmonaut = 80;
+  const framesPower = 1000;
 
   if (game.pet.ability !== 'No Enemies') {
-    spawnObject(FRAMES_LIL_STONE, 'mars', game.stones, 0.02);
-    spawnObject(FRAMES_BIG_STONE, 'mars', game.stones, 0.07);
+    spawnObject(framesStone, 'mars', game.stones, 0.02);
+    spawnObject(framesBigStone, 'mars', game.stones, 0.07);
     game.spawnBoss();
   }
-  spawnObject(FRAMES_COSMONAUT, 'cosmonaut', game.cosmonauts, 0.02);
-  spawnObject(FRAMES_POWERUP, 'powerup', game.powerups, 0.1);
+  spawnObject(framesCosmonaut, 'cosmonaut', game.cosmonauts, 0.02);
+  spawnObject(framesPower, 'powerup', game.powerups, 0.1);
 };
 
 const changeBestScore = () => {
@@ -218,11 +218,11 @@ const backgroundStars = () => {
 };
 
 const delPowerUp = () => {
-  const ACTION_TIME = 5000;
+  const actionTime = 5000;
   setTimeout(() => {
     toggleScreen(false, 'announcement');
     game.player.powerUp = null;
-  }, ACTION_TIME);
+  }, actionTime);
 };
 
 const setPowerUp = () => {
@@ -240,11 +240,15 @@ const setPowerUp = () => {
 const getCoins = () => {
   const coinText = document.querySelector('#coins');
   if (game.frames % 150 === 0) {
-    const COINS_WITHOUT_MULTIPLIER = 1;
-    const COINS_WITH_MULTIPLIER = 2;
-    game.coins += (game.player.powerUp === 'Coin Multiplier') ? COINS_WITH_MULTIPLIER : COINS_WITHOUT_MULTIPLIER;
-    if (game.pet.ability === 'Double Coins') {
-      game.coins += COINS_WITH_MULTIPLIER;
+    const coinsWithoutPower = 1;
+    const coinsWithPower = 2;
+    if (
+      game.player.powerUp === 'Coin Multiplier' ||
+      game.pet.ability === 'Double Coins'
+    ) {
+      game.coins += coinsWithPower;
+    } else {
+      game.coins += coinsWithoutPower;
     }
     coinText.innerText = game.coins;
   }
@@ -253,7 +257,11 @@ const getCoins = () => {
 const getPoints = () => {
   const scoreText = document.querySelector('#score');
   if (dailyMission.innerText === 'Collect 10 Cosmonauts') game.counterMission++;
-  game.score += (game.player.powerUp === 'Score Multiplier') ? game.levelMultiplier : 1;
+  if (game.player.powerUp === 'Score Multiplier') {
+    game.score += game.levelMultiplier;
+  } else {
+    game.score += 1;
+  }
   scoreText.innerHTML = game.score;
 };
 

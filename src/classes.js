@@ -29,8 +29,8 @@ class Game {
   }
 
   speedUp() {
-    const SPEED_BOOST = 0.1;
-    if (this.frames % 500 === 0) this.speed += SPEED_BOOST;
+    const speedBoost = 0.1;
+    if (this.frames % 500 === 0) this.speed += speedBoost;
   }
 
   spawnBoss() {
@@ -119,9 +119,9 @@ class Player {
   removeLives() {
     if (this.powerUp !== 'Shield' && game.pet.ability !== 'Shield') {
       this.lives--;
-      const FLASH_DELAY = 500;
+      const flashDelay = 500;
       setTimeout(setOpacity(0.1), 0);
-      setTimeout(setOpacity(1), FLASH_DELAY);
+      setTimeout(setOpacity(1), flashDelay);
       imgLives.removeChild(imgLives.lastElementChild);
     }
   }
@@ -253,10 +253,7 @@ class Pet {
 
   cosmonautsCollect() {
     for (const [index, cosmonaut] of game.cosmonauts.entries()) {
-      if (!checkCollision({
-        object1: cosmonaut,
-        object2: game.player
-      })) {
+      if (!game.player.collideWith(cosmonaut)) {
         getPoints();
         game.cosmonauts.splice(index, 1);
       }
@@ -268,10 +265,11 @@ class Pet {
   }
 
   setCooldown() {
+    const cooldown = 30000;
     if (this.isCooldown) setTimeout(() => {
       this.isCooldown = false;
       abilityPet.innerHTML = 'Ability of your Pet is Ready';
-    }, 30000);
+    }, cooldown);
   }
 
   getAbility() {

@@ -34,9 +34,9 @@ const upgradeItem = (itemName, price) => {
 };
 
 const buyLife = () => {
-  const LIFE_COST = 100;
-  if (game.coins >= LIFE_COST) {
-    game.coins -= LIFE_COST;
+  const lifePrice = 100;
+  if (game.coins >= lifePrice) {
+    game.coins -= lifePrice;
     game.player.lives += 1;
     saveProgress();
   }
