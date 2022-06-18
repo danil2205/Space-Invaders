@@ -37,16 +37,10 @@ const difficulties = {
   'impossible': 2,
 };
 
-const ammoDamages = {
-  APShell: 15,
-  HEASShell: 10,
-  HEShell: 30,
-};
-
-const ammoColors = {
-  APShell: 'red',
-  HEASShell: 'yellow',
-  HEShell: 'orange',
+const ammoCharacteristics = {
+  APShell: { damage: 15, color: 'red' },
+  HEASShell: { damage: 10, color: 'yellow' },
+  HEShell: { damage: 30, color: 'orange' },
 };
 
 const ammoTypesImage = [APShell, HEASShell, HEShell];
@@ -91,8 +85,8 @@ const changeProgressReload = () => {
 const changeAmmo = (ammoType, selectedAmmo) => {
   for (const ammoImage of ammoTypesImage) ammoImage.style.border = '';
   selectedAmmo.style.border = '1px solid white';
-  game.player.ammoDamage = ammoDamages[ammoType];
-  game.player.ammoColor = ammoColors[ammoType];
+  game.player.ammoDamage = ammoCharacteristics[ammoType].damage;
+  game.player.ammoColor = ammoCharacteristics[ammoType].color;
 };
 
 const getSkinShip = () => {
@@ -153,13 +147,13 @@ const useAdrenaline = () => {
 const countDown = () => {
   const countDownTimer = document.getElementById('countDownTimer');
   const DELAY = 1000;
-  const DEFAULT_VALUE = 3;
+  const defaultValue = 3;
   toggleScreen(true, 'countdown');
 
   const timer = setInterval(() => {
     if (countDownTimer.innerHTML === '0') {
       clearInterval(timer);
-      countDownTimer.innerHTML = DEFAULT_VALUE;
+      countDownTimer.innerHTML = defaultValue;
       gameStates.active = true;
       toggleScreen(false, 'countdown');
       animate();
@@ -266,13 +260,16 @@ const getPoints = () => {
 };
 
 const updateFunctions = (nameArray) => {
-  const functionCollection = {
+  const collideFunctions = {
     [game.cosmonauts]: () => getPoints(),
     [game.stones]: () => game.player.removeLives(),
     [game.powerups]: () => setPowerUp(),
-    [game.bosses]: () => game.player.removeLives(),
+    [game.bosses]: () => {
+      game.player.removeLives();
+      toggleScreen(false, 'bossAnnounce');
+    },
   };
-  return functionCollection[nameArray]();
+  return collideFunctions[nameArray]();
 };
 
 const updateObject = (nameArray) => {
@@ -348,16 +345,16 @@ const keyFunctions = {
   'Digit4': () => useAdrenaline(),
 };
 
-window.addEventListener('keydown', (event) => {
+window.addEventListener('keydown', ({ code }) => {
   try {
-    keyFunctions[event.code]();
+    keyFunctions[code]();
   } catch {
     return true;
   }
 });
 
-window.addEventListener('keyup', (event) => {
-  switch (event.code) {
+window.addEventListener('keyup', ({ code }) => {
+  switch (code) {
   case 'KeyA':
     keys.a.pressed = false;
     break;

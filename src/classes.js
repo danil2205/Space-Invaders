@@ -127,12 +127,10 @@ class Player {
   }
 
   update() {
-    if (this.image) {
-      this.draw();
-      this.move();
-      this.playerDie();
-      this.position.x += this.velocity.x;
-    }
+    this.draw();
+    this.move();
+    this.playerDie();
+    this.position.x += this.velocity.x;
   }
 }
 
@@ -180,25 +178,27 @@ class Boss {
   }
 
   deleteBoss() {
-    if (this.health <= 0 || game.bosses.length === 0) {
+    if (this.health <= 0) {
       game.coins += 20;
       game.bosses = [];
       toggleScreen(false, 'bossAnnounce');
       if (dailyMission.innerText === 'Kill 1 Bosses') game.counterMission++;
-    } else {
-      document.querySelector('#bossHP').style.width = game.bosses[0].health;
-      toggleScreen(true, 'bossAnnounce');
     }
   }
 
+  bossSpawned() {
+    if (game.bosses.length === 0) return;
+    document.querySelector('#bossHP').style.width = game.bosses[0].health;
+    toggleScreen(true, 'bossAnnounce');
+  }
+
   update() {
-    if (this.image) {
-      this.draw();
-      this.move();
-      this.deleteBoss(); // bug: after collision with player, announce doesn't disappear
-      this.position.x += this.velocity.x;
-      this.position.y += this.velocity.y;
-    }
+    this.draw();
+    this.move();
+    this.bossSpawned();
+    this.deleteBoss();
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
   }
 }
 
@@ -252,6 +252,7 @@ class Pet {
   }
 
   cosmonautsCollect() {
+    if (this.ability !== 'collectCosmonauts') return;
     for (const [index, cosmonaut] of game.cosmonauts.entries()) {
       if (!game.player.collideWith(cosmonaut)) {
         getPoints();
@@ -264,7 +265,7 @@ class Pet {
     if (this.ability === 'Double Coins') getCoins();
   }
 
-  setCooldown() {
+  reloadAbility() {
     const cooldown = 30000;
     if (this.isCooldown) setTimeout(() => {
       this.isCooldown = false;
@@ -275,6 +276,7 @@ class Pet {
   getAbility() {
     if (!this.isCooldown) {
       this.isCooldown = true;
+      this.reloadAbility();
       abilityPet.innerHTML = 'Ability of your Pet is NOT Ready';
       this.ability = this.abilityMenu;
       setTimeout(() => {
@@ -284,15 +286,12 @@ class Pet {
   }
 
   update() {
-    if (this.image) {
-      this.draw();
-      this.move();
-      this.setCooldown();
-      this.healShip();
-      if (this.ability === 'collectCosmonauts') this.cosmonautsCollect();
-      this.coinDoubling();
-      this.position.x += this.velocity.x;
-    }
+    this.draw();
+    this.move();
+    this.healShip();
+    this.cosmonautsCollect();
+    this.coinDoubling();
+    this.position.x += this.velocity.x;
   }
 }
 
@@ -394,15 +393,13 @@ class GameObject {
   }
 
   draw() {
-    if (this.image) {
-      ctx.drawImage(
-        this.image,
-        this.position.x,
-        this.position.y,
-        this.width,
-        this.height
-      );
-    }
+    ctx.drawImage(
+      this.image,
+      this.position.x,
+      this.position.y,
+      this.width,
+      this.height
+    );
   }
 
   move() {
