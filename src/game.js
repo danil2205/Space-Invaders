@@ -117,12 +117,10 @@ const setOpacity = (opacity) => () => {
   game.player.opacity = opacity;
 };
 
-const toggleScreen = (toggle, ...ids) => {
-  for (const id of ids) {
-    const element = document.querySelector(`#${id}`);
-    const display = toggle ? 'block' : 'none';
-    element.style.display = display;
-  }
+const toggleScreen = (toggle, id) => {
+  const element = document.querySelector(`#${id}`);
+  const display = toggle ? 'block' : 'none';
+  element.style.display = display;
 };
 
 const reloadAdrenaline = () => {
