@@ -2,15 +2,6 @@
 
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
-const bestScoreText = document.querySelector('#bestScore');
-const APShell = document.querySelector('#APShell');
-const HEASShell = document.querySelector('#HEASShell');
-const HEShell = document.querySelector('#HEShell');
-const progressBar = document.querySelector('#reloadGun');
-const imgLives = document.querySelector('#imgLives');
-const backgroundAudio = document.querySelector('#background');
-backgroundAudio.volume = 0.1;
-
 canvas.width = 850;
 canvas.height = 960;
 
@@ -22,6 +13,17 @@ const keys = {
   a: { pressed: false },
   d: { pressed: false },
 };
+
+const gameGUI = {
+  'bestScoreText': document.querySelector('#bestScore'),
+  'APShell': document.querySelector('#APShell'),
+  'HEASShell': document.querySelector('#HEASShell'),
+  'HEShell': document.querySelector('#HEShell'),
+  'progressBar': document.querySelector('#reloadGun'),
+  'imgLives': document.querySelector('#imgLives'),
+  'backgroundAudio': document.querySelector('#background'),
+};
+gameGUI.backgroundAudio.volume = 0.1;
 
 const gameStates = {
   active: false,
@@ -43,12 +45,12 @@ const ammoCharacteristics = {
   HEShell: { damage: 30, color: 'orange' },
 };
 
-const ammoTypesImage = [APShell, HEASShell, HEShell];
+const ammoTypesImage = [gameGUI.APShell, gameGUI.HEASShell, gameGUI.HEShell];
 
 const saveProgress = () => {
   const saveState = {
     coins: game.coins,
-    bestScore: bestScoreText.innerHTML,
+    bestScore: gameGUI.bestScoreText.innerHTML,
     petLevel: game.levelPet,
     petPrice: costPetUpgrade.innerHTML,
     multiplierLevel: game.levelMultiplier,
@@ -61,7 +63,7 @@ const saveProgress = () => {
 const loadProgress = () => {
   const saveFile = JSON.parse(localStorage.getItem('saveState'));
   game.coins = saveFile.coins;
-  bestScoreText.innerHTML = saveFile.bestScore;
+  gameGUI.bestScoreText.innerHTML = saveFile.bestScore;
   game.levelPet = saveFile.petLevel;
   game.levelMultiplier = saveFile.multiplierLevel;
   costPetUpgrade.innerHTML = saveFile.petPrice;
@@ -77,8 +79,8 @@ const playAudio = (nameAudio) => {
 
 const changeProgressReload = () => {
   const DELAY = 50;
-  if (progressBar.value >= progressBar.max) return;
-  progressBar.value += 0.05;
+  if (gameGUI.progressBar.value >= gameGUI.progressBar.max) return;
+  gameGUI.progressBar.value += 0.05;
   setTimeout(changeProgressReload, DELAY);
 };
 
@@ -102,14 +104,14 @@ const getSkinShip = () => {
 const randomNum = (maxNumber) => ~~(Math.random() * maxNumber);
 
 const toggleAudio = () => {
-  backgroundAudio.muted = !backgroundAudio.muted;
+  gameGUI.backgroundAudio.muted = !gameGUI.backgroundAudio.muted;
 };
 
 const showLives = () => {
-  imgLives.innerHTML = '';
+  gameGUI.imgLives.innerHTML = '';
   for (let i = 0; i < game.player.lives; i++) {
     const image = new Image();
-    imgLives.append(image);
+    gameGUI.imgLives.append(image);
   }
 };
 
@@ -133,11 +135,11 @@ const reloadAdrenaline = () => {
 const useAdrenaline = () => {
   if (game.player.adrenalineCooldown) return;
   const actionTime = 10000;
-  progressBar.max--;
+  gameGUI.progressBar.max--;
   game.player.adrenalineCooldown = true;
 
   setTimeout(() => {
-    progressBar.max++;
+    gameGUI.progressBar.max++;
   }, actionTime);
   reloadAdrenaline();
 };
@@ -187,8 +189,8 @@ const spawnObjects = () => {
 };
 
 const changeBestScore = () => {
-  if (game.score > bestScoreText.innerHTML) {
-    bestScoreText.innerHTML = game.score;
+  if (game.score > gameGUI.bestScoreText.innerHTML) {
+    gameGUI.bestScoreText.innerHTML = game.score;
   }
 };
 
@@ -257,7 +259,7 @@ const getPoints = () => {
   scoreText.innerHTML = game.score;
 };
 
-const updateFunctions = (nameArray) => {
+const getCollideFunctions = (nameArray) => {
   const collideFunctions = {
     [game.cosmonauts]: () => getPoints(),
     [game.stones]: () => game.player.removeLives(),
@@ -275,7 +277,7 @@ const updateObject = (nameArray) => {
     object.update();
     if (game.player.collideWith(object)) {
       nameArray.splice(index, 1);
-      updateFunctions(nameArray);
+      getCollideFunctions(nameArray);
     }
   }
 };
@@ -337,9 +339,9 @@ const keyFunctions = {
   'Escape': () => pause(),
   'KeyM': () => toggleAudio(),
   'Space': () => game.player.shoot(),
-  'Digit1': () => changeAmmo('APShell', APShell),
-  'Digit2': () => changeAmmo('HEASShell', HEASShell),
-  'Digit3': () => changeAmmo('HEShell', HEShell),
+  'Digit1': () => changeAmmo('APShell', gameGUI.APShell),
+  'Digit2': () => changeAmmo('HEASShell', gameGUI.HEASShell),
+  'Digit3': () => changeAmmo('HEShell', gameGUI.HEShell),
   'Digit4': () => useAdrenaline(),
 };
 

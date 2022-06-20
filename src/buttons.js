@@ -6,7 +6,7 @@ const abilityPet = document.querySelector('#abilityPet');
 
 const play = (...ids) => {
   showLives();
-  backgroundAudio.load();
+  gameGUI.backgroundAudio.load();
   for (const id of ids) changeTab(id);
   gameStates.active = true;
   gameStates.menu = false;

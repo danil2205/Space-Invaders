@@ -19,7 +19,7 @@ class Game {
     this.cosmonauts = [];
     this.powerups = [];
     this.shots = [];
-    this.arrayOfObjects = [
+    this.arrayOfGameObjects = [
       this.particles,
       this.bosses,
       this.cosmonauts,
@@ -44,7 +44,7 @@ class Game {
     this.player.update();
     this.pet.update();
     updateShots();
-    for (const object of this.arrayOfObjects) updateObject(object);
+    for (const object of this.arrayOfGameObjects) updateObject(object);
   }
 }
 
@@ -101,8 +101,11 @@ class Player {
   }
 
   shoot() {
-    if (progressBar.value === progressBar.max && game.bosses.length !== 0) {
-      progressBar.value = 0;
+    if (
+      gameGUI.progressBar.value === gameGUI.progressBar.max &&
+      game.bosses.length !== 0
+    ) {
+      gameGUI.progressBar.value = 0;
       game.shots.push(new Shot());
       changeProgressReload();
     }
@@ -122,7 +125,7 @@ class Player {
       const flashDelay = 500;
       setTimeout(setOpacity(0.1), 0);
       setTimeout(setOpacity(1), flashDelay);
-      imgLives.removeChild(imgLives.lastElementChild);
+      gameGUI.imgLives.removeChild(gameGUI.imgLives.lastElementChild);
     }
   }
 
