@@ -120,7 +120,7 @@ class Player {
   }
 
   removeLives() {
-    if (this.powerUp !== 'Shield' && game.pet.ability !== 'Shield') {
+    if (this.powerUp !== 'Shield' || game.pet.ability !== 'Shield') {
       this.lives--;
       const flashDelay = 500;
       setTimeout(setOpacity(0.1), 0);
