@@ -184,7 +184,9 @@ class Boss {
       game.coins += 20;
       game.bosses = [];
       toggleScreen(false, 'bossAnnounce');
-      if (dailyMission.innerText === 'Kill 1 Bosses') game.counterMission++;
+      if (missionsGUI.dailyMission.innerText === 'Kill 1 Bosses') {
+        game.counterMission++;
+      }
     }
   }
 
@@ -271,7 +273,7 @@ class Pet {
     const cooldown = 30000;
     if (this.isCooldown) setTimeout(() => {
       this.isCooldown = false;
-      abilityPet.innerHTML = 'Ability of your Pet is Ready';
+      shopGUI.abilityPet.innerHTML = 'Ability of your Pet is Ready';
     }, cooldown);
   }
 
@@ -279,11 +281,11 @@ class Pet {
     if (!this.isCooldown) {
       this.isCooldown = true;
       this.reloadAbility();
-      abilityPet.innerHTML = 'Ability of your Pet is NOT Ready';
+      shopGUI.abilityPet.innerHTML = 'Ability of your Pet is NOT Ready';
       this.ability = this.abilityMenu;
       setTimeout(() => {
         this.ability = null;
-      }, 20000 + 250 * game.levelPet); // 2 seconds + 0.25 seconds for each upgrade
+      }, 20000 + 250 * game.levelPet);
     }
   }
 
