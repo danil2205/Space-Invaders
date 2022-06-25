@@ -1,7 +1,9 @@
 'use strict';
 
-const dailyMission = document.querySelector('#dailyMission');
-const progressMission = document.querySelector('#progressMission');
+const missionsGUI = {
+  dailyMission: document.querySelector('#dailyMission'),
+  progressMission: document.querySelector('#progressMission'),
+};
 
 const dailyMissions = [
   'Collect 10 Cosmonauts',
@@ -19,8 +21,8 @@ const endDate = {
 const setDailyMission = () => {
   game.counterMission = 0;
   const randomMission = dailyMissions[randomNum(dailyMissions.length)];
-  dailyMission.innerHTML = randomMission;
-  progressMission.innerHTML = 'Progress - Uncompleted';
+  missionsGUI.dailyMission.innerHTML = randomMission;
+  missionsGUI.progressMission.innerHTML = 'Progress - Uncompleted';
 };
 
 const addZeroInTime = (time, n = 2) => `${time}`.padStart(n, '0');
@@ -42,11 +44,11 @@ const updateMissions = () => {
 
 const setStatusMission = () => {
   toggleScreen(true, 'claimReward');
-  progressMission.innerHTML = 'Progress - Completed';
+  missionsGUI.progressMission.innerHTML = 'Progress - Completed';
 };
 
 const checkMissionProgress = () => {
-  switch (dailyMission.innerText) {
+  switch (missionsGUI.dailyMission.innerText) {
   case 'Collect 10 Cosmonauts':
     if (game.counterMission >= 10) setStatusMission();
     break;
@@ -57,7 +59,7 @@ const checkMissionProgress = () => {
     if (game.score >= 100) setStatusMission();
     break;
   case 'Beat Your Record':
-    if (game.score > gameGUI.bestScoreText.innerHTML) setStatusMission();
+    if (game.score > gameGUI.bestScore.innerHTML) setStatusMission();
     break;
   default:
     console.log('Unknown mission');

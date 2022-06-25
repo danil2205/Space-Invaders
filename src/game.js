@@ -52,9 +52,9 @@ const saveProgress = () => {
     coins: game.coins,
     bestScore: gameGUI.bestScore.innerHTML,
     petLevel: game.levelPet,
-    petPrice: costPetUpgrade.innerHTML,
+    petPrice: shopGUI.costPetUpgrade.innerHTML,
     multiplierLevel: game.levelMultiplier,
-    multiplierPrice: costMulti.innerHTML,
+    multiplierPrice: shopGUI.costMulti.innerHTML,
   };
   const saveStateString = JSON.stringify(saveState);
   localStorage.setItem('saveState', saveStateString);
@@ -66,8 +66,8 @@ const loadProgress = () => {
   gameGUI.bestScore.innerHTML = saveFile.bestScore;
   game.levelPet = saveFile.petLevel;
   game.levelMultiplier = saveFile.multiplierLevel;
-  costPetUpgrade.innerHTML = saveFile.petPrice;
-  costMulti.innerHTML = saveFile.multiplierPrice;
+  shopGUI.costPetUpgrade.innerHTML = saveFile.petPrice;
+  shopGUI.costMulti.innerHTML = saveFile.multiplierPrice;
 };
 
 const playAudio = (nameAudio) => {
@@ -250,7 +250,7 @@ const getCoins = () => {
 
 const getPoints = () => {
   const scoreText = document.querySelector('#score');
-  if (dailyMission.innerText === 'Collect 10 Cosmonauts') game.counterMission++;
+  if (missionsGUI.dailyMission.innerText === 'Collect 10 Cosmonauts') game.counterMission++;
   if (game.player.powerUp === 'Score Multiplier') {
     game.score += game.levelMultiplier;
   } else {

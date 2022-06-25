@@ -1,8 +1,10 @@
 'use strict';
 
-const costMulti = document.querySelector('#costMulti');
-const costPetUpgrade = document.querySelector('#costPetUpgrade');
-const abilityPet = document.querySelector('#abilityPet');
+const shopGUI = {
+  costMulti: document.querySelector('#costMulti'),
+  costPetUpgrade: document.querySelector('#costPetUpgrade'),
+  abilityPet: document.querySelector('#abilityPet'),
+};
 
 const play = (...ids) => {
   showLives();
