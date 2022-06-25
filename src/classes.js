@@ -120,13 +120,12 @@ class Player {
   }
 
   removeLives() {
-    if (this.powerUp !== 'Shield' || game.pet.ability !== 'Shield') {
-      this.lives--;
-      const flashDelay = 500;
-      setTimeout(setOpacity(0.1), 0);
-      setTimeout(setOpacity(1), flashDelay);
-      gameGUI.imgLives.removeChild(gameGUI.imgLives.lastElementChild);
-    }
+    if (this.powerUp === 'Shield' || game.pet.ability === 'Shield') return;
+    this.lives--;
+    const flashDelay = 500;
+    setTimeout(setOpacity(0.1), 0);
+    setTimeout(setOpacity(1), flashDelay);
+    gameGUI.imgLives.removeChild(gameGUI.imgLives.lastElementChild);
   }
 
   update() {
@@ -284,7 +283,7 @@ class Pet {
       this.ability = this.abilityMenu;
       setTimeout(() => {
         this.ability = null;
-      }, 2000 + 250 * game.levelPet); // 2 seconds + 0.25 seconds for each upgrade
+      }, 20000 + 250 * game.levelPet); // 2 seconds + 0.25 seconds for each upgrade
     }
   }
 
