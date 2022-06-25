@@ -279,13 +279,14 @@ class Pet {
 
   getAbility() {
     if (!this.isCooldown) {
+      const actionTime = 20000 + 250 * game.levelPet;
       this.isCooldown = true;
       this.reloadAbility();
       shopGUI.abilityPet.innerHTML = 'Ability of your Pet is NOT Ready';
       this.ability = this.abilityMenu;
       setTimeout(() => {
         this.ability = null;
-      }, 20000 + 250 * game.levelPet);
+      }, actionTime);
     }
   }
 
