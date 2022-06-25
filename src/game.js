@@ -15,13 +15,13 @@ const keys = {
 };
 
 const gameGUI = {
-  'bestScoreText': document.querySelector('#bestScore'),
-  'APShell': document.querySelector('#APShell'),
-  'HEASShell': document.querySelector('#HEASShell'),
-  'HEShell': document.querySelector('#HEShell'),
-  'progressBar': document.querySelector('#reloadGun'),
-  'imgLives': document.querySelector('#imgLives'),
-  'backgroundAudio': document.querySelector('#background'),
+  bestScore: document.querySelector('#bestScore'),
+  APShell: document.querySelector('#APShell'),
+  HEASShell: document.querySelector('#HEASShell'),
+  HEShell: document.querySelector('#HEShell'),
+  progressBar: document.querySelector('#reloadGun'),
+  imgLives: document.querySelector('#imgLives'),
+  backgroundAudio: document.querySelector('#background'),
 };
 gameGUI.backgroundAudio.volume = 0.1;
 
@@ -32,11 +32,11 @@ const gameStates = {
 };
 
 const difficulties = {
-  'easy': 0.7,
-  'medium': 1,
-  'hard': 1.2,
-  'master': 1.5,
-  'impossible': 2,
+  easy: 0.7,
+  medium: 1,
+  hard: 1.2,
+  master: 1.5,
+  impossible: 2,
 };
 
 const ammoCharacteristics = {
@@ -50,7 +50,7 @@ const ammoTypesImage = [gameGUI.APShell, gameGUI.HEASShell, gameGUI.HEShell];
 const saveProgress = () => {
   const saveState = {
     coins: game.coins,
-    bestScore: gameGUI.bestScoreText.innerHTML,
+    bestScore: gameGUI.bestScore.innerHTML,
     petLevel: game.levelPet,
     petPrice: costPetUpgrade.innerHTML,
     multiplierLevel: game.levelMultiplier,
@@ -63,7 +63,7 @@ const saveProgress = () => {
 const loadProgress = () => {
   const saveFile = JSON.parse(localStorage.getItem('saveState'));
   game.coins = saveFile.coins;
-  gameGUI.bestScoreText.innerHTML = saveFile.bestScore;
+  gameGUI.bestScore.innerHTML = saveFile.bestScore;
   game.levelPet = saveFile.petLevel;
   game.levelMultiplier = saveFile.multiplierLevel;
   costPetUpgrade.innerHTML = saveFile.petPrice;
@@ -189,8 +189,8 @@ const spawnObjects = () => {
 };
 
 const changeBestScore = () => {
-  if (game.score > gameGUI.bestScoreText.innerHTML) {
-    gameGUI.bestScoreText.innerHTML = game.score;
+  if (game.score > gameGUI.bestScore.innerHTML) {
+    gameGUI.bestScore.innerHTML = game.score;
   }
 };
 
