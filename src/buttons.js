@@ -3,7 +3,6 @@
 const shopGUI = {
   costMulti: document.querySelector('#costMulti'),
   costPetUpgrade: document.querySelector('#costPetUpgrade'),
-  abilityPet: document.querySelector('#abilityPet'),
 };
 
 const play = (...ids) => {

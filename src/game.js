@@ -22,6 +22,7 @@ const gameGUI = {
   progressBar: document.querySelector('#reloadGun'),
   imgLives: document.querySelector('#imgLives'),
   backgroundAudio: document.querySelector('#background'),
+  abilityPet: document.querySelector('#abilityPet'),
 };
 gameGUI.backgroundAudio.volume = 0.1;
 

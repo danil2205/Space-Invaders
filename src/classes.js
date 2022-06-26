@@ -273,7 +273,7 @@ class Pet {
     const cooldown = 30000;
     if (this.isCooldown) setTimeout(() => {
       this.isCooldown = false;
-      shopGUI.abilityPet.innerHTML = 'Ability of your Pet is Ready';
+      gameGUI.abilityPet.innerHTML = 'Ability of your Pet is Ready';
     }, cooldown);
   }
 
@@ -282,7 +282,7 @@ class Pet {
       const actionTime = 20000 + 250 * game.levelPet;
       this.isCooldown = true;
       this.reloadAbility();
-      shopGUI.abilityPet.innerHTML = 'Ability of your Pet is NOT Ready';
+      gameGUI.abilityPet.innerHTML = 'Ability of your Pet is NOT Ready';
       this.ability = this.abilityMenu;
       setTimeout(() => {
         this.ability = null;
