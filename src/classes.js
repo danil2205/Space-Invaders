@@ -6,6 +6,7 @@ class Game {
   constructor() {
     this.player = new Player();
     this.pet = new Pet();
+    this.boss = null;
     this.levelMultiplier = 2;
     this.levelPet = 0;
     this.coins = 0;
@@ -14,18 +15,17 @@ class Game {
     this.score = 0;
     this.counterMission = 0;
     this.stones = [];
-    this.bosses = [];
     this.particles = [];
     this.cosmonauts = [];
     this.powerups = [];
     this.shots = [];
-    this.arrayOfGameObjects = [
-      this.particles,
-      this.bosses,
-      this.cosmonauts,
-      this.powerups,
-      this.stones,
-    ];
+    this.arrayOfGameObjects = {
+      'particles': this.particles,
+      'shots': this.shots,
+      'cosmonauts': this.cosmonauts,
+      'powerups': this.powerups,
+      'stones': this.stones,
+    };
   }
 
   speedUp() {
@@ -35,8 +35,19 @@ class Game {
 
   spawnBoss() {
     const framesToSpawn = 10000;
-    if (this.frames % framesToSpawn === 0 && this.bosses.length === 0) {
-      this.bosses.push(new Boss());
+    // if (this.frames !== 0 && this.frames % framesToSpawn === 0 && !this.boss) {
+    if (this.frames % framesToSpawn === 0 && !this.boss) {
+      this.boss = new Boss();
+      document.querySelector('#bossHP').style.width = this.boss.health;
+      toggleScreen(true, 'bossAnnounce');
+    }
+  }
+
+  isBossAlive() {
+    if (this.boss && this.boss.health <= 0) {
+      this.coins += 20;
+      this.boss = null;
+      toggleScreen(false, 'bossAnnounce');
     }
   }
 
@@ -44,7 +55,9 @@ class Game {
     this.player.update();
     this.pet.update();
     updateShots();
-    for (const object of this.arrayOfGameObjects) updateObject(object);
+    this.isBossAlive();
+    if (this.boss) this.boss.update();
+    for (const object of Object.keys(this.arrayOfGameObjects)) updateObject(object);
   }
 }
 
@@ -85,6 +98,7 @@ class Player {
       this.width,
       this.height
     );
+
     ctx.restore();
   }
 
@@ -101,21 +115,32 @@ class Player {
   }
 
   shoot() {
-    if (
-      gameGUI.progressBar.value === gameGUI.progressBar.max &&
-      game.bosses.length !== 0
-    ) {
+    if (gameGUI.progressBar.value === gameGUI.progressBar.max) {
       gameGUI.progressBar.value = 0;
-      game.shots.push(new Shot());
+      game.shots.push(
+        new Shot(
+          {
+            x: this.position.x + this.width / 2,
+            y: this.position.y,
+          },
+          {
+            x: 0,
+            y: -5 * game.speed,
+          },
+          this.ammoColor,
+          true
+        )
+      );
       changeProgressReload();
     }
   }
 
   collideWith(obj) {
-    return (
-      obj.position.x + obj.width >= this.position.x &&
-      obj.position.x <= this.position.x + this.width &&
-      obj.position.y + this.height / 2 >= this.position.y
+    return !(
+      ((this.position.y + this.height) < (obj.position.y)) ||
+      (this.position.y > (obj.position.y + obj.height)) ||
+      ((this.position.x + this.width) < obj.position.x) ||
+      (this.position.x > (obj.position.x + obj.width))
     );
   }
 
@@ -143,6 +168,7 @@ class Boss {
       y: 3,
     };
     this.health = 200;
+    this.isOnReload = false;
     const image = new Image();
     image.src = './img/boss.png';
     image.onload = () => {
@@ -151,7 +177,7 @@ class Boss {
       this.width = image.width * scale;
       this.height = image.height * scale;
       this.position = {
-        x: randomNum(canvas.width),
+        x: canvas.width / 2,
         y: 0,
       };
     };
@@ -174,33 +200,44 @@ class Boss {
     ) this.velocity.x = -this.velocity.x;
 
     if (
-      this.position.y + this.height > canvas.height ||
+      this.position.y + this.height > canvas.height / 2 ||
       this.position.y < canvasPos.top
     ) this.velocity.y = -this.velocity.y;
   }
 
-  deleteBoss() {
-    if (this.health <= 0) {
-      game.coins += 20;
-      game.bosses = [];
-      toggleScreen(false, 'bossAnnounce');
-      if (missionsGUI.dailyMission.innerText === 'Kill 1 Bosses') {
-        game.counterMission++;
-      }
-    }
+  shoot() {
+    if (this.isOnReload) return;
+    this.reload();
+
+    game.shots.push(
+      new Shot(
+        {
+          x: this.position.x + this.width / 2,
+          y: this.position.y + this.height,
+        },
+        {
+          x: 0,
+          y: 3 * game.speed,
+        },
+        'red'
+      )
+    );
   }
 
-  bossSpawned() {
-    if (game.bosses.length === 0) return;
-    document.querySelector('#bossHP').style.width = game.bosses[0].health;
-    toggleScreen(true, 'bossAnnounce');
+  reload() {
+    this.isOnReload = true;
+    setTimeout(() => this.isOnReload = false, 5000);
+  }
+
+  getDamage(dmg) {
+    this.health -= dmg;
+    document.querySelector('#bossHP').style.width = this.health;
   }
 
   update() {
     this.draw();
     this.move();
-    this.bossSpawned();
-    this.deleteBoss();
+    this.shoot();
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
   }
@@ -343,18 +380,13 @@ class Particle {
 }
 
 class Shot extends Particle {
-  constructor() {
+  constructor(position,velocity, color, isPlayerShot = false) {
     super();
-    this.position = {
-      x: game.player.position.x + game.player.width / 2,
-      y: game.player.position.y,
-    };
-    this.velocity = {
-      x: 0,
-      y: -5 * game.speed,
-    };
+    this.position = { x: position.x, y: position.y};
+    this.velocity = { x: velocity.x, y: velocity.y};
     this.radius = 5;
-    this.color = game.player.ammoColor;
+    this.color = color;
+    this.isPlayerShot = isPlayerShot;
   }
 
   deleteShots() {
@@ -368,7 +400,9 @@ class Shot extends Particle {
     return (
       obj.position.x + obj.width >= this.position.x &&
       obj.position.x <= this.position.x + this.radius &&
-      obj.position.y >= this.position.y
+      (this.isPlayerShot ?
+        obj.position.y >= this.position.y :
+        obj.position.y <= this.position.y)
     );
   }
 

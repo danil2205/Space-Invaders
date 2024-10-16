@@ -262,33 +262,41 @@ const getPoints = () => {
 
 const getCollideFunctions = (nameArray) => {
   const collideFunctions = {
-    [game.cosmonauts]: () => getPoints(),
-    [game.stones]: () => game.player.removeLives(),
-    [game.powerups]: () => setPowerUp(),
-    [game.bosses]: () => {
-      game.player.removeLives();
-      toggleScreen(false, 'bossAnnounce');
-    },
+    'cosmonauts': () => getPoints(),
+    'stones': () => game.player.removeLives(),
+    'powerups': () => setPowerUp(),
   };
-  return collideFunctions[nameArray]();
+
+  return collideFunctions[nameArray] || null;
 };
 
 const updateObject = (nameArray) => {
-  for (const [index, object] of nameArray.entries()) {
+  const arrOfObjects = game.arrayOfGameObjects[nameArray]
+
+  for (const [index, object] of arrOfObjects.entries()) {
     object.update();
     if (game.player.collideWith(object)) {
-      nameArray.splice(index, 1);
-      getCollideFunctions(nameArray);
+      const collideFunction = getCollideFunctions(nameArray);
+      if (collideFunction) {
+        arrOfObjects.splice(index, 1);
+        collideFunction();
+      }
     }
   }
 };
 
 const updateShots = () => {
-  const boss = game.bosses[0];
+  const boss = game.boss;
   for (const [index, shot] of game.shots.entries()) {
     shot.update();
-    if (shot.collideWith(boss)) {
-      boss.health -= game.player.ammoDamage;
+
+    if (boss && shot.isPlayerShot && shot.collideWith(boss)) {
+      boss.getDamage(game.player.ammoDamage);
+      game.shots.splice(index, 1);
+    }
+
+    if (!shot.isPlayerShot && shot.collideWith(game.player)) {
+      game.player.removeLives();
       game.shots.splice(index, 1);
     }
   }
