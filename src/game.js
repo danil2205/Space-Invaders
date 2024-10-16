@@ -1,7 +1,10 @@
 'use strict';
 
-const canvas = document.querySelector('canvas');
-const ctx = canvas.getContext('2d');
+import { Game } from './classes/Game.js';
+
+export const canvas = document.querySelector('canvas');
+export const ctx = canvas.getContext('2d');
+export const canvasPos = canvas.getBoundingClientRect();
 canvas.width = 850;
 canvas.height = 960;
 
