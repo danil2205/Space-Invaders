@@ -1,6 +1,6 @@
 <body>
 
-    <audio src="./music/background.mp3" id="background" autoplay="true"></audio>
+    <audio src="./music/background.mp3" id="background" autoplay></audio>
     <div id="allScore" class="allScore">
         <p style="left: 1280px; top: 10px;">
             <img src="./img/cosmonaut_for_score.png" alt="Collected cosmonauts"> <span>x </span><span id="score">0</span>
@@ -30,7 +30,6 @@
         <div>
             <h1>Game Over</h1>
             <h1 id="scoreGameOver">0</h1>
-            <button onclick="refreshGame()">Try Again</button>
             <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'gameInterface')">In Main Menu</button>
         </div>
     </div>
@@ -45,7 +44,7 @@
     <div id="pause" class="pause">
         <div>
             <h1>Paused</h1>
-            <button onclick="pause()">Resume</button>
+            <button onclick="game.pause()">Resume</button>
             <button onclick="exit('pause', 'canvas', 'allScore', 'screen', 'gameInterface')">Exit</button>
         </div>
     </div>
@@ -54,11 +53,11 @@
 
         <div id="difficulty" class="difficulty">
             <h2>Choose Difficulty:</h2>
-            <button onclick="changeDifficulty(difficulties.easy)">Easy</button>
-            <button onclick="changeDifficulty(difficulties.medium)">Medium</button>
-            <button onclick="changeDifficulty(difficulties.hard)">Hard</button>
-            <button onclick="changeDifficulty(difficulties.master)">Master</button>
-            <button onclick="changeDifficulty(difficulties.impossible)">Impossible</button>
+            <button onclick="changeDifficulty(0.7)">Easy</button>
+            <button onclick="changeDifficulty(1)">Medium</button>
+            <button onclick="changeDifficulty(1.2)">Hard</button>
+            <button onclick="changeDifficulty(1.5)">Master</button>
+            <button onclick="changeDifficulty(2)">Impossible</button>
             <button onclick="back('difficulty')">Back</button>
         </div>
 
@@ -102,8 +101,8 @@
         <div id="shop" class="shop">
             <div>
                 <h1>Shop</h1>
-                <span>Choose your skin: </span><input id="skinID" type="range" min="1" max="4" step="1">
-                <img id="shipImg" style="width: 80px; height: 80px;">
+                <span>Choose your skin: </span><input oninput="getSkinShip(this.value)" id="skinID" type="range" min="1" max="4" step="1">
+                <img id="shipImg" src="./img/ship3.png" style="width: 80px; height: 80px;">
                 <button onclick="buyLife()" style="margin-top: 20px">Buy x1 Live</button>
 
                 <h2>Power-Ups</h2>
@@ -138,7 +137,7 @@
         </div>
 
         <div id="ammoTypes" class="ammoType">
-            <div><img id="APShell" src="./img/AP.png"></div>
+            <div><img id="APShell" src="./img/AP.png" style="border: 1px solid white"></div>
             <div><img id="HEASShell" src="./img/HEAS.png"></div>
             <div><img id="HEShell" src="./img/HE.png"></div>
         </div>
@@ -148,8 +147,13 @@
 
     <canvas style="display: none" id="canvas"></canvas>
     <link rel="stylesheet" href="style.css">
-    <script src="./src/buttons.js"></script>
-    <script type="module"  src="src/classes/Game.js"></script>
-    <script src="./src/game.js"></script>
-    <script src="./src/missions.js"></script>
-</body>
+    <script type="module" src="src/classes/Game.js"></script>
+    <script type="module" src="src/classes/Boss.js"></script>
+    <script type="module" src="src/classes/GameObject.js"></script>
+    <script type="module" src="src/classes/Particle.js"></script>
+    <script type="module" src="src/classes/Pet.js"></script>
+    <script type="module" src="src/classes/Player.js"></script>
+    <script type="module" src="src/classes/Shot.js"></script>
+    <script type="module" src="./src/missions.js"></script>
+    <script type="module" src="./src/buttons.js"></script>
+    </body>

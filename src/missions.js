@@ -1,9 +1,7 @@
 'use strict';
 
-const missionsGUI = {
-  dailyMission: document.querySelector('#dailyMission'),
-  progressMission: document.querySelector('#progressMission'),
-};
+import { game } from './buttons.js';
+import { gameGUI, missionsGUI, randomNum, toggleScreen } from './utils.js';
 
 const dailyMissions = [
   'Collect 10 Cosmonauts',
@@ -47,7 +45,7 @@ const setStatusMission = () => {
   missionsGUI.progressMission.innerHTML = 'Progress - Completed';
 };
 
-const checkMissionProgress = () => {
+export const checkMissionProgress = () => {
   switch (missionsGUI.dailyMission.innerText) {
   case 'Collect 10 Cosmonauts':
     if (game.counterMission >= 10) setStatusMission();

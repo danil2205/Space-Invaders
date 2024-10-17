@@ -1,21 +1,22 @@
 import { Particle } from './Particle.js';
-import { canvas, canvasPos } from '../game.js';
+import { canvas, canvasPos } from '../utils.js';
 
 export class Shot extends Particle {
-  constructor(position,velocity, color, isPlayerShot = false) {
+  constructor(shotsArray, position, velocity, color, isPlayerShot = false) {
     super();
     this.position = { x: position.x, y: position.y};
     this.velocity = { x: velocity.x, y: velocity.y};
     this.radius = 5;
     this.color = color;
     this.isPlayerShot = isPlayerShot;
+    this.shotsArray = shotsArray;
   }
 
   deleteShots() {
     if (
       this.position.y >= canvas.height ||
       this.position.y < canvasPos.top
-    ) game.shots.splice(0, 1);
+    ) this.shotsArray.splice(0, 1);
   }
 
   collideWith(obj) {

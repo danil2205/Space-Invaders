@@ -1,13 +1,15 @@
-import { canvas, canvasPos, ctx } from '../game.js';
+import { Shot } from './Shot.js';
+import { canvas, canvasPos, ctx } from '../utils.js';
 
 export class Boss {
-  constructor() {
+  constructor(game) {
     this.velocity = {
       x: 5,
       y: 3,
     };
     this.health = 200;
     this.isOnReload = false;
+    this.game = game;
     const image = new Image();
     image.src = './img/boss.png';
     image.onload = () => {
@@ -48,15 +50,16 @@ export class Boss {
     if (this.isOnReload) return;
     this.reload();
 
-    game.shots.push(
+    this.game.shots.push(
       new Shot(
+        this.game.shots,
         {
           x: this.position.x + this.width / 2,
           y: this.position.y + this.height,
         },
         {
           x: 0,
-          y: 3 * game.speed,
+          y: 3 * this.game.speed,
         },
         'red'
       )

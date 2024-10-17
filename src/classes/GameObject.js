@@ -1,12 +1,13 @@
-import { ctx } from '../game.js';
+import { canvas, ctx } from '../utils.js';
 
 export class GameObject {
-  constructor(nameObject, arrayObjects, scale, { position }) {
+  constructor(nameObject, arrayObjects, scale, speed, { position }) {
     this.velocity = {
       x: 0,
       y: 3,
     };
     this.arrayObjects = arrayObjects;
+    this.speed = speed;
     const image = new Image();
     image.src = `./img/${nameObject}.png`;
     image.onload = () => {
@@ -20,15 +21,15 @@ export class GameObject {
   draw() {
     ctx.drawImage(
       this.image,
-      this.position.x,
-      this.position.y,
+      this.position?.x,
+      this.position?.y,
       this.width,
       this.height
     );
   }
 
   move() {
-    this.position.y += this.velocity.y * game.speed;
+    this.position.y += this.velocity.y * this.speed;
   }
 
   delete() {

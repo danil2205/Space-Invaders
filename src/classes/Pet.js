@@ -1,14 +1,16 @@
-import { ctx } from '../game.js';
+import { ctx, gameGUI } from '../utils.js';
 
 export class Pet {
-  constructor() {
+  constructor(game) {
     this.velocity = {
       x: 0,
       y: 0,
     };
-    this.abilityMenu = null;
+    this.abilityMenu = 'Shield';
     this.ability = null;
     this.isCooldown = false;
+    this.game = game;
+    gameGUI.abilityPet.innerHTML = 'Ability of your Pet is Ready';
 
     const image = new Image();
     image.src = `./img/satellite1.png`;
@@ -18,10 +20,15 @@ export class Pet {
       this.width = image.width * scale;
       this.height = image.height * scale;
       this.position = {
-        x: game.player.position.x - game.player.width,
-        y: game.player.position.y - game.player.height,
+        x: this.game.player.position?.x - this.game.player.width,
+        y: this.game.player.position?.y - this.game.player.height,
       };
     };
+
+    this.abilities = {
+      'Heal': this.healShip,
+      'collectCosmonauts': this.cosmonautsCollect,
+    }
   }
 
   draw() {
@@ -35,32 +42,28 @@ export class Pet {
   }
 
   move() {
-    if (this.position.x >= game.player.position.x + game.player.width) {
+    if (this.position.x >= this.game.player.position.x + this.game.player.width) {
       this.velocity.x = -3;
-    } else if (this.position.x <= game.player.position.x - game.player.width) {
+    } else if (this.position.x <= this.game.player.position.x - this.game.player.width) {
       this.velocity.x = 3;
     }
   }
 
   healShip() {
-    if (this.ability === 'Heal') {
-      game.player.lives += 1;
-      this.ability = null;
-    }
+    if (this.ability !== 'Heal') return;
+    this.game.player.lives += 1;
+    this.game.showLives();
+    this.ability = null;
   }
 
   cosmonautsCollect() {
     if (this.ability !== 'collectCosmonauts') return;
-    for (const [index, cosmonaut] of game.cosmonauts.entries()) {
-      if (!game.player.collideWith(cosmonaut)) {
-        getPoints();
-        game.cosmonauts.splice(index, 1);
+    for (const [index, cosmonaut] of this.game.cosmonauts.entries()) {
+      if (!this.game.player.collideWith(cosmonaut)) {
+        this.game.getPoints();
+        this.game.cosmonauts.splice(index, 1);
       }
     }
-  }
-
-  coinDoubling() {
-    if (this.ability === 'Double Coins') getCoins();
   }
 
   reloadAbility() {
@@ -73,7 +76,7 @@ export class Pet {
 
   getAbility() {
     if (!this.isCooldown) {
-      const actionTime = 20000 + 250 * game.levelPet;
+      const actionTime = 5000 + 250 * this.game.levelPet;
       this.isCooldown = true;
       this.reloadAbility();
       gameGUI.abilityPet.innerHTML = 'Ability of your Pet is NOT Ready';
@@ -89,7 +92,11 @@ export class Pet {
     this.move();
     this.healShip();
     this.cosmonautsCollect();
-    this.coinDoubling();
+    if (isNaN(this.position.x)) {
+      console.log(this.position)
+      this.position.x = this.game.player.position.x - this.game.player.width;
+      this.position.y = this.game.player.position?.y - this.game.player.height
+    }
     this.position.x += this.velocity.x;
   }
 }

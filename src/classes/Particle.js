@@ -1,4 +1,4 @@
-import { canvas, ctx } from '../game.js';
+import { canvas, ctx, randomNum } from '../utils.js';
 
 export class Particle {
   constructor() {
