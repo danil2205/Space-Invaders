@@ -91,6 +91,7 @@ export class Game {
   isBossAlive() {
     if (this.boss && this.boss.health <= 0) {
       this.coins += 20;
+      if (missionsGUI.dailyMission.innerText === 'Kill 1 Boss') this.counterMission++;
       this.boss = null;
       toggleScreen(false, 'bossAnnounce');
     }

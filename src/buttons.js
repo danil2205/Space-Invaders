@@ -1,6 +1,6 @@
-import { canvas, gameGUI, shopGUI, toggleScreen } from './utils.js';
+import { canvas, gameGUI, missionsGUI, shopGUI, toggleScreen } from './utils.js';
 import { Game } from './classes/Game.js';
-import { checkMissionProgress } from './missions.js';
+import { checkMissionProgress, saveMissionProgress } from './missions.js';
 
 canvas.width = 850;
 canvas.height = 960;
@@ -97,8 +97,8 @@ const claimReward = () => {
   const rewardMission = 100;
   game.coins += rewardMission;
   toggleScreen(false, 'claimReward');
-  game.counterMission = NaN; // blocking counter
   saveProgress();
+  saveMissionProgress();
 };
 
 const back = (...tabNames) => {
@@ -112,6 +112,7 @@ const exit = (...ids) => {
   game.gameStates.active = false;
   checkMissionProgress();
   saveProgress();
+  saveMissionProgress();
   refreshGame();
 };
 

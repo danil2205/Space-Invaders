@@ -16,6 +16,7 @@ export const gameGUI = {
 export const missionsGUI = {
   dailyMission: document.querySelector('#dailyMission'),
   progressMission: document.querySelector('#progressMission'),
+  claimReward: document.querySelector('#claimReward'),
 };
 
 export const shopGUI = {

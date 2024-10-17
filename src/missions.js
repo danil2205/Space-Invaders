@@ -6,7 +6,7 @@ import { gameGUI, missionsGUI, randomNum, toggleScreen } from './utils.js';
 const dailyMissions = [
   'Collect 10 Cosmonauts',
   'Kill 1 Boss',
-  'Score 100 points',
+  'Score 25 points',
   'Beat Your Record',
 ];
 
@@ -16,16 +16,43 @@ const endDate = {
   'seconds': '59',
 };
 
+export const saveMissionProgress = (date) => {
+  const isCompleted = missionsGUI.progressMission.innerHTML === 'Progress - Completed';
+  const isRewardClaimed = isCompleted && missionsGUI.claimReward.style.display === 'none';
+  const parsedProgress = JSON.parse(localStorage.getItem('missionProgress'));
+
+  const missionState = {
+    task: missionsGUI.dailyMission.innerHTML,
+    isCompleted: isCompleted,
+    setDate: date || parsedProgress?.setDate,
+    isRewardClaimed: isRewardClaimed,
+  }
+
+  const missionProgress = JSON.stringify(missionState);
+  localStorage.setItem('missionProgress', missionProgress);
+};
+
 const setDailyMission = () => {
-  game.counterMission = 0;
-  const randomMission = dailyMissions[randomNum(dailyMissions.length)];
-  missionsGUI.dailyMission.innerHTML = randomMission;
-  missionsGUI.progressMission.innerHTML = 'Progress - Uncompleted';
+  const missionProgress = JSON.parse(localStorage.getItem('missionProgress'));
+  let date;
+  if (new Date().toLocaleDateString() === missionProgress?.setDate) {
+    date = missionProgress.setDate;
+    missionsGUI.dailyMission.innerHTML = missionProgress.task;
+    missionsGUI.progressMission.innerHTML = missionProgress.isCompleted ? 'Progress - Completed' : 'Progress - Uncompleted';
+  } else {
+    date = new Date().toLocaleDateString();
+    const randomMission = dailyMissions[randomNum(dailyMissions.length)];
+    missionsGUI.dailyMission.innerHTML = randomMission;
+    missionsGUI.progressMission.innerHTML = 'Progress - Uncompleted';
+  }
+
+  saveMissionProgress(date);
 };
 
 const addZeroInTime = (time, n = 2) => `${time}`.padStart(n, '0');
 
 const updateMissions = () => {
+  const missionProgress = JSON.parse(localStorage.getItem('missionProgress'));
   const timeRemains = document.querySelector('#timeRemains');
   const DELAY = 1000;
   const currentTime = new Date();
@@ -36,12 +63,13 @@ const updateMissions = () => {
   const remainingTime = hours + ':' + minutes + ':' + seconds;
 
   timeRemains.innerHTML = `Times remaining: ${remainingTime}`;
-  if (remainingTime === '00:00:00') setDailyMission();
+  if (new Date().toLocaleDateString() !== missionProgress.setDate) setDailyMission();
   setTimeout(updateMissions, DELAY);
 };
 
 const setStatusMission = () => {
-  toggleScreen(true, 'claimReward');
+  const missionProgress = JSON.parse(localStorage.getItem('missionProgress'));
+  if (!missionProgress.isRewardClaimed) toggleScreen(true, 'claimReward');
   missionsGUI.progressMission.innerHTML = 'Progress - Completed';
 };
 
@@ -53,8 +81,8 @@ export const checkMissionProgress = () => {
   case 'Kill 1 Boss':
     if (game.counterMission >= 1) setStatusMission();
     break;
-  case 'Score 100 points':
-    if (game.score >= 100) setStatusMission();
+  case 'Score 25 points':
+    if (game.score >= 25) setStatusMission();
     break;
   case 'Beat Your Record':
     if (game.score > gameGUI.bestScore.innerHTML) setStatusMission();
