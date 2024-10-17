@@ -77,6 +77,8 @@ const changeDifficulty = (difficultySpeed) => {
 const upgradeItem = (itemName, price) => {
   if (game.coins >= price.innerText) {
     game.coins -= price.innerText;
+    document.querySelector('#coinsPet').textContent = game.coins;
+    document.querySelector('#coinsShop').textContent = game.coins;
     price.innerText *= 2;
     if (itemName === 'pet') game.levelPet++;
     else game.levelMultiplier++;
@@ -88,6 +90,8 @@ const buyLife = () => {
   const lifePrice = 100;
   if (game.coins >= lifePrice) {
     game.coins -= lifePrice;
+    document.querySelector('#coinsShop').textContent = game.coins;
+    document.querySelector('#coinsPet').textContent = game.coins;
     game.player.lives += 1;
     saveProgress();
   }
@@ -117,6 +121,8 @@ const exit = (...ids) => {
 };
 
 loadProgress();
+document.querySelector('#coinsShop').textContent = game.coins;
+document.querySelector('#coinsPet').textContent = game.coins;
 
 window.play = play;
 window.changeDifficulty = changeDifficulty;

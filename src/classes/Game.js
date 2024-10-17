@@ -276,7 +276,6 @@ export class Game {
       toggleScreen(true, 'screen');
     }
   };
-
 }
 
 

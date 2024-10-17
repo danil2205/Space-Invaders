@@ -75,17 +75,18 @@
         </div>
 
         <div id="pet" class="pet">
-            <div>
-                <h2>Pet and Ability Menu</h2>
-                <span id="costPetUpgrade">1000</span><span> coins</span>
-                <button onclick="upgradeItem('pet', costPetUpgrade);">Upgrade pet</button>
-                <button onclick="game.pet.abilityMenu = 'Heal'">Heal Ship</button>
-                <button onclick="game.pet.abilityMenu = 'Shield'">Shield</button>
-                <button onclick="game.pet.abilityMenu = 'Double Coins'">x2 Coins</button>
-                <button onclick="game.pet.abilityMenu = 'collectCosmonauts'">Magnet Cosmonauts</button>
-                <button onclick="game.pet.abilityMenu = 'No Enemies'">No Enemies</button>
-                <button onclick="back('pet')">Back</button>
-            </div>
+            <h2 style="margin-top: 50px; margin-bottom: 0px;">Pet and Ability Menu</h2>
+            <p class="coinsShop" style="text-align: center; font-size: 24px; margin-top: 10px;">
+                <span id="coinsPet">0</span> <img src="./img/coin.png">
+            </p>
+            <span id="costPetUpgrade">1000</span><span> coins</span>
+            <button onclick="upgradeItem('pet', costPetUpgrade);">Upgrade pet</button>
+            <button onclick="game.pet.abilityMenu = 'Heal'">Heal Ship</button>
+            <button onclick="game.pet.abilityMenu = 'Shield'">Shield</button>
+            <button onclick="game.pet.abilityMenu = 'Double Coins'">x2 Coins</button>
+            <button onclick="game.pet.abilityMenu = 'collectCosmonauts'">Magnet Cosmonauts</button>
+            <button onclick="game.pet.abilityMenu = 'No Enemies'">No Enemies</button>
+            <button onclick="back('pet')">Back</button>
         </div>
 
         <div id="tutorial" class="preparation">
@@ -101,6 +102,9 @@
         <div id="shop" class="shop">
             <div>
                 <h1>Shop</h1>
+                <p class="coinsShop" style="text-align: center; font-size: 24px; margin-top: 10px;">
+                    <span id="coinsShop">0</span> <img src="./img/coin.png">
+                </p>
                 <span>Choose your skin: </span><input oninput="getSkinShip(this.value)" id="skinID" type="range" min="1" max="4" step="1">
                 <img id="shipImg" src="./img/ship3.png" style="width: 80px; height: 80px;">
                 <button onclick="buyLife()" style="margin-top: 20px">Buy x1 Live</button>
