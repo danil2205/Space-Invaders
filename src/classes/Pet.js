@@ -24,11 +24,6 @@ export class Pet {
         y: this.game.player.position?.y - this.game.player.height,
       };
     };
-
-    this.abilities = {
-      'Heal': this.healShip,
-      'collectCosmonauts': this.cosmonautsCollect,
-    }
   }
 
   draw() {
@@ -93,7 +88,6 @@ export class Pet {
     this.healShip();
     this.cosmonautsCollect();
     if (isNaN(this.position.x)) {
-      console.log(this.position)
       this.position.x = this.game.player.position.x - this.game.player.width;
       this.position.y = this.game.player.position?.y - this.game.player.height
     }

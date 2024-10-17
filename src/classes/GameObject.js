@@ -21,8 +21,8 @@ export class GameObject {
   draw() {
     ctx.drawImage(
       this.image,
-      this.position?.x,
-      this.position?.y,
+      this.position.x,
+      this.position.y,
       this.width,
       this.height
     );
