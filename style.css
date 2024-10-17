@@ -46,12 +46,11 @@ body {
     display: none
 }
 
-.allScore img {
+.allScore img, .shop img, .pet img {
     margin-bottom:-10px;
     width: 40px;
     height: 40px;
 }
-
 
 .menu {
     display: block;
@@ -226,16 +225,23 @@ button:hover {
 
 h1 {
     font-size: 70px;
+    margin: 20px;
 }
 
 h2 {
     font-size: 35px;
 }
-p {
+
+.allScore > p {
     font-size: 32px;
     position: absolute;
     z-index: 10;
     color: white;
     margin: 0;
 }
+
+#coinsShop {
+    margin: 0px;
+}
+
 
