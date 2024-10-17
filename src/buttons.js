@@ -57,7 +57,7 @@ const refreshGame = () => {
   document.querySelector('#score').innerHTML = game.score;
   game.gameStates.active = true;
   toggleScreen(false, 'screen');
-  game.backgroundStars();
+  toggleScreen(false, 'bossAnnounce');
   if (!game.gameStates.menu) {
     toggleScreen(true, 'gameInterface');
     game.animate();
@@ -120,7 +120,6 @@ loadProgress();
 window.play = play;
 window.changeDifficulty = changeDifficulty;
 window.changeTab = changeTab;
-window.refreshGame = refreshGame;
 window.exit = exit;
 window.back = back;
 window.claimReward = claimReward;
