@@ -133,7 +133,7 @@ export class Player {
   }
 
   reloadAdrenaline() {
-    const cooldown = 15000;
+    const cooldown = 90000;
     setTimeout(() => {
       this.adrenalineCooldown = false;
       document.querySelector('#adrenaline').style.filter = 'brightness(100%)';
