@@ -81,7 +81,8 @@ export class Game {
 
   spawnBoss() {
     const framesToSpawn = 2000;
-    if (this.frames !== 0 && this.frames % framesToSpawn === 0 && !this.boss) {
+    // if (this.frames !== 0 && this.frames % framesToSpawn === 0 && !this.boss) {
+    if (this.frames % framesToSpawn === 0 && !this.boss) {
       this.boss = new Boss(this);
       document.querySelector('#bossHP').style.width = this.boss.health;
       toggleScreen(true, 'bossAnnounce');

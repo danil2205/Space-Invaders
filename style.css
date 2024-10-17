@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
 body {
     background-image: url("./img/background_menu.png");
     background-repeat: no-repeat;
@@ -19,136 +20,77 @@ body {
     position: fixed;
     top: 50%;
     left: 50%;
-    margin-top: -300px;
-    margin-left: -200px;
-    height: 200px;
-    width: 300px;
-    text-align: center
+    transform: translate(-50%, -50%);
+    width: 80vw;
+    max-width: 400px;
+    height: 30vh;
+    max-height: 250px;
+    text-align: center;
+    box-sizing: border-box;
 }
 
 .pause button {
-    width: 200px;
-}
-
-.pause div, .countdown div, .menu div, .screen div, .shop div, .missions div, .pet div {
-    max-width: 448px;
     width: 100%;
-    padding: 24px;
-}
-
-.pet button {
-    padding: 10px 24px;
-    cursor: pointer;
 }
 
 .allScore {
-    position: center;
     display: none
 }
 
 .allScore img, .shop img, .pet img {
-    margin-bottom:-10px;
     width: 40px;
     height: 40px;
+    margin-bottom: -10px;
 }
 
-.menu {
+.menu, .difficulty, .pet, .shop, .missions, .tutorial {
     display: block;
     color: white;
     padding: 20px;
-    width: 300px;
     position: fixed;
     top: 60%;
     left: 50%;
-    margin-top: -300px;
-    margin-left: -200px;
-    height: 200px;
+    transform: translate(-50%, -50%);
+    width: 80vw;
+    max-width: 400px;
     text-align: center;
 }
 
-.menu button {
-    width: 200px;
+.pet, .shop {
+    top: 65% !important;
 }
 
-.difficulty {
-    display: none;
-    color: white;
-    padding: 20px;
-    position: fixed;
-    top: 65%;
-    left: 54%;
-    margin-top: -300px;
-    margin-left: -200px;
-    height: 200px;
-    width: 300px;
-    text-align: center
+.menu button, .difficulty button, .pet button, .shop button, .missions button, .tutorial button, .pause button {
+    width: 50%;
+    margin: 10px auto;
+    display: block;
+    text-align: center;
 }
 
-.difficulty h2 {
-    margin-right: 100px;
-}
-.difficulty button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.missions, .screen, .shop, .pet {
+.difficulty, .missions, .screen, .shop, .pet, .preparation {
     display: none;
     color: white;
     padding: 20px;
     position: fixed;
     top: 60%;
     left: 50%;
-    margin-top: -300px;
-    margin-left: -200px;
-    height: 200px;
-    width: 300px;
-    text-align: center
-}
-
-.missions div {
-    max-width: 448px;
-    width: 100%;
-    margin-top: 50px;
-}
-
-.missions button {
-    margin-top: 50px;
-    width: 200px;
-}
-
-.preparation {
-    display: none;
-    padding: 20px;
-    width: 300px;
-    position: fixed;
-    top: 70%;
-    left: 46%;
-    margin-top: -300px;
-    margin-left: -200px;
-    height: 200px;
+    transform: translate(-50%, -50%);
+    width: 80vw;
+    max-width: 400px;
     text-align: center;
 }
 
-.screen button {
-    width: 250px;
-}
-
-.shop button {
-    width: 265px;
-}
-
-.shop span, .pet span {
-    font-size: 30px;
-    margin-left: 20px;
+.screen {
+    top: 50% !important;
 }
 
 .imgLives {
     display: block;
     position: fixed;
     top: 10%;
-    left: 47.5%;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 10px;
 }
 
 .imgLives img {
@@ -165,16 +107,91 @@ body {
     left: 44.5%;
 }
 
-.ammoType {
-    position: fixed;
-    left: 1400px;
-    top: 480px;
+.boss > h2 {
+    color: white;
     display: block;
+    position: fixed;
+    top: 13%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.ammoType, .consumables {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 20px;
 }
 
 .ammoType img, .consumables img {
     width: 50px;
     height: 50px;
+}
+
+.gameInterface {
+    position: fixed;
+    display: none;
+}
+
+.reload {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+}
+
+button {
+    border: none;
+    font-family: 'VT323', sans-serif;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 12px 36px;
+    color: white;
+    background-color: #1bafdb;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    width: 200px;
+}
+
+button:hover {
+    background-color: #0E809C;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin: 20px;
+}
+
+h2 {
+    font-size: 1.75rem;
+}
+
+.allScore > p {
+    font-size: 30px;
+    position: absolute;
+    color: white;
+    margin: 0;
+}
+
+#coinsShop {
+    font-size: 1.5rem;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.shop span, .pet span {
+    font-size: 30px;
+    margin-left: 20px;
+}
+
+.ammoType {
+    position: fixed;
+    left: 1400px;
+    top: 480px;
+    display: block;
 }
 
 .consumables {
@@ -184,64 +201,10 @@ body {
     display: block;
 }
 
-.consumables h2 {
-    display: block;
-    position: fixed;
-    color: red;
-    top: 627px;
-    left: 1420px;
-}
-
-.gameInterface {
-    position: fixed;
-    display: none;
-}
-
-.reload {
-    display: block;
-    left: 910px;
-    top: 960px;
-    position: fixed;
-    width: 100px;
-}
-
-button {
-    border: none;
-    font-family: 'VT323', sans-serif;
-    font-size: 32px;
-    cursor: pointer;
-    padding: 12px 48px 12px 48px;
-    color: white;
-    background-color: #1bafdb;
-    border-radius: 12px;
-    margin-bottom: 15px;
-    appearance: none;
-    width: 200px
-}
-
-button:hover {
-    background-color: #0E809C;
-}
-
-h1 {
-    font-size: 70px;
-    margin: 20px;
-}
-
-h2 {
-    font-size: 35px;
-}
-
-.allScore > p {
+.gameInterface > p {
     font-size: 32px;
     position: absolute;
     z-index: 10;
     color: white;
     margin: 0;
 }
-
-#coinsShop {
-    margin: 0px;
-}
-
-

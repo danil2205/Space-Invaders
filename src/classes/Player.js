@@ -133,20 +133,23 @@ export class Player {
   }
 
   reloadAdrenaline() {
-    const cooldown = 100000;
+    const cooldown = 15000;
     setTimeout(() => {
       this.adrenalineCooldown = false;
+      document.querySelector('#adrenaline').style.filter = 'brightness(100%)';
     }, cooldown);
   }
 
   useAdrenaline() {
     if (this.adrenalineCooldown) return;
     const actionTime = 10000;
+    document.querySelector('#adrenaline').style.filter = 'brightness(20%)';
     gameGUI.progressBar.max--;
     this.adrenalineCooldown = true;
 
     setTimeout(() => {
       gameGUI.progressBar.max++;
+      gameGUI.progressBar.value = gameGUI.progressBar.max;
     }, actionTime);
 
     this.reloadAdrenaline();
