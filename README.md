@@ -10,13 +10,13 @@ Controls: <br />
 ![tutorialIMG](https://i.ibb.co/y51jzKN/image.png)
 
 What about game:
-The game is very simple and you can play one game endless (if you play well of course). As soon as you start game, you will get coins, see on the screen objects such as stones, astronauts, power-ups and a boss. The goal of the game is to collect as many astronauts as possible, fly around the stones and prevent the boss from crashing into you. By the way, for killing the boss you will receive additional coins. But be careful, you are not immortal, on top of the screen there are your lives (usually 3 lives, if you don't buy more in shop). <br />
+The game is very simple and you can play one game endless (if you play well of course). As soon as you start game, you will get coins, see on the screen objects such as stones, astronauts, power-ups and a boss. The goal of the game is to collect as many astronauts as possible, fly around the stones and prevent the boss from hitting you with a projectile. By the way, for killing the boss you will receive additional coins. But be careful, you are not immortal, on top of the screen there are your lives (usually 3 lives, if you don't buy more in shop). <br />
 > **Warning**: The game speed increases over time, so it will be harder and harder.
 
 ![gameplayIMG](https://i.ibb.co/x8Q34BH/image.png)
 
 On the right side of the screen you will see `Ammo Types` and `Adrenaline`. There are three types of ammo types: `APShell`, `HEASShell` and `HEShell`. Each of them have different damage - 15, 10 and 30 damage. You can hit only Boss with shots and your gun has a reload. You reload 3 seconds, but you can boost it by adrenaline to 2 seconds. Action time of adrenaline is 10 seconds <br />
-> **Note**: Cooldown to use it again - 100 seconds. <br />
+> **Note**: Cooldown to use it again - 90 seconds. <br />
 
 ![AmmoAdrenalineIMG](https://i.ibb.co/nbqsh89/image.png)
 
@@ -26,7 +26,7 @@ Also, you can see mystery boxes while you are playing. These boxes will help you
 `Coin Multiplier` gives you +2 coins per second. <br />
 > **Note**: All power-ups last only 5 seconds. 
 
-In Main Menu, you can choose a skin for your ship and ability for your pet. To choose ability of your pet, you have to click on `Pet` tab. There many useful abilties: `Heal Ship`, `Shield`, `x2 Coins`, `Magnet Cosmonauts` and `No Enemies`. I think it's not worth dwelling on abilities for a long time, eveything is clear by name. The only thing I want to say that action time of pet ability calculated according to the formula: `2 seconds + 0.25 seconds * levelOfYourPet`. <br />
+In Main Menu, you can choose a skin for your ship and ability for your pet. To choose ability of your pet, you have to click on `Pet` tab. There many useful abilties: `Heal Ship`, `Shield`, `x2 Coins`, `Magnet Cosmonauts` and `No Enemies`. I think it's not worth dwelling on abilities for a long time, eveything is clear by name. The only thing I want to say that action time of pet ability calculated according to the formula: `5 seconds + 0.25 seconds * levelOfYourPet`. <br />
 > **Note**: Cooldown of pet ability is 30 seconds. <br />
 
 ![PetIMG](https://i.ibb.co/GTC6HdD/image.png)
