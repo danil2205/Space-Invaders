@@ -41,7 +41,7 @@ export class Player {
       };
     };
 
-
+    document.querySelector('#adrenaline').style.filter = 'brightness(100%)';
     this.setupEventListeners();
   }
 

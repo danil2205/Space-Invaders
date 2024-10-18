@@ -103,7 +103,7 @@ const claimReward = () => {
   game.coins += rewardMission;
   toggleScreen(false, 'claimReward');
   saveProgress();
-  saveMissionProgress();
+  saveMissionProgress({ isRewardClaimed: true });
 };
 
 const back = (...tabNames) => {
@@ -117,7 +117,7 @@ const exit = (...ids) => {
   game.gameStates.active = false;
   checkMissionProgress();
   saveProgress();
-  saveMissionProgress();
+  saveMissionProgress({});
   refreshGame();
 };
 

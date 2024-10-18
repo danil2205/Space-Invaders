@@ -16,16 +16,18 @@ const endDate = {
   'seconds': '59',
 };
 
-export const saveMissionProgress = (date) => {
+export const saveMissionProgress = ({ date, isRewardClaimed }) => {
   const isCompleted = missionsGUI.progressMission.innerHTML === 'Progress - Completed';
-  const isRewardClaimed = isCompleted && missionsGUI.claimReward.style.display === 'none';
   const parsedProgress = JSON.parse(localStorage.getItem('missionProgress'));
 
   const missionState = {
     task: missionsGUI.dailyMission.innerHTML,
     isCompleted: isCompleted,
     setDate: date || parsedProgress?.setDate,
-    isRewardClaimed: isRewardClaimed,
+    isRewardClaimed:
+      isRewardClaimed !== undefined ?
+      isRewardClaimed :
+      parsedProgress?.isRewardClaimed || false,
   }
 
   const missionProgress = JSON.stringify(missionState);
@@ -36,17 +38,16 @@ const setDailyMission = () => {
   const missionProgress = JSON.parse(localStorage.getItem('missionProgress'));
   let date;
   if (new Date().toLocaleDateString() === missionProgress?.setDate) {
-    date = missionProgress.setDate;
     missionsGUI.dailyMission.innerHTML = missionProgress.task;
     missionsGUI.progressMission.innerHTML = missionProgress.isCompleted ? 'Progress - Completed' : 'Progress - Uncompleted';
+    if (!missionProgress.isRewardClaimed) toggleScreen(true, 'claimReward');
   } else {
     date = new Date().toLocaleDateString();
     const randomMission = dailyMissions[randomNum(dailyMissions.length)];
     missionsGUI.dailyMission.innerHTML = randomMission;
     missionsGUI.progressMission.innerHTML = 'Progress - Uncompleted';
+    saveMissionProgress({ date, isRewardClaimed: false });
   }
-
-  saveMissionProgress(date);
 };
 
 const addZeroInTime = (time, n = 2) => `${time}`.padStart(n, '0');
@@ -85,7 +86,8 @@ export const checkMissionProgress = () => {
     if (game.score >= 25) setStatusMission();
     break;
   case 'Beat Your Record':
-    if (game.score > gameGUI.bestScore.innerHTML) setStatusMission();
+    const bestScorePrev = JSON.parse(localStorage.getItem('saveState')).bestScore;
+    if (game.score > +bestScorePrev) setStatusMission();
     break;
   default:
     console.log('Unknown mission');
