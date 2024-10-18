@@ -24,6 +24,7 @@ const saveProgress = () => {
 
 const loadProgress = () => {
   const saveFile = JSON.parse(localStorage.getItem('saveState'));
+  if (!saveFile) return;
   game.coins = saveFile.coins;
   gameGUI.bestScore.innerHTML = saveFile.bestScore;
   game.levelPet = saveFile.petLevel;
