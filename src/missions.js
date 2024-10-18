@@ -40,7 +40,7 @@ const setDailyMission = () => {
   if (new Date().toLocaleDateString() === missionProgress?.setDate) {
     missionsGUI.dailyMission.innerHTML = missionProgress.task;
     missionsGUI.progressMission.innerHTML = missionProgress.isCompleted ? 'Progress - Completed' : 'Progress - Uncompleted';
-    if (!missionProgress.isRewardClaimed) toggleScreen(true, 'claimReward');
+    if (!missionProgress.isRewardClaimed && missionProgress.isCompleted) toggleScreen(true, 'claimReward');
   } else {
     date = new Date().toLocaleDateString();
     const randomMission = dailyMissions[randomNum(dailyMissions.length)];
