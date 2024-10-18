@@ -31,6 +31,8 @@ const loadProgress = () => {
   game.levelMultiplier = saveFile.multiplierLevel;
   shopGUI.costPetUpgrade.innerHTML = saveFile.petPrice;
   shopGUI.costMulti.innerHTML = saveFile.multiplierPrice;
+  document.querySelector('#coinsShop').textContent = saveFile.coins;
+  document.querySelector('#coinsPet').textContent = saveFile.coins;
 };
 
 const getSkinShip = (skinValue) => {
@@ -122,8 +124,6 @@ const exit = (...ids) => {
 };
 
 loadProgress();
-document.querySelector('#coinsShop').textContent = game.coins;
-document.querySelector('#coinsPet').textContent = game.coins;
 
 window.play = play;
 window.changeDifficulty = changeDifficulty;
